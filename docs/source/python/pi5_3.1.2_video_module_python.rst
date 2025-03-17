@@ -1,0 +1,307 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _3.1.2_py:
+
+3.1.2 Video Module
+=====================
+
+**Introduction**
+
+Beyond taking photos, the Raspberry Pi Camera Module also allows you to record high-quality videos. This project demonstrates how to set up the camera module to record videos with configurable resolution, frame rate, and bitrate, saving them directly to your Raspberry Pi.
+
+
+----------------------------------------------
+
+
+**What You’ll Need**
+
+Below are the components required for this project:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    * - COMPONENT INTRODUCTION
+      - PURCHASE LINK
+    * - Camera Module
+      - |link_camera_buy|
+
+
+----------------------------------------------
+
+
+**Experimental Procedures**
+
+1. **Access the Raspberry Pi Desktop:**
+
+   You can access the Raspberry Pi desktop remotely. Detailed steps are available in :ref:`remote_desktop`.
+
+2. **Open a Terminal:**
+
+   Navigate to the project directory:
+
+   .. code-block:: bash
+
+       cd ~/zero-w-ai-kit/python
+
+3. **Run the Python Script:**
+
+   Execute the script to start recording:
+
+   .. code-block:: bash
+
+       sudo python3 3.1.2_VideoModule_zero.py
+
+   The camera will start recording. Press ``Ctrl+C`` to stop. The recorded video will be saved as ``my_video.mp4`` in the ``~`` directory (your home folder).
+
+.. note::
+    You can also open the ``3.1.2_VideoModule_zero.py`` file in a Python IDE, click the "Run" button to execute the script, and stop it using the "Stop" button.
+
+For instructions on transferring the video to your PC, refer to :ref:`filezilla`.
+
+
+----------------------------------------------
+
+
+**Code**
+
+Below is the Python code used for this project:
+
+.. code-block:: python
+
+   #!/usr/bin/env python3
+
+   import time
+   from picamera2 import Picamera2, Preview
+   from picamera2.encoders import H264Encoder
+   from picamera2.outputs import FfmpegOutput
+   import os
+
+   # Get the current user's home directory
+   user_home = os.path.expanduser('~')
+
+   # Create a Picamera2 instance
+   camera = Picamera2()
+   # Retrieve the default preview configuration
+   preview_config = camera.preview_configuration
+
+   try:
+       # Configure preview size and format
+       preview_config.size = (800, 600)
+       preview_config.format = 'XRGB8888'
+       # Start the camera preview in QTGL mode
+       camera.start_preview(Preview.QTGL)
+
+       # Define video configuration with resolution and frame rate
+       conf = {'size': (800, 600)}
+       controls = {'FrameRate': 40}
+       config = camera.create_video_configuration(main=conf, controls=controls, buffer_count=12)
+
+       # Set up the video encoder and output file
+       encoder = H264Encoder(bitrate=10000000)
+       output = FfmpegOutput(f'{user_home}/my_video.mp4')
+
+       # Configure and start recording
+       camera.configure(config)
+       camera.start_recording(encoder, output)
+       print("Recording started. Press Ctrl+C to stop.")
+
+       # Record for 10 seconds (or until interrupted)
+       time.sleep(10)
+       camera.stop_recording()
+
+   except KeyboardInterrupt:
+       # Gracefully handle interruptions
+       print("Recording stopped by user.")
+       camera.stop_preview()
+
+This Python script uses the ``Picamera2`` library to record a video using the Raspberry Pi camera. When executed:
+
+1. **Camera Initialization**:
+
+   - The camera is configured to preview at a resolution of ``800x600`` using ``QTGL`` mode for hardware-accelerated live display.
+
+2. **Video Configuration**:
+
+   - The video is recorded at a resolution of ``800x600`` and a frame rate of 40 FPS.
+   - The recording uses the H.264 encoder with a bitrate of 10 Mbps.
+
+3. **Recording Process**:
+
+   - The recorded video is saved as ``my_video.mp4`` in the user's home directory.
+   - The recording runs for 10 seconds or until interrupted with ``Ctrl+C``.
+
+4. **Graceful Exit**:
+
+   - The camera stops recording and the preview ends if the script is interrupted by the user.
+
+
+----------------------------------------------
+
+
+**Understanding the Code**
+
+1. **Imports:**
+
+   The script uses the ``picamera2`` library to control the camera, encode videos using ``H264Encoder``, and define the output file with ``FfmpegOutput``. The ``os`` module is used to handle file paths.
+
+   .. code-block:: python
+
+       import time
+       from picamera2 import Picamera2, Preview
+       from picamera2.encoders import H264Encoder
+       from picamera2.outputs import FfmpegOutput
+       import os
+
+2. **User Directory Setup:**
+
+   The home directory of the current user is determined to save the video file.
+
+   .. code-block:: python
+
+       user_home = os.path.expanduser('~')
+
+3. **Camera Initialization:**
+
+   A ``Picamera2`` instance is created, and the default preview configuration is retrieved.
+
+   .. code-block:: python
+
+       camera = Picamera2()
+       preview_config = camera.preview_configuration
+
+4. **Preview Configuration:**
+
+   The camera preview size is set to 800x600 pixels, and the format is set to ``XRGB8888``.
+
+   .. code-block:: python
+
+       preview_config.size = (800, 600)
+       preview_config.format = 'XRGB8888'
+
+5. **Video Recording Setup:**
+
+   A video configuration is created with a resolution of 800x600 pixels and a frame rate of 40 FPS. The video is encoded in H.264 format with a bitrate of 10 Mbps and saved as ``my_video.mp4``.
+
+   .. code-block:: python
+
+       conf = {'size': (800, 600)}
+       controls = {'FrameRate': 40}
+       config = camera.create_video_configuration(main=conf, controls=controls, buffer_count=12)
+       encoder = H264Encoder(bitrate=10000000)
+       output = FfmpegOutput(f'{user_home}/my_video.mp4')
+
+6. **Recording and Cleanup:**
+
+   The camera is configured and starts recording. The recording lasts for 10 seconds or until interrupted with ``Ctrl+C``. The script gracefully handles interruptions by stopping the preview and exiting cleanly.
+
+   .. code-block:: python
+
+       try:
+           camera.configure(config)
+           camera.start_recording(encoder, output)
+           time.sleep(10)
+           camera.stop_recording()
+       except KeyboardInterrupt:
+           camera.stop_preview()
+
+
+
+----------------------------------------------
+
+
+**Troubleshooting**
+
+1. **Preview Window Does Not Appear**:
+
+   - **Cause**: Missing dependencies or incorrect camera setup.
+   - **Solution**:
+
+      - Ensure the Raspberry Pi camera module is properly connected and enabled via ``raspi-config``.
+      - Install required libraries for ``Picamera2`` and QTGL mode:
+       
+      .. code-block:: python
+
+         sudo apt update
+         sudo apt install -y python3-picamera2 qtbase5-dev
+
+
+2. **Video File Not Created**:
+
+   - **Cause**: Insufficient permissions or incorrect file path.
+   - **Solution**:
+
+     - Verify the file path ``my_video.mp4`` is correctly set to the user's home directory using ``print(user_home)``.
+     - Ensure the script has write permissions for the specified directory.
+
+3. **Script Crashes with Encoder Error**:
+
+   - **Cause**: H.264 encoder is not properly set up or configured.
+   - **Solution**:
+
+      - Confirm that the Raspberry Pi hardware supports H.264 encoding.
+      - Ensure the ``ffmpeg`` package is installed:
+
+
+      .. code-block:: python
+
+         sudo apt install -y ffmpeg
+
+
+4. **Recording Interrupted**:
+
+   - **Cause**: User interrupts the script prematurely.
+   - **Solution**: Handle ``KeyboardInterrupt`` to clean up resources and ensure the video file is finalized.
+
+   .. code-block:: python
+
+       except KeyboardInterrupt:
+           print("Recording stopped by user.")
+           camera.stop_recording()
+           camera.stop_preview()
+
+----------------------------------------------
+
+
+**Extendable Ideas**
+
+1. **Custom Recording Duration**: Allow the user to specify the recording duration as a script argument:
+
+   .. code-block:: python
+
+      import argparse
+      parser = argparse.ArgumentParser()
+      parser.add_argument("--duration", type=int, default=10, help="Recording duration in seconds")
+      args = parser.parse_args()
+      time.sleep(args.duration)
+
+
+2. **Timelapse Video**: Record at a low frame rate to create a timelapse effect:
+
+   .. code-block:: python
+
+      controls = {'FrameRate': 5}
+
+3. **Multiple Resolutions**: Offer options to record in different resolutions (e.g., HD, Full HD, 4K).
+
+
+
+
+----------------------------------------------
+
+**Conclusion**
+
+This project demonstrates how to record videos using the Raspberry Pi Camera Module and Picamera2 library. By customizing the video settings, you can create professional-quality videos for various applications, including surveillance, documentation, and creative projects. Experiment further to unlock the full potential of your Raspberry Pi camera!
+

@@ -1,0 +1,224 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _1.3.1_py:
+
+1.3.1 Motor
+=============
+
+**Introduction**
+
+In this project, we will learn how to use the L293D motor driver to control a DC motor, making it rotate clockwise and counterclockwise. Since a DC motor requires higher current, we use a Power Supply Module to ensure safe operation.
+
+----------------------------------------------
+
+**What You’ll Need**
+
+To complete this project, you will need the following components:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_gpio_extension_board`
+        - |link_gpio_board_buy|
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_power_module`
+        - \-
+    *   - :ref:`cpn_l293d`
+        - \-
+    *   - :ref:`cpn_motor`
+        - |link_motor_buy|
+
+----------------------------------------------
+
+**Circuit Diagram**
+
+The circuit diagram below shows the connections required to control the motor with the L293D driver and a power module.
+
+.. image:: ../python/img/1.3.1_motor_schematic.png
+
+----------------------------------------------
+
+**Wiring Diagram**
+
+Follow these steps to build the circuit:
+
+1. Connect the L293D motor driver to the Raspberry Pi GPIO pins and the motor.
+2. Use the power module to provide a separate power supply to the motor driver.
+3. Ensure all connections are secure and correct to prevent damage to the components.
+
+.. image:: ../python/img/1.3.1_motor_circuit.png
+
+.. note::
+    The power module can apply a 9V battery using the 9V Battery Buckle included in the kit. Insert the jumper cap of the power module into the 5V bus strips of the breadboard.
+
+.. image:: ../python/img/1.3.1_motor_battery.jpeg
+
+----------------------------------------------
+
+**Writing the Code**
+
+The following Python code controls the motor’s rotation direction and timing:
+
+.. code-block:: python
+
+   #!/usr/bin/env python3
+   from gpiozero import Motor
+   from time import sleep
+
+   # Initialize the Motor with GPIO Zero, specifying GPIO pins for forward (17), backward (27), and enable (22) control
+   motor = Motor(forward=17, backward=27, enable=22)
+
+   try:
+       # Main function to control the motor's direction and movement.
+       # Alternates motor rotation between clockwise and counterclockwise with stops in between.
+       actions = {'CW': motor.forward, 'CCW': motor.backward, 'STOP': motor.stop}  # Define motor actions for readability
+       
+       while True:
+           # Loop through the defined actions to control motor direction
+           for action in ['CW', 'STOP', 'CCW', 'STOP']:
+               actions[action]()  # Execute the current action (forward, stop, backward, stop)
+               print(f"{action}")  # Display the current action in the console
+               sleep(5)  # Pause for 5 seconds before proceeding to the next action
+
+   except KeyboardInterrupt:
+       # Gracefully handle a keyboard interrupt (e.g., Ctrl+C) to stop the program
+       pass
+
+This Python script controls a motor connected to a Raspberry Pi using the GPIO Zero library. When executed:
+
+1. The motor alternates between clockwise (CW) and counterclockwise (CCW) rotation with a 5-second pause in between.
+2. Between each rotation, the motor stops for 5 seconds.
+3. The current motor action ("CW", "STOP", or "CCW") is printed to the console for feedback.
+4. The program runs indefinitely until the user interrupts it by pressing ``Ctrl+C``.
+
+
+
+----------------------------------------------
+
+**Understanding the Code**
+
+1. **Library Import**
+
+   The ``gpiozero`` library simplifies GPIO interactions, while the ``time`` library provides delay functions.
+
+   .. code-block:: python
+
+       from gpiozero import Motor
+       from time import sleep
+
+2. **Motor Initialization**
+
+   The ``Motor`` object is created using GPIO pins for forward (17), backward (27), and enable (22) control.
+
+   .. code-block:: python
+
+       motor = Motor(forward=17, backward=27, enable=22)
+
+3. **Motor Actions**
+
+   A dictionary maps motor actions (``CW``, ``CCW``, ``STOP``) to corresponding functions. These actions are executed sequentially in a loop, with each action lasting 5 seconds.
+
+   .. code-block:: python
+
+       actions = {'CW': motor.forward, 'CCW': motor.backward, 'STOP': motor.stop}
+       
+       while True:
+           for action in ['CW', 'STOP', 'CCW', 'STOP']:
+               actions[action]()
+               print(f"{action}")
+               sleep(5)
+
+4. **Interrupt Handling**
+
+   The ``try-except`` block allows the program to terminate cleanly when interrupted using Ctrl+C.
+
+   .. code-block:: python
+
+       except KeyboardInterrupt:
+           pass
+
+
+----------------------------------------------
+
+**Troubleshooting**
+
+1. **Motor Does Not Move**  
+
+   - **Cause**: Incorrect wiring or GPIO pin configuration.  
+   - **Solution**: Verify the motor driver’s connections to GPIO pins 17, 27, and 22. Ensure the motor is receiving power and the enable pin is connected properly.
+
+2. **Only One Direction Works**
+
+   - **Cause**: Faulty connection to the forward or backward pin.  
+   - **Solution**: Check the wiring for both GPIO pins (17 and 27) and ensure they are securely connected to the motor driver.
+
+3. **Motor Spins Continuously Without Stopping**  
+
+   - **Cause**: The ``stop()`` function may not be executed properly.  
+   - **Solution**: Confirm that the enable pin (GPIO 22) is functioning correctly and the ``motor.stop()`` method is called in the ``STOP`` action.
+
+
+----------------------------------------------
+
+**Extendable Ideas**
+
+1. **Variable Speeds**  
+
+   Control the motor’s speed dynamically using the ``motor.forward(speed)`` and ``motor.backward(speed)`` methods:
+
+   .. code-block:: python
+
+      motor.forward(0.5)  # Set speed to 50%
+      motor.backward(0.75)  # Set speed to 75%
+
+
+2. **User-Controlled Actions**  
+
+   Allow the user to control the motor in real-time via keyboard input:
+
+   .. code-block:: python
+
+      while True:
+         action = input("Enter 'CW', 'CCW', or 'STOP': ")
+         if action in actions:
+            actions[action]()
+         else:
+            print("Invalid action!")
+
+
+3. **Timed Motor Control**  
+
+   Add functionality to run the motor for a user-specified duration:
+
+   .. code-block:: python
+
+      duration = int(input("Enter duration (seconds): "))
+      motor.forward()
+      sleep(duration)
+      motor.stop()
+
+
+----------------------------------------------
+
+**Conclusion**
+
+This project demonstrates how to control a DC motor using the L293D motor driver and GPIO pins. Understanding motor control is essential for building robotics and other motion-based electronic projects.

@@ -1,0 +1,316 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _4.1.6_py:
+
+4.1.6 Reversing Alarm
+==============================
+
+**Introduction**
+
+Parking a car safely into a garage often requires careful navigation, especially in tight spaces. In this project, you’ll create a reversing alarm system using an ultrasonic sensor, an LCD, and a buzzer. This system mimics the functionality of a real-world parking sensor, providing both visual and auditory feedback about the distance to obstacles.
+
+
+----------------------------------------------
+
+
+**What You’ll Need**
+
+Below are the components required for this project:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+    *   - GPIO Extension Board
+        - |link_gpio_board_buy|
+    *   - Breadboard
+        - |link_breadboard_buy|
+    *   - Wires
+        - |link_wires_buy|
+    *   - Resistors
+        - |link_resistor_buy|
+    *   - Buzzer
+        - |link_passive_buzzer_buy|
+    *   - Transistor
+        - |link_transistor_buy|
+    *   - Ultrasonic Sensor
+        - |link_ultrasonic_buy|
+    *   - I2C LCD Display
+        - |link_i2clcd1602_buy|
+
+
+
+----------------------------------------------
+
+**Circuit Diagram**
+
+The system uses an ultrasonic sensor to measure the distance to obstacles. The distance is displayed on an I2C LCD screen, and the buzzer emits warning tones of varying frequency depending on the distance.
+
+.. image:: ../python/img/4.1.9_reversing_alarm_schematic.png
+   :align: center
+
+
+----------------------------------------------
+
+
+**Wiring Diagram**
+
+Follow this wiring diagram to set up your system:
+
+.. image:: ../python/img/4.1.9_reversing_alarm_circuit.png
+   :align: center
+
+
+----------------------------------------------
+
+
+**Writing the Code**
+
+1. Navigate to the project directory:
+
+   .. code-block:: bash
+
+       cd ~/zero-w-ai-kit/python
+
+2. Run the Python script:
+
+   .. code-block:: bash
+
+       sudo python3 4.1.9_ReversingAlarm_zero.py
+
+After starting the script:
+
+* The ultrasonic sensor measures the distance to an obstacle.
+* The distance is displayed on the LCD in real-time.
+* The buzzer emits a warning tone, with its frequency increasing as the obstacle gets closer.
+
+.. note::
+
+   * If the LCD shows no content, adjust the potentiometer on the back to enhance the contrast.
+   * Ensure the I2C interface is enabled; refer to :ref:`i2c_config` for setup instructions.
+   * If you encounter the error ``ModuleNotFoundError: No module named 'smbus2'``, run ``sudo pip3 install smbus2``.
+
+
+
+----------------------------------------------
+
+**Code**
+
+Here is the Python code for the project:
+
+.. code-block:: python
+
+    #!/usr/bin/env python3
+    import LCD1602
+    import time
+    from gpiozero import DistanceSensor, Buzzer
+
+    # Initialize ultrasonic sensor and buzzer
+    sensor = DistanceSensor(echo=24, trigger=23)  # Echo: GPIO 24, Trigger: GPIO 23
+    buzzer = Buzzer(17)  # GPIO 17
+
+    def lcdsetup():
+        """Initialize the LCD and display a welcome message."""
+        LCD1602.init(0x27, 1)  # I2C address: 0x27
+        LCD1602.clear()
+        LCD1602.write(0, 0, 'Ultrasonic Starting')
+        LCD1602.write(1, 1, 'By SunFounder')
+        time.sleep(2)
+
+    def distance():
+        """Measure and return the distance from the sensor."""
+        dis = sensor.distance * 100  # Convert to cm
+        print(f'Distance: {dis:.2f} cm')
+        time.sleep(0.3)
+        return dis
+
+    def loop():
+        """Main loop to update LCD and buzzer based on distance."""
+        while True:
+            dis = distance()
+            if dis > 400:
+                LCD1602.clear()
+                LCD1602.write(0, 0, 'Error')
+                LCD1602.write(3, 1, 'Out of range')
+                time.sleep(0.5)
+            else:
+                LCD1602.clear()
+                LCD1602.write(0, 0, 'Distance is')
+                LCD1602.write(5, 1, f'{dis:.2f} cm')
+                if dis >= 50:
+                    time.sleep(0.5)
+                elif 20 < dis < 50:
+                    for _ in range(2):
+                        buzzer.on()
+                        time.sleep(0.05)
+                        buzzer.off()
+                        time.sleep(0.2)
+                elif dis <= 20:
+                    for _ in range(5):
+                        buzzer.on()
+                        time.sleep(0.05)
+                        buzzer.off()
+                        time.sleep(0.05)
+
+    try:
+        lcdsetup()
+        loop()
+    except KeyboardInterrupt:
+        buzzer.off()
+        LCD1602.clear()
+
+This Python script integrates an ultrasonic distance sensor, a buzzer, and an LCD1602 display to create a real-time distance monitoring system. When executed:
+
+1. **System Initialization**:
+
+   - The LCD initializes with a welcome message: 
+
+   .. code-block:: python
+
+      Ultrasonic Starting
+      By SunFounder
+
+
+   - The welcome message is displayed for 2 seconds before transitioning to real-time distance monitoring.
+
+2. **Distance Measurement**: The ultrasonic sensor measures the distance to the nearest object in front of it and converts the value to centimeters.
+
+3. **LCD Output**:
+
+   - The measured distance is displayed on the LCD in real-time:
+
+   .. code-block:: python
+
+      Distance is
+      XX.XX cm
+
+   - If the distance exceeds 400 cm, the LCD displays an error message:
+
+   .. code-block:: python
+
+      Error
+      Out of range
+
+
+4. **Buzzer Alerts**: Based on the measured distance:
+
+     - **More than 50 cm**: No buzzer sound.
+     - **Between 20 cm and 50 cm**: The buzzer beeps twice with a short interval.
+     - **20 cm or less**: The buzzer emits rapid beeps to indicate proximity.
+
+
+----------------------------------------------
+
+**Understanding the Code**
+
+1. **LCD Initialization:** The LCD is initialized and displays a startup message.
+
+   .. code-block:: python
+
+       def lcdsetup():
+           LCD1602.init(0x27, 1)
+           LCD1602.clear()
+           LCD1602.write(0, 0, 'Ultrasonic Starting')
+           LCD1602.write(1, 1, 'By SunFounder')
+           time.sleep(2)
+
+2. **Distance Measurement:** The ultrasonic sensor calculates the distance, which is displayed on the LCD.
+
+   .. code-block:: python
+
+       def distance():
+           dis = sensor.distance * 100
+           print(f'Distance: {dis:.2f} cm')
+           time.sleep(0.3)
+           return dis
+
+3. **Auditory Alerts:** The buzzer's frequency changes based on the proximity of obstacles:
+
+   * **>50 cm:** No sound.
+   * **20-50 cm:** Beeps twice with medium intervals.
+   * **≤20 cm:** Rapid beeping for urgent warning.
+
+
+
+
+----------------------------------------------
+
+**Troubleshooting**
+
+1. **LCD Does Not Display Anything**:
+
+   - **Cause**: Incorrect I2C address or wiring.
+   - **Solution**:
+
+     - Verify the LCD's I2C address using ``i2cdetect -y 1`` and update ``LCD1602.init()`` with the correct address.
+     - Ensure SDA and SCL pins are connected properly.
+
+2. **Distance Not Measured**:
+
+   - **Cause**: Incorrect wiring or sensor malfunction.
+   - **Solution**:
+
+     - Ensure the ultrasonic sensor's ``echo`` and ``trigger`` pins are connected to GPIO 24 and GPIO 23, respectively.
+     - Test the sensor independently to confirm functionality.
+
+3. **Buzzer Does Not Sound**:
+
+   - **Cause**: Buzzer not connected or faulty.
+   - **Solution**:
+
+     - Verify the buzzer is connected to GPIO 17 and ground.
+     - Test the buzzer by turning it on manually:
+       
+       .. code-block:: python
+
+           buzzer.on()
+           time.sleep(1)
+           buzzer.off()
+
+4. **LCD Displays 'Out of Range' Constantly**:
+
+   - **Cause**: Sensor is unable to detect objects within its range.
+   - **Solution**:
+
+     - Ensure there are no obstructions or interference in the sensor's path.
+     - Place objects within the sensor's effective range (usually 2 cm to 400 cm).
+
+----------------------------------------------
+
+**Extendable Ideas**
+
+1. **Adjustable Alert Thresholds**: Allow users to set custom distance thresholds for the buzzer alerts.
+
+2. **Data Logging**: Log distance measurements to a file for later analysis:
+
+   .. code-block:: python
+
+      with open("distance_log.txt", "a") as log_file:
+            log_file.write(f"{time.time():.3f}, {dis:.2f} cm\n")
+
+3. **Visual Alerts**: Use LEDs of different colors to indicate proximity levels (e.g., green for safe, yellow for caution, red for danger).
+
+4. **Dynamic Messages**: Display custom messages on the LCD based on distance, such as:
+
+   - ``Too Close!``
+   - ``Safe Distance``
+
+----------------------------------------------
+
+**Conclusion**
+
+This project demonstrates a practical application of ultrasonic sensors, combining auditory and visual feedback for an intuitive reversing alarm system. Such systems are valuable in vehicles and robotics, offering insights into proximity detection and IoT integrations. Extend its functionality to suit your innovative ideas!

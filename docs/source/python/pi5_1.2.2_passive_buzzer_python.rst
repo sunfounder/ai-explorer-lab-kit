@@ -1,0 +1,263 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _1.2.2_py:
+
+1.2.2 Passive Buzzer
+===========================
+
+**Introduction**
+
+In this project, we will learn how to make a passive buzzer play music by driving it with different frequencies. Passive buzzers, unlike active buzzers, require an external signal to produce sound.
+
+----------------------------------------------
+
+**What You’ll Need**
+
+To complete this project, you will need the following components:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_gpio_extension_board`
+        - |link_gpio_board_buy|
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_buzzer`
+        - |link_passive_buzzer_buy|
+    *   - :ref:`cpn_transistor`
+        - |link_transistor_buy|
+
+----------------------------------------------
+
+**Circuit Diagram**
+
+The circuit uses a passive buzzer, a PNP transistor, and a 1kΩ resistor. The resistor protects the transistor from excessive current. By varying the frequency of the GPIO pin connected to the transistor, the buzzer produces different sounds, enabling it to play music.
+
+.. image:: ../python/img/1.2.2_passive_buzzer_schematic.png
+
+----------------------------------------------
+
+**Wiring Diagram**
+
+Follow these steps to build the circuit:
+
+1. Connect the base of the PNP transistor to GPIO17 through the resistor.
+2. Connect the emitter of the transistor to the power supply (+).
+3. Connect the collector of the transistor to one terminal of the passive buzzer.
+4. Connect the other terminal of the buzzer to the ground (-).
+
+.. image:: ../python/img/1.2.2_PassiveBuzzer_circuit.png
+
+----------------------------------------------
+
+**Writing the Code**
+
+The following Python code generates musical notes using a passive buzzer:
+
+.. code-block:: python
+
+   #!/usr/bin/env python3
+   from gpiozero import TonalBuzzer
+   from time import sleep
+
+   # Initialize a TonalBuzzer connected to GPIO pin 17
+   tb = TonalBuzzer(17)
+
+   def play(tune):
+       """
+       Play a musical tune using the buzzer.
+       :param tune: List of tuples (note, duration), where each tuple represents a note and its duration.
+       """
+       for note, duration in tune:
+           print(note)  # Output the current note being played
+           tb.play(note)  # Play the note on the buzzer
+           sleep(float(duration))  # Delay for the duration of the note
+       tb.stop()  # Stop playing after the tune is complete
+
+   # Define a musical tune as a sequence of notes and durations
+   tune = [
+       ('C#4', 0.2), ('D4', 0.2), (None, 0.2),
+       ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),
+       ('F#4', 0.2), ('G4', 0.2), (None, 0.6),
+       ('Eb4', 0.2), ('E4', 0.2), (None, 0.2),
+       ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+       ('C4', 0.2), ('B4', 0.2), (None, 0.2),
+       ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+       ('B4', 0.2), ('Bb4', 0.5), (None, 0.6),
+       ('A4', 0.2), ('G4', 0.2), ('E4', 0.2), 
+       ('D4', 0.2), ('E4', 0.2)
+   ]
+
+   try:
+       play(tune)  # Execute the play function to start playing the tune
+
+   except KeyboardInterrupt:
+       # Handle KeyboardInterrupt for graceful termination
+       pass
+
+This Python script plays a musical tune using a TonalBuzzer connected to GPIO pin 17 on a Raspberry Pi. When executed:
+
+1. The script iterates through a predefined sequence of musical notes (``tune``), playing each note for a specified duration.
+2. The notes are output to the console as they are played, providing a visual reference.
+3. The tune stops automatically once all notes are played. The buzzer produces no sound during pauses (when the note is ``None``).
+4. The program can be interrupted gracefully using ``Ctrl+C``.
+
+
+----------------------------------------------
+
+**Understanding the Code**
+
+1. **Library Import**
+
+   The ``TonalBuzzer`` class from the ``gpiozero`` library is used to generate tones, and ``time.sleep`` introduces delays for note durations.
+
+   .. code-block:: python
+
+       from gpiozero import TonalBuzzer
+       from time import sleep
+
+2. **Buzzer Initialization**
+
+   The ``TonalBuzzer`` is associated with GPIO pin 17 for tone generation.
+
+   .. code-block:: python
+
+       tb = TonalBuzzer(17)
+
+3. **Playing Notes**
+
+   The ``play`` function iterates over a list of tuples representing musical notes and their durations. Each note is played for its specified duration, followed by a brief stop.
+
+   .. code-block:: python
+
+       def play(tune):
+           for note, duration in tune:
+               print(note)
+               tb.play(note)
+               sleep(float(duration))
+           tb.stop()
+
+4. **Tune Definition**
+
+   The ``tune`` variable contains a sequence of notes (e.g., 'C#4') and durations (e.g., 0.2 seconds).
+
+   .. code-block:: python
+
+       tune = [
+           ('C#4', 0.2), ('D4', 0.2), (None, 0.2),
+           ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),
+           ('F#4', 0.2), ('G4', 0.2), (None, 0.6),
+           ('Eb4', 0.2), ('E4', 0.2), (None, 0.2),
+           ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+           ('C4', 0.2), ('B4', 0.2), (None, 0.2),
+           ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+           ('B4', 0.2), ('Bb4', 0.5), (None, 0.6),
+           ('A4', 0.2), ('G4', 0.2), ('E4', 0.2), 
+           ('D4', 0.2), ('E4', 0.2)
+       ]
+
+5. **Keyboard Interrupt Handling**
+
+   The ``try-except`` block ensures the program stops gracefully when interrupted (e.g., Ctrl+C).
+
+   .. code-block:: python
+
+       try:
+           play(tune)
+       except KeyboardInterrupt:
+           pass
+
+
+
+----------------------------------------------
+
+**Troubleshooting**
+
+1. **No Sound from the Buzzer**  
+
+   - **Cause**: Incorrect GPIO pin connection or incompatible buzzer type.  
+   - **Solution**: Ensure the TonalBuzzer is connected to GPIO pin 17 and is compatible with the ``gpiozero.TonalBuzzer`` class.
+
+2. **Intermittent or Stuttering Sound**  
+
+   - **Cause**: Timing inconsistencies in the ``sleep()`` function.  
+   - **Solution**: Confirm that the durations in the ``tune`` list are appropriately calibrated for smooth transitions.
+
+
+----------------------------------------------
+
+**Extendable Ideas**
+
+1. **Custom Tunes**  
+
+   Allow the user to input their own sequence of notes and durations:
+
+   .. code-block:: python
+
+      user_tune = []
+      while True:
+         note = input("Enter a note (or 'stop' to finish): ")
+         if note.lower() == 'stop':
+            break
+         duration = float(input("Enter duration for the note: "))
+         user_tune.append((note, duration))
+      play(user_tune)
+
+
+2. **Multiple Tunes**  
+
+   Add predefined tunes and let the user select which one to play:
+
+   .. code-block:: python
+
+      tunes = {
+         "tune1": [('C4', 0.5), ('D4', 0.5), (None, 0.5)],
+         "tune2": [('G4', 0.3), ('A4', 0.3), (None, 0.3)]
+      }
+      choice = input("Choose a tune (tune1/tune2): ")
+      play(tunes[choice])
+
+
+3. **Real-Time Interaction**  
+
+   Use buttons or a keyboard to play notes interactively, turning the buzzer into a simple instrument.
+
+4. **Chained Tunes**  
+
+   Automatically chain multiple tunes together to create a longer piece.
+
+5. **Dynamic Speed Adjustment**  
+
+   Allow users to change the playback speed dynamically by modifying the note durations:
+
+   .. code-block:: python
+
+      speed_factor = float(input("Enter speed factor (e.g., 1.0 for normal, 0.5 for faster): "))
+      adjusted_tune = [(note, duration * speed_factor) for note, duration in tune]
+      play(adjusted_tune)
+
+----------------------------------------------
+
+**Conclusion**
+
+This project demonstrates how to use a passive buzzer to play musical notes. By combining hardware and software, you can create a variety of sounds and melodies for interactive projects.

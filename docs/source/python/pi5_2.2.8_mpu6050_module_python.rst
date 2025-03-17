@@ -1,0 +1,309 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _2.2.8_py:
+
+2.2.8 MPU6050 Module
+====================
+
+**Introduction**
+
+The MPU6050 is a highly integrated 6-axis motion tracking module that includes a 3-axis gyroscope and a 3-axis accelerometer. This module is widely used in smartphones, tablets, and wearable devices due to its compact size, low power consumption, and high performance. In this project, you will learn how to interface with the MPU6050 using the I2C protocol to obtain acceleration and angular velocity data, which will then be displayed on the screen.
+
+
+
+----------------------------------------------
+
+**What You’ll Need**
+
+Below are the components required for this project:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    * - COMPONENT INTRODUCTION
+      - PURCHASE LINK
+    * - GPIO Extension Board
+      - |link_gpio_board_buy|
+    * - Breadboard
+      - |link_breadboard_buy|
+    * - Wires
+      - |link_wires_buy|
+    * - MPU6050 Module
+      - |link_mpu6050_buy|
+
+
+----------------------------------------------
+
+
+**Circuit Diagram**
+
+The MPU6050 communicates with the microcontroller via the I2C bus. Connect the SDA1 and SCL1 pins of the MPU6050 to the corresponding I2C pins on the Raspberry Pi:
+
+.. image:: ../python/img/2.2.9_mpu6050_schematic.png
+
+
+
+----------------------------------------------
+
+**Wiring Diagram**
+
+Assemble the circuit as shown in the wiring diagram below:
+
+.. image:: ../python/img/2.2.9_mpu6050_circuit.png
+
+Ensure that all connections are secure and match the schematic to avoid communication errors.
+
+
+----------------------------------------------
+
+
+**Writing the Code**
+
+1. **Setup I2C:** Follow the steps in the :ref:`i2c_config` to enable I2C on your Raspberry Pi if it is not already configured.
+
+2. **Navigate to the project directory:**
+
+   .. code-block:: bash
+
+       cd ~/zero-w-ai-kit/python
+
+3. **Run the Python script:**
+
+   .. code-block:: bash
+
+       sudo python3 2.2.9_mpu6050_zero.py
+
+After running the script, the MPU6050 will calculate and display the following on the screen:
+
+- The deflection angles of the x-axis and y-axis
+- The acceleration and angular velocity along each axis
+
+.. note::
+    - If you encounter the error ``FileNotFoundError: [Errno 2] No such file or directory: '/dev/i2c-1'``, refer to :ref:`i2c_config` to enable I2C.
+    - If you get ``ModuleNotFoundError: No module named 'smbus2'``, run ``sudo pip3 install smbus2``.
+    - If the error ``OSError: [Errno 121] Remote I/O error`` appears, it indicates a miswired or faulty module.
+
+
+----------------------------------------------
+
+
+**Code**
+
+Below is the Python code for this project:
+
+.. code-block:: python
+
+   import smbus
+   import math
+   import time
+
+   # Power management registers
+   power_mgmt_1 = 0x6b
+   power_mgmt_2 = 0x6c
+
+   def read_byte(adr):
+       return bus.read_byte_data(address, adr)
+
+   def read_word(adr):
+       high = bus.read_byte_data(address, adr)
+       low = bus.read_byte_data(address, adr+1)
+       val = (high << 8) + low
+       return val
+
+   def read_word_2c(adr):
+       val = read_word(adr)
+       if val >= 0x8000:
+           return -((65535 - val) + 1)
+       else:
+           return val
+
+   def dist(a, b):
+       return math.sqrt((a * a) + (b * b))
+
+   def get_y_rotation(x, y, z):
+       radians = math.atan2(x, dist(y, z))
+       return -math.degrees(radians)
+
+   def get_x_rotation(x, y, z):
+       radians = math.atan2(y, dist(x, z))
+       return math.degrees(radians)
+
+   bus = smbus.SMBus(1)  # Use SMBus(1) for Revision 2 boards
+   address = 0x68         # Address of MPU6050
+
+   # Wake up the MPU6050 as it starts in sleep mode
+   bus.write_byte_data(address, power_mgmt_1, 0)
+
+   while True:
+       time.sleep(0.1)
+
+       gyro_xout = read_word_2c(0x43)
+       gyro_yout = read_word_2c(0x45)
+       gyro_zout = read_word_2c(0x47)
+
+       print("gyro_xout: ", gyro_xout, "scaled: ", (gyro_xout / 131))
+       print("gyro_yout: ", gyro_yout, "scaled: ", (gyro_yout / 131))
+       print("gyro_zout: ", gyro_zout, "scaled: ", (gyro_zout / 131))
+
+       accel_xout = read_word_2c(0x3b)
+       accel_yout = read_word_2c(0x3d)
+       accel_zout = read_word_2c(0x3f)
+
+       accel_xout_scaled = accel_xout / 16384.0
+       accel_yout_scaled = accel_yout / 16384.0
+       accel_zout_scaled = accel_zout / 16384.0
+
+       print("accel_xout: ", accel_xout, "scaled: ", accel_xout_scaled)
+       print("accel_yout: ", accel_yout, "scaled: ", accel_yout_scaled)
+       print("accel_zout: ", accel_zout, "scaled: ", accel_zout_scaled)
+
+       print("x rotation: ", get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))
+       print("y rotation: ", get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))
+
+       time.sleep(1)
+
+This Python script interfaces with an MPU6050 sensor connected to a Raspberry Pi via I2C. The script performs the following actions:
+
+1. Initializes the MPU6050 by waking it from sleep mode.
+2. Continuously reads gyroscope and accelerometer data from the sensor:
+
+   - Gyroscope outputs: ``gyro_xout``, ``gyro_yout``, ``gyro_zout`` (raw and scaled).
+   - Accelerometer outputs: ``accel_xout``, ``accel_yout``, ``accel_zout`` (raw and scaled).
+
+3. Calculates the device's tilt angles:
+
+   - ``x rotation``: The angle of tilt along the X-axis.
+   - ``y rotation``: The angle of tilt along the Y-axis.
+
+4. Displays the raw data, scaled data, and calculated angles on the console every second.
+
+
+----------------------------------------------
+
+**Understanding the Code**
+
+1. **Reading Sensor Data:**
+
+   Functions like ``read_word`` and ``read_word_2c`` are used to read raw sensor data from the MPU6050 registers.
+
+   .. code-block:: python
+
+       def read_word(adr):
+           high = bus.read_byte_data(address, adr)
+           low = bus.read_byte_data(address, adr+1)
+           return (high << 8) + low
+
+       def read_word_2c(adr):
+           val = read_word(adr)
+           return -((65535 - val) + 1) if val >= 0x8000 else val
+
+2. **Calculating Rotation Angles:**
+
+   Functions like ``get_x_rotation`` and ``get_y_rotation`` compute the deflection angles of the x-axis and y-axis based on acceleration data.
+
+   .. code-block:: python
+
+       def get_y_rotation(x, y, z):
+           radians = math.atan2(x, dist(y, z))
+           return -math.degrees(radians)
+
+3. **Displaying Data:**
+
+   The script prints raw and scaled data for the gyroscope and accelerometer, along with calculated rotation angles.
+
+   .. code-block:: python
+
+       print("gyro_xout: ", gyro_xout, "scaled: ", (gyro_xout / 131))
+       print("accel_xout: ", accel_xout, "scaled: ", accel_xout_scaled)
+       print("x rotation: ", get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))
+
+
+
+----------------------------------------------
+
+
+**Troubleshooting**
+
+1. **No Output or Sensor Not Detected**:
+
+   - **Cause**: Incorrect I2C setup or wiring.
+   - **Solution**:
+
+      - Ensure the MPU6050 is correctly connected to the Raspberry Pi's I2C pins (SDA, SCL, power, ground).
+      - Verify the I2C address using the ``i2cdetect`` tool:
+
+      .. code-block:: shell
+
+         sudo i2cdetect -y 1
+         
+      - Confirm that the device address matches ``0x68`` in the script.
+
+2. **Incorrect or Erratic Values**:
+
+   - **Cause**: Sensor calibration issues or noisy environment.
+   - **Solution**:
+
+     - Place the MPU6050 on a stable surface to reduce noise.
+     - Perform calibration on the gyroscope and accelerometer to ensure accurate readings.
+
+3. **ImportError: No Module Named ``smbus``**:
+
+   - **Cause**: The ``smbus`` library is not installed.
+   - **Solution**: Install the library using:
+
+   .. code-block:: shell
+
+     sudo apt-get install python3-smbus
+
+
+4. **Script Crashes on Execution**:
+
+   - **Cause**: Power supply issues or incorrect sensor initialization.
+   - **Solution**: Ensure the sensor is powered correctly (3.3V or 5V) and that the initialization command ``bus.write_byte_data(address, power_mgmt_1, 0)`` is executed without errors.
+
+
+
+----------------------------------------------
+
+**Extendable Ideas**
+
+1. **Data Logging**: Save gyroscope and accelerometer readings to a file for analysis:
+     
+    .. code-block:: python
+
+        with open("mpu6050_log.txt", "a") as log_file:
+            log_file.write(f"{time.time():.3f}, {gyro_xout}, {gyro_yout}, {gyro_zout}, {accel_xout}, {accel_yout}, {accel_zout}\n")
+
+2. **Integration with Motors**: Use the gyroscope data to stabilize a drone or robotic arm.
+
+3. **Calibration Routine**: Add a calibration step to zero out sensor biases before taking measurements:
+     
+    .. code-block:: python
+
+        def calibrate():
+            gyro_bias_x = sum(read_word_2c(0x43) for _ in range(100)) / 100
+            gyro_bias_y = sum(read_word_2c(0x45) for _ in range(100)) / 100
+            gyro_bias_z = sum(read_word_2c(0x47) for _ in range(100)) / 100
+            return gyro_bias_x, gyro_bias_y, gyro_bias_z
+
+        gyro_bias_x, gyro_bias_y, gyro_bias_z = calibrate()
+
+
+----------------------------------------------
+
+**Conclusion**
+
+This project demonstrates how to interface with the MPU6050 module using the I2C protocol to capture motion and orientation data. By understanding how to read and process this data, you can integrate the MPU6050 into a wide range of projects, from motion-controlled devices to advanced robotics and navigation systems.

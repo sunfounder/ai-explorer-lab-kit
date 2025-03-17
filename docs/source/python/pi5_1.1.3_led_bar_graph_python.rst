@@ -1,0 +1,283 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _1.1.3_py:
+
+1.1.3 LED Bar Graph
+======================
+
+**Introduction**
+
+In this project, we will sequentially illuminate the LEDs on an LED Bar Graph, creating a visually appealing pattern that showcases GPIO control on the Raspberry Pi.
+
+----------------------------------------------
+
+**What You’ll Need**
+
+Here are the components required for this project:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_gpio_extension_board`
+        - |link_gpio_board_buy|
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_bar_graph`
+        - \-
+
+----------------------------------------------
+
+**Circuit Diagram**
+
+Below is the schematic diagram for the project, showing how to connect the LED Bar Graph to the Raspberry Pi using GPIO pins and resistors for current limitation:
+
+.. image:: ../python/img/1.1.3_LedBarGraph_schematic.png
+
+----------------------------------------------
+
+**Wiring Diagram**
+
+Follow these steps to assemble the circuit:
+
+1. Place the LED Bar Graph on the breadboard.
+2. Connect the GPIO pins to the LEDs using appropriate resistors.
+3. Ensure the polarity is correct, as incorrect connections will prevent the LEDs from lighting.
+
+.. note::
+
+    Pay attention to the direction when connecting the components. Incorrect connections will result in non-functional LEDs.
+
+.. image:: ../python/img/1.1.3_LedBarGraph_circuit.png
+
+----------------------------------------------
+
+**Writing the Code**
+
+The Python script below lights up the LEDs in different patterns—odd, even, and all LEDs sequentially. Save and run the script to observe the results:
+
+.. code-block:: python
+
+   #!/usr/bin/env python3
+   from gpiozero import LED
+   from time import sleep
+
+   # Define GPIO pins where LEDs are connected
+   led_pins = [18, 23, 24, 25, 8, 7, 12, 16, 20, 21]
+
+   # Create LED objects for each pin
+   leds = [LED(pin) for pin in led_pins]
+
+   def odd_led_bar_graph():
+       # Sequentially light up odd-numbered LEDs (index 0, 2, 4, etc.)
+       for i in range(5):
+           j = i * 2  # Calculate odd index
+           leds[j].on()  # Turn on odd-numbered LED
+           sleep(0.3)    # Delay for visual effect
+           leds[j].off() # Turn off LED
+
+   def even_led_bar_graph():
+       # Sequentially light up even-numbered LEDs (index 1, 3, 5, etc.)
+       for i in range(5):
+           j = i * 2 + 1  # Calculate even index
+           leds[j].on()   # Turn on even-numbered LED
+           sleep(0.3)     # Delay for visual effect
+           leds[j].off()  # Turn off LED
+
+   def all_led_bar_graph():
+       # Sequentially light up all LEDs one by one
+       for led in leds:
+           led.on()       # Turn on LED
+           sleep(0.3)     # Delay for visual effect
+           led.off()      # Turn off LED
+
+   def turn_off_all_leds():
+       # Turn off all LEDs at once
+       for led in leds:
+           led.off()
+
+   try:
+       # Main loop to cycle through LED patterns
+       while True:
+           odd_led_bar_graph()   # Activate odd-numbered LEDs
+           sleep(0.3)            # Pause between patterns
+           even_led_bar_graph()  # Activate even-numbered LEDs
+           sleep(0.3)            # Pause between patterns
+           all_led_bar_graph()   # Activate all LEDs
+           sleep(0.3)            # Pause before restarting
+
+   except KeyboardInterrupt:
+       # Handle interruption (Ctrl+C) gracefully
+       turn_off_all_leds()      # Ensure all LEDs are turned off on exit
+       pass
+
+This Python script controls a series of LEDs connected to specific GPIO pins on a Raspberry Pi. When executed, the LEDs perform a series of light patterns in a loop:
+
+1. Sequentially light up odd-numbered LEDs (indices 0, 2, 4, etc.) with a short delay between each.
+2. Sequentially light up even-numbered LEDs (indices 1, 3, 5, etc.) with the same delay.
+3. Sequentially light up all LEDs one by one.
+
+After completing these patterns, the script pauses briefly and then repeats the cycle. The program runs indefinitely until interrupted by the user pressing ``Ctrl+C``.
+
+
+----------------------------------------------
+
+**Understanding the Code**
+
+1. **Importing Libraries**
+
+   The ``gpiozero`` library is used for LED control, and the ``time`` library is used to introduce delays.
+
+   .. code-block:: python
+
+       from gpiozero import LED
+       from time import sleep
+
+2. **Defining GPIO Pins**
+
+   ``led_pins`` specifies the GPIO pins connected to the LEDs, and ``leds`` creates corresponding ``LED`` objects.
+
+   .. code-block:: python
+
+       led_pins = [18, 23, 24, 25, 8, 7, 12, 16, 20, 21]
+       leds = [LED(pin) for pin in led_pins]
+
+3. **Odd LED Pattern**
+
+   Lights up LEDs at odd indices sequentially.
+
+   .. code-block:: python
+
+       def odd_led_bar_graph():
+           for i in range(5):
+               j = i * 2
+               leds[j].on()
+               sleep(0.3)
+               leds[j].off()
+
+4. **Even LED Pattern**
+
+   Lights up LEDs at even indices sequentially.
+
+   .. code-block:: python
+
+       def even_led_bar_graph():
+           for i in range(5):
+               j = i * 2 + 1
+               leds[j].on()
+               sleep(0.3)
+               leds[j].off()
+
+5. **All LED Pattern**
+
+   Sequentially lights up all LEDs.
+
+   .. code-block:: python
+
+       def all_led_bar_graph():
+           for led in leds:
+               led.on()
+               sleep(0.3)
+               led.off()
+
+6. **Handling Interruptions**
+
+   Ensures all LEDs are turned off when the script is interrupted.
+
+   .. code-block:: python
+
+       def turn_off_all_leds():
+           for led in leds:
+               led.off()
+
+----------------------------------------------
+
+**Troubleshooting**
+
+1. **LEDs Do Not Light Up**  
+
+   - **Cause**: Incorrect wiring or GPIO configuration.  
+   - **Solution**: Verify the LEDs are connected to the correct GPIO pins specified in ``led_pins`` and that a resistor is used to protect the LEDs.
+
+2. **KeyboardInterrupt Not Working Properly**  
+
+   - **Cause**: LEDs remain on after the program is interrupted.  
+   - **Solution**: Ensure the ``turn_off_all_leds()`` function is correctly executed in the ``except KeyboardInterrupt`` block.
+
+3. **GPIOZero Module Not Found**  
+
+   - **Cause**: The ``gpiozero`` library is not installed.  
+   - **Solution**: Install the library with ``pip install gpiozero``.
+
+4. **Timing or Flickering Issues**  
+
+   - **Cause**: Inadequate power supply or unstable connections.  
+   - **Solution**: Check the power source and ensure connections are secure.
+
+
+----------------------------------------------
+
+**Extendable Ideas**
+
+1. **Custom LED Patterns**  
+
+   Create additional patterns by modifying or adding new functions. For example, create a "wave" effect:  
+
+.. code-block:: python
+
+   def wave_pattern():
+       for led in leds:
+           led.on()
+           sleep(0.2)
+           led.off()
+
+
+2. **Dynamic User Control**  
+
+   Use input to select LED patterns dynamically:  
+
+.. code-block:: python
+
+   while True:
+       choice = input("Enter pattern (odd/even/all/wave): ")
+       if choice == 'odd':
+           odd_led_bar_graph()
+       elif choice == 'even':
+           even_led_bar_graph()
+       elif choice == 'all':
+           all_led_bar_graph()
+       elif choice == 'wave':
+           wave_pattern()
+
+
+
+3. **PWM Control for Smooth Transitions**  
+
+   Replace ``LED`` objects with ``PWMLED`` objects to control brightness for smoother lighting transitions.
+
+
+----------------------------------------------
+
+
+**Conclusion**
+
+This project demonstrates the use of GPIO pins to control an LED Bar Graph, offering insights into hardware programming and creative pattern generation. Experiment with the code to create your own light displays.

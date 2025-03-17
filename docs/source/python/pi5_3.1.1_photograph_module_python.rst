@@ -1,0 +1,285 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _3.1.1_py:
+
+3.1.1 Photograph Module
+==========================
+
+**Introduction**
+
+This project introduces you to using the Raspberry Pi camera module to capture a photograph. The camera module can take high-quality still images and videos, making it a versatile tool for projects ranging from photography to computer vision.
+
+
+----------------------------------------------
+
+
+**What You’ll Need**
+
+Below are the components required for this project:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    * - COMPONENT INTRODUCTION
+      - PURCHASE LINK
+    * - Camera Module
+      - |link_camera_buy|
+
+
+----------------------------------------------
+
+
+**Experimental Procedures**
+
+1. **Access the Raspberry Pi Desktop:**
+
+   You can access the Raspberry Pi desktop remotely. Detailed steps can be found in :ref:`remote_desktop`.
+
+2. **Open a Terminal:**
+
+   Navigate to the folder containing the code:
+
+   .. code-block:: bash
+
+       cd ~/zero-w-ai-kit/python
+
+3. **Run the Python Script:**
+
+   Execute the script to capture a photo:
+
+   .. code-block:: bash
+
+       sudo python3 3.1.1_PhotographModule_zero.py
+
+   After running the script, the camera will take a photo. The image will be saved as ``my_photo.jpg`` in the ``~`` directory (your home folder).
+
+.. note::
+    
+    You can also open the ``3.1.1_PhotographModule.py`` file using a Python IDE, run the script by clicking the "Run" button, and stop it with the "Stop" button.
+
+If you wish to download the photo to your PC, refer to the :ref:`filezilla` guide.
+
+
+----------------------------------------------
+
+
+**Code**
+
+Below is the Python code used for this project:
+
+.. code-block:: python
+
+   #!/usr/bin/env python3    
+   from picamera2 import Picamera2, Preview
+   import os
+
+   # Get the current user's login name
+   user = os.getlogin()
+   # Get the path to the user's home directory
+   user_home = os.path.expanduser(f'~{user}')
+
+   # Create a Picamera2 instance
+   camera = Picamera2()
+   # Retrieve the default preview configuration
+   preview_config = camera.preview_configuration
+
+   try:
+       # Set preview size and format
+       preview_config.size = (800, 600)
+       preview_config.format = 'XRGB8888'  
+       # Start the camera preview in QTGL mode
+       camera.start_preview(Preview.QTGL)
+       # Start the camera
+       camera.start()
+       # Capture and save a photo to the user's home directory
+       camera.capture_file(f'{user_home}/my_photo.jpg')
+
+   except KeyboardInterrupt:
+       # Stop the camera preview if a KeyboardInterrupt (e.g., Ctrl+C) occurs
+       camera.stop_preview()
+       pass
+
+This Python script uses the ``Picamera2`` library to interface with a Raspberry Pi camera and performs the following actions:
+
+1. **Camera Initialization**: Initializes the camera and sets up a preview configuration with a resolution of ``800x600`` and format ``XRGB8888``.
+   
+2. **Live Camera Preview**: Starts a live camera preview using the ``QTGL`` mode, which provides a hardware-accelerated preview window.
+
+3. **Photo Capture**: Captures a photo and saves it to the user's home directory with the filename ``my_photo.jpg``.
+
+4. **Keyboard Interrupt Handling**: The script handles ``KeyboardInterrupt`` (e.g., when pressing ``Ctrl+C``), stopping the camera preview gracefully.
+
+
+----------------------------------------------
+
+
+**Understanding the Code**
+
+1. **Imports:**
+
+   The ``picamera2`` library is used to interact with the camera, while the ``os`` module is used to manage file paths.
+
+   .. code-block:: python
+
+       from picamera2 import Picamera2, Preview
+       import os
+
+2. **User Directory Setup:**
+
+   Retrieves the current user's login name and home directory to save the captured photo.
+
+   .. code-block:: python
+
+       user = os.getlogin()
+       user_home = os.path.expanduser(f'~{user}')
+
+3. **Camera Initialization:**
+
+   Creates a ``Picamera2`` instance and retrieves the default preview configuration.
+
+   .. code-block:: python
+
+       camera = Picamera2()
+       preview_config = camera.preview_configuration
+
+4. **Setting Preview Configuration:**
+
+   The preview size is set to 800x600 pixels, and the format is set to ``XRGB8888`` for compatibility.
+
+   .. code-block:: python
+
+       preview_config.size = (800, 600)
+       preview_config.format = 'XRGB8888'
+
+5. **Capturing the Photo:**
+
+   Starts the camera and captures an image, saving it as ``my_photo.jpg`` in the user's home directory.
+
+   .. code-block:: python
+
+       camera.start_preview(Preview.QTGL)
+       camera.start()
+       camera.capture_file(f'{user_home}/my_photo.jpg')
+
+6. **Graceful Exit:**
+
+   Handles a ``KeyboardInterrupt`` (e.g., Ctrl+C) by stopping the camera preview without crashing the program.
+
+   .. code-block:: python
+
+       except KeyboardInterrupt:
+           camera.stop_preview()
+           pass
+
+.. note::
+   For continuous shooting, use a ``for`` loop with the ``capture`` function and adjust the interval between captures:
+
+   .. code-block:: python
+
+       for i in range(5):
+           camera.capture(f'{user_home}/my_photo_{i}.jpg')
+
+
+
+----------------------------------------------
+
+
+**Troubleshooting**
+
+1. **Preview Window Not Displayed**:
+
+   - **Cause**: Missing or incorrectly configured camera drivers.
+   - **Solution**:
+
+     - Ensure the Raspberry Pi camera module is properly connected and enabled in ``raspi-config``.
+     - Run ``sudo raspi-config``, navigate to ``Interface Options`` > ``Camera``, and enable the camera.
+
+2. **Photo Not Saved**:
+
+   - **Cause**: Incorrect file path or permissions.
+   - **Solution**:
+
+     - Verify the user's home directory path with ``print(user_home)`` in the script.
+     - Ensure the script has write permissions for the directory.
+
+3. **Error: ModuleNotFoundError: No Module Named 'picamera2'**:
+
+   - **Cause**: ``Picamera2`` library is not installed.
+   - **Solution**: Install the ``Picamera2`` library:
+
+   .. code-block:: shell
+
+     sudo apt update
+     sudo apt install -y python3-picamera2
+
+
+4. **Camera Initialization Fails**:
+
+   - **Cause**: The camera is not detected or in use by another process.
+   - **Solution**:
+
+     - Check for active camera processes with ``sudo lsof /dev/video*`` and terminate conflicting processes.
+     - Ensure the camera is properly connected and restart the Raspberry Pi if needed.
+
+5. **QTGL Preview Mode Error**:
+
+   - **Cause**: Missing dependencies for the ``QTGL`` mode.
+   - **Solution**: Install the required libraries:
+
+   .. code-block:: shell
+
+     sudo apt install -y qtbase5-dev
+
+
+6. **Script Does Not Exit Gracefully**:
+
+   - **Cause**: The ``try...except`` block does not properly handle camera shutdown.
+   - **Solution**: Add ``camera.stop()`` and ``camera.stop_preview()`` in the ``except KeyboardInterrupt`` block.
+
+   .. code-block:: python
+
+       except KeyboardInterrupt:
+           camera.stop_preview()
+           camera.stop()
+           pass
+
+
+----------------------------------------------
+
+
+**Extendable Ideas**
+
+1. **Capture Timelapse Photos**: Capture photos at regular intervals and save them with timestamps:
+
+     .. code-block:: python
+
+         import time
+         for i in range(10):
+             camera.capture_file(f'{user_home}/photo_{i}.jpg')
+             time.sleep(5)
+
+2. **Real-Time Filters**: Apply real-time effects to the camera preview, such as grayscale or edge detection.
+
+3. **Custom Image Formats**: Save images in different formats, such as PNG or BMP, by modifying the ``capture_file`` method.
+
+4. **Dynamic Preview Adjustments**: Allow the user to adjust preview settings, such as resolution and brightness, via keyboard input.
+
+
+----------------------------------------------
+
+**Conclusion**
+
+This project demonstrates how to use the Raspberry Pi camera module to capture and save a photo. By exploring the Picamera2 library, you can expand this functionality to create more complex applications like surveillance systems, time-lapse photography, or AI-based vision projects.

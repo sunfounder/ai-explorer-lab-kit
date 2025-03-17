@@ -1,0 +1,246 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _2.1.4_py:
+
+2.1.4 Slide Switch
+==============================================
+
+**Introduction**
+
+In this project, we will learn how to use a slide switch to control two LEDs. Slide switches are commonly used as power switches in electronic circuits. Here, we demonstrate its functionality using a breadboard setup. While slide switches are often soldered onto PCBs for stability, we will use it in a flexible breadboard configuration to better understand its operation.
+
+----------------------------------------------
+
+**What You’ll Need**
+
+To complete this project, gather the following components:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_gpio_extension_board`
+        - |link_gpio_board_buy|
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_led`
+        - |link_led_buy|
+    *   - :ref:`cpn_slide_switch`
+        - |link_slide_switch_buy|
+    *   - :ref:`cpn_capacitor`
+        - |link_capacitor_buy|
+
+----------------------------------------------
+
+**Circuit Diagram**
+
+The Slide Switch middle pin is connected to GPIO17, while two LEDs are connected to GPIO22 and GPIO27. The switch toggles between the two LEDs, alternately lighting them up.
+
+.. image:: ../python/img/2.1.4_slide_switch_schematic_1.png
+
+.. image:: ../python/img/2.1.4_slide_switch_schematic_2.png
+
+----------------------------------------------
+
+**Wiring Diagram**
+
+Follow these steps to build the circuit:
+
+1. Connect the middle pin of the Slide Switch to GPIO17.
+2. Connect one side pin of the Slide Switch to GND and the other to VCC.
+3. Connect LED1’s anode to GPIO22 via a current-limiting resistor.
+4. Connect LED2’s anode to GPIO27 via a current-limiting resistor.
+5. Connect the cathodes of both LEDs to GND.
+
+.. image:: ../python/img/2.1.4_slide_switch_circuit.png
+
+----------------------------------------------
+
+**Writing the Code**
+
+Here’s the Python code to control the LEDs based on the state of the Slide Switch:
+
+.. code-block:: python
+
+   #!/usr/bin/env python3
+   from gpiozero import LED, Button  # Import LED and Button classes for GPIO control
+   from time import sleep  # Import sleep function for adding delays
+
+   # Initialize the slide switch on GPIO pin 17 with the pull-up resistor disabled
+   slide_switch = Button(17, pull_up=False)
+   # Initialize LED1 on GPIO pin 22
+   led1 = LED(22)
+   # Initialize LED2 on GPIO pin 27
+   led2 = LED(27)
+
+   try:
+       # Main loop to control LED states based on the slide switch's state
+       while True:
+           if slide_switch.is_pressed:  # Check if the slide switch is activated
+               print('    LED1 ON    ')  # Print status message
+               led1.on()   # Turn on LED1
+               led2.off()  # Turn off LED2
+           else:  # If the slide switch is not activated
+               print('    LED2 ON    ')  # Print status message
+               led1.off()  # Turn off LED1
+               led2.on()   # Turn on LED2
+
+           sleep(0.5)  # Wait for 0.5 seconds before rechecking the switch state
+
+   except KeyboardInterrupt:
+       # Handle a keyboard interrupt (Ctrl+C) for a clean exit from the loop
+       pass
+
+
+This Python script demonstrates the use of a slide switch to control two LEDs on a Raspberry Pi. When executed:
+
+1. **Slide Switch Activated**:
+
+   - Prints "LED1 ON" to the console.
+   - Turns on LED1 (connected to GPIO pin 22).
+   - Turns off LED2 (connected to GPIO pin 27).
+
+2. **Slide Switch Not Activated**:
+
+   - Prints "LED2 ON" to the console.
+   - Turns off LED1.
+   - Turns on LED2.
+
+3. The program continuously checks the state of the slide switch every 0.5 seconds and adjusts the LEDs accordingly.
+
+4. The script runs indefinitely until interrupted by pressing ``Ctrl+C``.
+
+
+
+----------------------------------------------
+
+**Understanding the Code**
+
+1. **Library Imports**
+
+   Import necessary libraries for GPIO control and adding delays.
+
+   .. code-block:: python
+
+       from gpiozero import LED, Button
+       from time import sleep
+
+2. **Component Initialization**
+
+   Configure the Slide Switch as a Button and initialize two LEDs connected to GPIO pins 22 and 27.
+
+   .. code-block:: python
+
+       slide_switch = Button(17, pull_up=False)
+       led1 = LED(22)
+       led2 = LED(27)
+
+3. **State Monitoring and LED Control**
+
+   In the main loop, the program monitors the state of the Slide Switch. When the switch is toggled, it alternates between turning on LED1 and LED2.
+
+   .. code-block:: python
+
+       while True:
+           if slide_switch.is_pressed:
+               led1.on()
+               led2.off()
+           else:
+               led1.off()
+               led2.on()
+           sleep(0.5)
+
+4. **Graceful Exit**
+
+   The script terminates gracefully when interrupted using Ctrl+C.
+
+   .. code-block:: python
+
+       except KeyboardInterrupt:
+           pass
+
+
+----------------------------------------------
+
+**Troubleshooting**
+
+
+1. **Slide Switch Does Not Respond**  
+
+   - **Cause**: The slide switch is not connected properly, or the pull-up resistor configuration is incorrect.  
+   - **Solution**: Confirm that the slide switch is connected to GPIO pin 17 and ground. Ensure ``pull_up=False`` matches the active-low switch configuration.
+
+
+2. **LEDs Flicker or Behave Erratically**  
+
+   - **Cause**: Debounce issues with the slide switch.  
+   - **Solution**: Add software debounce to stabilize the input signal:
+
+   .. code-block:: python
+
+      if slide_switch.is_pressed:
+         sleep(0.05)  # Debounce delay
+
+----------------------------------------------
+
+**Extendable Ideas**
+
+
+1. **Two-Way Switch Control**  
+
+   Combine two slide switches to control LEDs in a more complex setup, such as a simple light control panel.
+
+
+2. **Audio Feedback**  
+
+   Add a buzzer that sounds when the slide switch is activated:
+
+   .. code-block:: python
+
+      from gpiozero import Buzzer
+      buzzer = Buzzer(23)
+      if slide_switch.is_pressed:
+         buzzer.on()
+      else:
+         buzzer.off()
+
+
+3. **PWM Brightness Control**  
+
+   Use a PWMLED to adjust the brightness of an LED based on the slide switch's state:
+
+   .. code-block:: python
+
+      from gpiozero import PWMLED
+      led1 = PWMLED(22)
+      if slide_switch.is_pressed:
+         led1.value = 0.8  # 80% brightness
+      else:
+         led1.value = 0.2  # 20% brightness
+
+
+----------------------------------------------
+
+
+**Conclusion**
+
+This project demonstrates how to use a Slide Switch with a Raspberry Pi to control LEDs. Slide Switches are versatile and durable components, often employed in user interfaces and control systems. Experimenting with them opens up possibilities for creating advanced and interactive projects.

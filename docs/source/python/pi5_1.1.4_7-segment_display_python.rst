@@ -1,0 +1,254 @@
+.. note::
+
+    Hello, welcome to the SunFounder Raspberry Pi & Arduino & ESP32 Enthusiasts Community on Facebook! Dive deeper into Raspberry Pi, Arduino, and ESP32 with fellow enthusiasts.
+
+    **Why Join?**
+
+    - **Expert Support**: Solve post-sale issues and technical challenges with help from our community and team.
+    - **Learn & Share**: Exchange tips and tutorials to enhance your skills.
+    - **Exclusive Previews**: Get early access to new product announcements and sneak peeks.
+    - **Special Discounts**: Enjoy exclusive discounts on our newest products.
+    - **Festive Promotions and Giveaways**: Take part in giveaways and holiday promotions.
+
+    👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
+
+.. _1.1.4_py:
+
+1.1.4 7-segment Display
+=============================
+
+**Introduction**
+
+In this project, we will explore how to control a 7-segment display to sequentially show numbers from 0 to 9 and letters from A to F. This will demonstrate how to use a 74HC595 shift register to control multiple segments efficiently with fewer GPIO pins.
+
+----------------------------------------------
+
+**What You’ll Need**
+
+To complete this project, you will need the following components:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_gpio_extension_board`
+        - |link_gpio_board_buy|
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_7_segment`
+        - |link_7segment_buy|
+    *   - :ref:`cpn_74hc595`
+        - |link_74hc595_buy|
+
+----------------------------------------------
+
+**Circuit Diagram**
+
+The circuit uses a 74HC595 shift register to control the 7-segment display. The connections are as follows:
+
+- Connect ST_CP (Storage Register Clock) of 74HC595 to GPIO18 of the Raspberry Pi.
+- Connect SH_CP (Shift Register Clock) to GPIO27.
+- Connect DS (Data Input) to GPIO17.
+- The output pins of the 74HC595 are connected to the corresponding segments of the 7-segment display.
+
+This setup minimizes the GPIO pins needed by using serial communication to control the parallel outputs of the shift register.
+
+.. image:: ../python/img/1.1.4_7_segment_schematic.png
+
+----------------------------------------------
+
+**Wiring Diagram**
+
+Follow these steps to build the circuit:
+
+1. Place the 7-segment display and 74HC595 shift register on the breadboard.
+2. Connect the shift register output pins to the 7-segment display segments.
+3. Connect the input pins of the shift register to the specified GPIO pins on the Raspberry Pi.
+4. Add resistors to limit current for the display segments.
+
+.. image:: ../python/img/1.1.4_7-Segment_circuit.png
+
+----------------------------------------------
+
+**Writing the Code**
+
+The following Python code sequentially displays hexadecimal digits (0-9, A-F) on the 7-segment display:
+
+.. code-block:: python
+
+   #!/usr/bin/env python3
+   from gpiozero import OutputDevice
+   from time import sleep
+
+   # GPIO pins connected to 74HC595 shift register
+   SDI = OutputDevice(17)   # Serial Data Input
+   RCLK = OutputDevice(18)  # Memory Clock Input (Register Clock)
+   SRCLK = OutputDevice(27) # Shift Register Clock
+
+   # Hexadecimal digit codes for a common cathode 7-segment display
+   segCode = [
+       0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,
+       0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71
+   ]
+
+   def hc595_shift(data):
+       # Shift 8 bits of data into the 74HC595
+       for bit in range(8):
+           SDI.value = bool(0x80 & (data << bit))
+           SRCLK.on()
+           sleep(0.001)
+           SRCLK.off()
+       RCLK.on()
+       sleep(0.001)
+       RCLK.off()
+
+   try:
+       while True:
+           for code in segCode:
+               hc595_shift(code)
+               print(f"Displaying: {segCode.index(code):X}")
+               sleep(0.5)
+   except KeyboardInterrupt:
+       pass
+
+This Python script controls a 7-segment display connected to a Raspberry Pi through a 74HC595 shift register. When executed:
+
+1. The script sequentially cycles through hexadecimal digits (0-9, A-F) on the 7-segment display.
+2. Each digit is displayed for 0.5 seconds.
+3. The corresponding digit being displayed is also printed to the console in hexadecimal format.
+
+The program runs in an infinite loop until interrupted by the user pressing ``Ctrl+C``.
+
+
+----------------------------------------------
+
+
+**Understanding the Code**
+
+1. **Importing Libraries**
+
+   The ``gpiozero`` library simplifies GPIO control, and the ``time`` library provides delays.
+
+   .. code-block:: python
+
+       from gpiozero import OutputDevice
+       from time import sleep
+
+2. **Defining GPIO Pins**
+
+   The GPIO pins are assigned to control the SDI, RCLK, and SRCLK of the shift register.
+
+   .. code-block:: python
+
+       SDI = OutputDevice(17)   # Serial Data Input
+       RCLK = OutputDevice(18)  # Memory Clock Input (Register Clock)
+       SRCLK = OutputDevice(27) # Shift Register Clock
+
+
+3. **Hexadecimal Codes**
+
+   Each hexadecimal digit has a unique code to control the segments on the display.
+
+   .. code-block:: python
+
+       segCode = [
+           0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,
+           0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71
+       ]
+
+4. **Data Shifting Function**
+
+   The ``hc595_shift`` function sends 8 bits of data to the shift register.
+
+   .. code-block:: python
+
+       def hc595_shift(data):
+           for bit in range(8):
+               SDI.value = bool(0x80 & (data << bit))
+               SRCLK.on()
+               sleep(0.001)
+               SRCLK.off()
+           RCLK.on()
+           sleep(0.001)
+           RCLK.off()
+
+5. **Main Loop**
+
+   The main loop cycles through the hexadecimal codes, displaying each digit on the 7-segment display.
+
+   .. code-block:: python
+
+       try:
+           while True:
+               for code in segCode:
+                   hc595_shift(code)
+                   print(f"Displaying: {segCode.index(code):X}")
+                   sleep(0.5)
+       except KeyboardInterrupt:
+           pass
+
+
+----------------------------------------------
+
+**Troubleshooting**
+
+1. **7-Segment Display Not Working**  
+
+   - **Cause**: Incorrect wiring between the Raspberry Pi, 74HC595, and 7-segment display.  
+   - **Solution**: Verify that the GPIO pins (17, 18, 27) are correctly connected to ``SDI``, ``RCLK``, and ``SRCLK`` of the shift register, and that the output pins of the 74HC595 are connected to the display.
+
+2. **Incorrect Digits Displayed**  
+
+   - **Cause**: The ``segCode`` values may not match the wiring of the 7-segment display.  
+   - **Solution**: Ensure the segment-to-pin mapping corresponds to the codes in ``segCode``.
+
+
+3. **No Activity on the Display**  
+
+   - **Cause**: The shift register may not be receiving data correctly.  
+   - **Solution**: Verify the clock signals (``RCLK``, ``SRCLK``) are being toggled and that the data (``SDI``) is being sent correctly.
+
+4. **Timing Issues**  
+
+   - **Cause**: Delays (``sleep(0.001)``) may be too short for proper latching.  
+   - **Solution**: Increase delay values slightly (e.g., ``sleep(0.002)``).
+
+
+
+----------------------------------------------
+
+**Extendable Ideas**
+
+
+1. **Custom Patterns**: Add custom patterns or animations by defining new codes that light up specific segments.
+
+2. **Variable Speed Control**: Allow the user to input a delay time to control the display speed dynamically:  
+
+   .. code-block:: python
+
+      delay = float(input("Enter delay between digits (in seconds): "))
+
+
+3. **Counter Functionality**: Implement a counting feature that increments or decrements a number in real time:  
+
+   .. code-block:: python
+
+      count = 0
+      while True:
+         hc595_shift(segCode[count % len(segCode)])
+         count += 1
+         sleep(0.5)
+
+
+----------------------------------------------
+
+**Conclusion**
+
+By completing this project, you have learned how to control a 7-segment display using a 74HC595 shift register and Python. This knowledge can be expanded to build more complex displays and integrate with various applications.
