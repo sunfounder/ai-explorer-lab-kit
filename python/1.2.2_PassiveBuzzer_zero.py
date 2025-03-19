@@ -5,8 +5,6 @@ from time import sleep
 # Initialize a TonalBuzzer connected to PWM 0
 tb = Buzzer(PWM('P0'))  # Update this pin number based on your setup
 
-print("test")
-
 def play(tune):
     """
     Play a musical tune using the buzzer.
