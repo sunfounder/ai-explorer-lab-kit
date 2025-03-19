@@ -14,11 +14,11 @@ try:
     # Continuously monitor the state of the slider and control LEDs accordingly
     while True:
         if slider.value() == 1:  # Check if the slider is pressed
-            led1.high()  # Turn off LED1
-            led2.low()   # Turn on LED2
+            led1.off()  # Turn off LED1
+            led2.on()   # Turn on LED2
         else:  # If the sensor is not pressed
-            led1.low()   # Turn on LED1
-            led2.high()  # Turn off LED2
+            led1.on()   # Turn on LED1
+            led2.off()  # Turn off LED2
 
         sleep(0.5)  # Pause for 0.5 seconds before rechecking the sensor state
 
