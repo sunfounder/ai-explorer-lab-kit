@@ -12,11 +12,15 @@
 
     👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
 
-Download the Code
-=================
+Download the Code & Library
+=====================================
 
-Before you download the code, please note that the example code is
-**ONLY** test on Raspberry Pi OS. We provide two methods for download:
+.. _download_the_code:
+
+Download the code
+-----------------------------
+
+.. note:: Before you download the code, please note that the example code is **ONLY** test on Raspberry Pi OS. We provide two methods for download:
 
 **Method 1: Use git clone (Recommended)**
 
@@ -50,3 +54,25 @@ Clone the repository from GitHub.
 Download the source code from github: https://github.com/sunfounder/ai-explorer-lab-kit
 
 .. image:: img/image33.png
+
+
+
+.. _download_the_lib:
+
+Download & Install the Library
+----------------------------------
+
+Run the command in terminal to install ``fusion-hat`` module.
+
+   .. raw:: html
+
+      <run></run>
+
+   .. code-block::
+
+      cd ~/
+      git clone https://github.com/sunfounder/fusion-hat.git
+      cd fusion-hat
+      sudo python3 setup.py install
+
+

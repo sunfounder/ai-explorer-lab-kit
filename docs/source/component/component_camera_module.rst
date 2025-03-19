@@ -47,7 +47,7 @@ The board is small, about 25mm x 23mm x 9mm, and weighs 3g, making it ideal for 
 
 
 
-**Assemble the Camera Module**
+Assemble the Camera Module
 -------------------------------------
 
 
@@ -66,7 +66,7 @@ If the FFC wire is installed correctly, it will be straight and will not pull ou
 
 .. _enable_camera:
 
-**Enable the Camera Interface**
+Enable the Camera Interface
 ---------------------------------------
 
 Run the following command to enable the camera interface of your Raspberry Pi. If you have enabled it, skip this; if you do not know whether you have done that or not, please continue.
@@ -104,12 +104,3 @@ After the configuration is complete, it is recommended to reboot the Raspberry P
 
    sudo reboot
    
-**Example**
-
-* :ref:`3.1.1_py` (Python Project)
-* :ref:`3.1.2_py` (Python Project)
-* :ref:`4.1.1_py` (Python Project)
-* :ref:`4.1.4_py` (Python Project)
-* :ref:`4.1.5_py` (Python Project)
-* :ref:`1.10_scratch` (Scratch Project)
-* :ref:`1.18_scratch` (Scratch Project)

@@ -34,8 +34,6 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -46,6 +44,11 @@ To complete this project, you will need the following components:
         - |link_7segment_buy|
     *   - :ref:`cpn_74hc595`
         - |link_74hc595_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
@@ -53,14 +56,14 @@ To complete this project, you will need the following components:
 
 The circuit uses a 74HC595 shift register to control the 7-segment display. The connections are as follows:
 
-- Connect ST_CP (Storage Register Clock) of 74HC595 to GPIO18 of the Raspberry Pi.
-- Connect SH_CP (Shift Register Clock) to GPIO27.
-- Connect DS (Data Input) to GPIO17.
+- Connect ST_CP (Storage Register Clock, RCLK) of 74HC595 to Pin 4 of the Raspberry Pi.
+- Connect SH_CP (Shift Register Clock, SRCLK) to Pin 27.
+- Connect DS (Data Input, SDI) to Pin 17.
 - The output pins of the 74HC595 are connected to the corresponding segments of the 7-segment display.
 
 This setup minimizes the GPIO pins needed by using serial communication to control the parallel outputs of the shift register.
 
-.. image:: ../python/img/1.1.4_7_segment_schematic.png
+
 
 ----------------------------------------------
 
@@ -73,7 +76,6 @@ Follow these steps to build the circuit:
 3. Connect the input pins of the shift register to the specified GPIO pins on the Raspberry Pi.
 4. Add resistors to limit current for the display segments.
 
-.. image:: ../python/img/1.1.4_7-Segment_circuit.png
 
 ----------------------------------------------
 
@@ -84,39 +86,52 @@ The following Python code sequentially displays hexadecimal digits (0-9, A-F) on
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import OutputDevice
+   from fusion_hat import Pin
    from time import sleep
 
    # GPIO pins connected to 74HC595 shift register
-   SDI = OutputDevice(17)   # Serial Data Input
-   RCLK = OutputDevice(18)  # Memory Clock Input (Register Clock)
-   SRCLK = OutputDevice(27) # Shift Register Clock
+   SDI = Pin(17,Pin.OUT)   # Serial Data Input
+   RCLK = Pin(4,Pin.OUT)  # Memory Clock Input (Register Clock)
+   SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
    # Hexadecimal digit codes for a common cathode 7-segment display
    segCode = [
-       0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,
-       0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71
+      0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,
+      0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71
    ]
 
    def hc595_shift(data):
-       # Shift 8 bits of data into the 74HC595
-       for bit in range(8):
-           SDI.value = bool(0x80 & (data << bit))
-           SRCLK.on()
-           sleep(0.001)
-           SRCLK.off()
-       RCLK.on()
-       sleep(0.001)
-       RCLK.off()
+      # Shift 8 bits of data into the 74HC595
+      for bit in range(8):
+         # Set SDI high or low based on data bit
+         SDI.value(0x80 & (data << bit))
+         # Trigger shift register clock
+         SRCLK.high()
+         sleep(0.001)
+         SRCLK.low()
+      # Latch data to output by triggering memory clock
+      RCLK.high()
+      sleep(0.001)
+      RCLK.low()
+
+   def display_all_on():
+      # Function to turn all segments on (for common cathode 7-segment display)
+      all_on_code = 0x3f
+      hc595_shift(all_on_code)
+      print("Displaying all segments on")
 
    try:
-       while True:
-           for code in segCode:
-               hc595_shift(code)
-               print(f"Displaying: {segCode.index(code):X}")
-               sleep(0.5)
+      while True:
+         # Display each hexadecimal digit on 7-segment display
+         for code in segCode:
+               hc595_shift(code)  # Shift the code into 74HC595
+               # Print the displayed segment code
+               print(f"Displaying segCode[{segCode.index(code)}]: 0x{code:02X}")
+               sleep(0.5)  # Pause between displaying each digit
+
    except KeyboardInterrupt:
-       pass
+      # Gracefully handle script interruption (e.g., Ctrl+C)
+      pass
 
 This Python script controls a 7-segment display connected to a Raspberry Pi through a 74HC595 shift register. When executed:
 
@@ -134,12 +149,14 @@ The program runs in an infinite loop until interrupted by the user pressing ``Ct
 
 1. **Importing Libraries**
 
-   The ``gpiozero`` library simplifies GPIO control, and the ``time`` library provides delays.
+   The ``fusion_hat`` library simplifies GPIO control, and the ``time`` library provides delays.
 
    .. code-block:: python
 
-       from gpiozero import OutputDevice
-       from time import sleep
+      #!/usr/bin/env python3
+      from fusion_hat import Pin
+      from time import sleep
+
 
 2. **Defining GPIO Pins**
 
@@ -147,9 +164,10 @@ The program runs in an infinite loop until interrupted by the user pressing ``Ct
 
    .. code-block:: python
 
-       SDI = OutputDevice(17)   # Serial Data Input
-       RCLK = OutputDevice(18)  # Memory Clock Input (Register Clock)
-       SRCLK = OutputDevice(27) # Shift Register Clock
+      # GPIO pins connected to 74HC595 shift register
+      SDI = Pin(17,Pin.OUT)   # Serial Data Input
+      RCLK = Pin(4,Pin.OUT)  # Memory Clock Input (Register Clock)
+      SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
 
 3. **Hexadecimal Codes**
@@ -158,10 +176,10 @@ The program runs in an infinite loop until interrupted by the user pressing ``Ct
 
    .. code-block:: python
 
-       segCode = [
-           0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,
-           0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71
-       ]
+      segCode = [
+         0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,
+         0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71
+      ]
 
 4. **Data Shifting Function**
 
@@ -185,14 +203,14 @@ The program runs in an infinite loop until interrupted by the user pressing ``Ct
 
    .. code-block:: python
 
-       try:
-           while True:
-               for code in segCode:
-                   hc595_shift(code)
-                   print(f"Displaying: {segCode.index(code):X}")
-                   sleep(0.5)
-       except KeyboardInterrupt:
-           pass
+      try:
+         while True:
+            for code in segCode:
+                  hc595_shift(code)
+                  print(f"Displaying: {segCode.index(code):X}")
+                  sleep(0.5)
+      except KeyboardInterrupt:
+         pass
 
 
 ----------------------------------------------
@@ -201,8 +219,8 @@ The program runs in an infinite loop until interrupted by the user pressing ``Ct
 
 1. **7-Segment Display Not Working**  
 
-   - **Cause**: Incorrect wiring between the Raspberry Pi, 74HC595, and 7-segment display.  
-   - **Solution**: Verify that the GPIO pins (17, 18, 27) are correctly connected to ``SDI``, ``RCLK``, and ``SRCLK`` of the shift register, and that the output pins of the 74HC595 are connected to the display.
+   - **Cause**: Incorrect wiring between the Fusion HAT, 74HC595, and 7-segment display.  
+   - **Solution**: Verify that the GPIO pins (17, 4, 27) are correctly connected to ``SDI``, ``RCLK``, and ``SRCLK`` of the shift register, and that the output pins of the 74HC595 are connected to the display.
 
 2. **Incorrect Digits Displayed**  
 

@@ -12,12 +12,12 @@
 
     👉 Ready to explore and create with us? Click [|link_sf_facebook|] and join today!
 
-SunFounder Zero W AI Kit
+SunFounder AI Explorer Lab Kit
 =======================================================
 
 
 
-Thanks for choosing our |link_Raphael_kit|.
+Thanks for choosing our AI Explorer Lab Kit.
 
 .. .. note::
 ..     This document is available in the following languages.
@@ -67,9 +67,13 @@ Thanks for choosing our |link_Raphael_kit|.
 ..     for_other_models
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     python/play_with_python
+
+
+.. toctree::
+    :maxdepth: 2
     gpt_lesson/play_with_gpt
 
 

@@ -47,16 +47,20 @@ Here’s the list of components and their purposes:
 
     *   - COMPONENT
         - PURPOSE
-    *   - GPIO Extension Board
-        - Simplifies access to GPIO pins
     *   - Breadboard
         - Used to build circuits without soldering
     *   - Wires
         - Connects components on the breadboard
-    *   - Resistor (330Ω recommended)
+    *   - Resistor (330Ω or 220Ω recommended)
         - Protects the LED from too much current
     *   - LED
         - The main component that will blink
+    *   - Raspberry Pi Zero 2 W
+        - The brain of the project
+    *   - Fusion HAT
+        - Connects the Raspberry Pi to the breadboard
+
+----------------------------------------------
 
 
 
@@ -75,22 +79,15 @@ Before diving into the project, make sure your Raspberry Pi is ready:
 
    Attach a monitor, keyboard, and mouse to your Raspberry Pi. Alternatively, set up SSH to control your Raspberry Pi from another computer.
 
-3. **Update Software:**  
+3. **Connect the Fusion HAT:**
 
-   Open the terminal and run the following commands to ensure your system is up to date:
-   
-   .. code-block:: bash
+   Connect the Fusion HAT to the GPIO pins on the Raspberry Pi. Make sure the pins are aligned correctly.
 
-       sudo apt update
-       sudo apt upgrade
+   .. image:: /image/xxxx.png
 
-4. **Install GPIO Libraries:**  
+4. **Download & Install Fusion HAT Libraries:**  
 
-   Install the ``gpiozero`` library, which makes it easy to control GPIO pins using Python:
-   
-   .. code-block:: bash
-
-       sudo apt install python3-gpiozero
+   You should done this step when you download the code. See :ref:`download_the_lib`
 
 5. **Enable GPIO Access:**  
 
@@ -174,25 +171,33 @@ Here’s the complete Python script for this project:
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
-    from gpiozero import LED
-    from time import sleep
+   from fusion_hat import Pin
+   from time import sleep
 
-    # Initialize the LED object connected to GPIO pin 17
-    led = LED(17)
+   # Initialize an LED connected to GPIO pin 17 using the Fusion HAT library.
+   led = Pin(17,mode=Pin.OUT)
 
-    try:
-        while True:
-            led.on()  # Turn on the LED
-            print('LED is ON')
-            sleep(0.5)  # Wait for 0.5 seconds
+   try:
+      # Start an infinite loop to toggle the LED state.
+      while True:
+         # Turn on the LED and print a message to the console.
+         led.high()
+         print('...LED ON')
 
-            led.off()  # Turn off the LED
-            print('LED is OFF')
-            sleep(0.5)  # Wait for 0.5 seconds
-    except KeyboardInterrupt:
-        pass  # Gracefully exit on Ctrl+C
+         # Wait for 0.5 seconds with the LED on.
+         sleep(0.5)
 
+         # Turn off the LED and print a message to the console.
+         led.low()
+         print('LED OFF...')
+
+         # Wait for 0.5 seconds with the LED off.
+         sleep(1)
+
+   except KeyboardInterrupt:
+      # Gracefully handle a keyboard interrupt (Ctrl+C) by breaking the loop.
+      # GPIO Zero handles cleanup of GPIO settings automatically on exit.
+      pass
 
 
 This Python script controls an LED connected to GPIO pin 17 of a Raspberry Pi. When executed, the LED alternates between turning on and off in half-second intervals. Simultaneously, the console prints "LED is ON" and "LED is OFF" to indicate the LED's current state. The program runs indefinitely until interrupted by a user pressing ``Ctrl+C``.
@@ -205,11 +210,11 @@ This Python script controls an LED connected to GPIO pin 17 of a Raspberry Pi. W
 
 1. **Imports:**  
 
-   The ``gpiozero`` library simplifies controlling GPIO devices. The ``LED`` class allows you to control an LED with basic methods like ``on()`` and ``off()``. The ``sleep`` function introduces delays between commands.
+   The ``fusion_hat`` library simplifies controlling GPIO devices. The ``Pin`` class allows you to control an LED with basic methods like ``on()`` and ``off()``. The ``sleep`` function introduces delays between commands.
 
 2. **Initialization:**  
 
-   The line ``led = LED(17)`` tells the Raspberry Pi that an LED is connected to GPIO pin 17.
+   The line ``led = Pin(17,mode=Pin.OUT)`` tells the Raspberry Pi that an LED is connected to GPIO pin 17.
 
 3. **Main Loop:**  
 
@@ -239,8 +244,8 @@ This Python script controls an LED connected to GPIO pin 17 of a Raspberry Pi. W
 
 3. **Incorrect GPIO Setup**  
 
-   - **Cause**: GPIO library is not installed.  
-   - **Solution**: Install ``gpiozero`` via ``pip install gpiozero``.
+   - **Cause**: Fusion_hat library is not installed.  
+   - **Solution**: See :ref:`download_the_lib`.
 
 4. **LED Flickers or Behaves Erratically**  
 
@@ -266,14 +271,6 @@ This Python script controls an LED connected to GPIO pin 17 of a Raspberry Pi. W
 
 
 2. **Multi-LED Control**: Connect multiple LEDs to different GPIO pins and control them in patterns (e.g., sequential lighting or simultaneous blinking).
-
-3. **Use PWM for Brightness Control**: Use the ``PWMLED`` class to control the brightness of the LED:  
-
-   .. code-block:: python
-
-        from gpiozero import PWMLED
-        led = PWMLED(17)
-        led.pulse()  # Gradually increase and decrease brightness
 
 
 ----------------------------------------------

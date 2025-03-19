@@ -34,30 +34,33 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
-    *   - :ref:`cpn_breadboard`
-        - |link_breadboard_buy|
+
     *   - :ref:`cpn_wires`
         - |link_wires_buy|
     *   - :ref:`cpn_i2c_lcd`
         - |link_i2clcd1602_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+
 
 **Circuit Diagram**
 
 The circuit diagram below shows how to connect the LCD1602 to the Raspberry Pi using the I2C interface.
 
-.. image:: ../python/img/1.1.7_i2c_lcd_schematic.png
+.. image:: ../python/img/
 
 **Wiring Diagram**
 
 Follow these steps to build the circuit:
 
-1. Connect the I2C interface pins (SDA and SCL) of the LCD1602 to the corresponding GPIO pins on the Raspberry Pi.
+1. Connect the I2C interface pins (SDA and SCL) of the LCD1602 to the corresponding pins on the Fusiuon HAT.
 2. Ensure proper power supply connections to the LCD1602.
 3. Verify the wiring to avoid errors.
 
-.. image:: ../python/img/1.1.7_i2c_lcd1602_circuit.png
+.. image:: ../python/img/
 
 **Writing the Code**
 
@@ -65,33 +68,26 @@ The following Python code initializes the LCD1602 and displays a simple greeting
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
-   import LCD1602  # Import module for interfacing with LCD1602
-   import time     # Import module for timing functions
+   from fusion_hat import LCD1602
+   from time import sleep
 
-   def setup():
-       # Initialize LCD with I2C address 0x27 and enable backlight
-       LCD1602.init(0x27, 1) 
-       # Display the message 'Greetings!' at the top-left corner (row 0, column 0)
-       LCD1602.write(0, 0, 'Greetings!') 
-       # Display the message 'From SunFounder' on the second line (row 1, column 1)
-       LCD1602.write(1, 1, 'From SunFounder') 
-       time.sleep(2)  # Display messages for 2 seconds
+   lcd = LCD1602(address=0x27, backlight=1)
 
-   try:
-       setup()  # Run the setup function to initialize the LCD and display messages
-       
-   except KeyboardInterrupt:
-       # Clear the LCD display if a keyboard interruption (e.g., Ctrl+C) occurs
-       LCD1602.clear()
-       pass  # Proceed with no further action
+   while True:
+      lcd.clear()
+      lcd.write(0, 0, 'Greetings!')
+      lcd.write(1, 1, 'From SunFounder')
+      sleep(1)
+      lcd.clear()
+      lcd.message('Hello\n   World!')
+      sleep(1)
 
 This Python script interfaces with an LCD1602 display module to present a brief message. When executed:
 
 1. It initializes the LCD1602 display with I2C communication (default address ``0x27``).
 2. The first line of the display shows the text "Greetings!".
 3. The second line displays the text "From SunFounder".
-4. The messages remain visible for 2 seconds before the program ends.
+4. The messages remain visible for 1 seconds before the next text.
 
 The display clears if the user interrupts the script by pressing ``Ctrl+C``.
 
@@ -102,29 +98,35 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
 
 1. **Library Import**
 
-   The ``LCD1602`` library simplifies interfacing with the I2C LCD1602 display. It provides functions for initialization and displaying text.
+   The ``LCD1602`` class simplifies interfacing with the I2C LCD1602 display. It provides functions for initialization and displaying text.
 
    .. code-block:: python
 
-       import LCD1602  # Import module for interfacing with LCD1602
+      from fusion_hat import LCD1602
 
 2. **Initialization**
 
-   The ``LCD1602.init`` function initializes the LCD with the I2C address (typically 0x27). The backlight is enabled during initialization.
+   Initializes the LCD with the I2C address (typically 0x27). The backlight is enabled during initialization.
 
    .. code-block:: python
 
-       LCD1602.init(0x27, 1)
+      lcd = LCD1602(address=0x27, backlight=1)
 
 3. **Displaying Text**
 
-   The ``LCD1602.write`` function is used to display text on the LCD. The first two parameters specify the row and column positions, and the third parameter is the text message.
-
    .. code-block:: python
 
-       LCD1602.write(0, 0, 'Greetings!')
-       LCD1602.write(1, 1, 'From SunFounder')
+      lcd.clear()
+      lcd.write(0, 0, 'Greetings!')
+      lcd.write(1, 1, 'From SunFounder')
+      sleep(1)
+      lcd.clear()
+      lcd.message('Hello\n   World!')
+      sleep(1)
 
+   * The ``write`` function is used to display text on the LCD. The first two parameters specify the row and column positions, and the third parameter is the text message.
+   * The ``message`` function displays a multi-line message on the LCD. The text is automatically split into two lines.
+   * The ``clear`` function clears the display.
 
 
 **Troubleshooting**
@@ -134,17 +136,12 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
    - **Cause**: Incorrect I2C address or improper wiring.  
    - **Solution**: Verify the I2C address of the LCD module (use ``i2cdetect -y 1`` on the Raspberry Pi). Ensure the SDA and SCL pins are correctly connected.
 
-2. **LCD Module Does Not Initialize**  
+2. **Backlight Not Working**  
 
-   - **Cause**: Missing or incompatible ``LCD1602`` library.  
-   - **Solution**: Ensure the ``LCD1602`` library is installed and compatible. Follow the library documentation to install or update it.
+   - **Cause**: Incorrect backlight setting or wiring issue.  
+   - **Solution**: Check the backlight connection and ensure the ``backlight`` parameter is set correctly during initialization.
 
-3. **KeyboardInterrupt Leaves Text on Display**  
-
-   - **Cause**: The ``LCD1602.clear()`` method may not execute properly.  
-   - **Solution**: Ensure the ``clear()`` function is called in the ``except KeyboardInterrupt`` block to reset the display.
-
-4. **Text Alignment Issues**  
+3. **Text Alignment Issues**  
 
    - **Cause**: Incorrect column and row positions in the ``write()`` function.  
    - **Solution**: Adjust the ``write(row, column, text)`` parameters to align the text properly.
@@ -161,8 +158,8 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
 
       user_message1 = input("Enter first line: ")
       user_message2 = input("Enter second line: ")
-      LCD1602.write(0, 0, user_message1)
-      LCD1602.write(1, 0, user_message2)
+      lcd.write(0, 0, user_message1)
+      lcd.write(1, 0, user_message2)
 
 
 2. **Real-Time Clock Display**  
@@ -175,8 +172,8 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
       import datetime
       while True:
          now = datetime.datetime.now()
-         LCD1602.write(0, 0, now.strftime("%H:%M:%S"))
-         LCD1602.write(1, 0, now.strftime("%d-%m-%Y"))
+         lcd.write(0, 0, now.strftime("%H:%M:%S"))
+         lcd.write(1, 0, now.strftime("%d-%m-%Y"))
          time.sleep(1)
 
 
@@ -192,7 +189,7 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
 
       def scroll_text(row, message, delay=0.3):
          for i in range(len(message) - 16 + 1):
-            LCD1602.write(row, 0, message[i:i+16])
+            lcd.write(row, 0, message[i:i+16])
             time.sleep(delay)
 
 
@@ -208,4 +205,4 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
 
 **Conclusion**
 
-This project demonstrates how to use the LCD1602 with the I2C interface to display static text. By understanding the basics of I2C communication and the functions of the ``LCD1602`` library, you can integrate the display into more complex applications.
+This project demonstrates how to use the LCD1602 with the I2C interface to display static text. By understanding the basics of I2C communication and the functions of the ``LCD1602`` class, you can integrate the display into more complex applications.

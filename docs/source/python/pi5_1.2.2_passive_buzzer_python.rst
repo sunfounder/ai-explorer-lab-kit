@@ -34,10 +34,6 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
-    *   - :ref:`cpn_breadboard`
-        - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
         - |link_wires_buy|
     *   - :ref:`cpn_resistor`
@@ -46,6 +42,11 @@ To complete this project, you will need the following components:
         - |link_passive_buzzer_buy|
     *   - :ref:`cpn_transistor`
         - |link_transistor_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
@@ -53,7 +54,7 @@ To complete this project, you will need the following components:
 
 The circuit uses a passive buzzer, a PNP transistor, and a 1kΩ resistor. The resistor protects the transistor from excessive current. By varying the frequency of the GPIO pin connected to the transistor, the buzzer produces different sounds, enabling it to play music.
 
-.. image:: ../python/img/1.2.2_passive_buzzer_schematic.png
+.. image:: ../python/img/
 
 ----------------------------------------------
 
@@ -61,12 +62,12 @@ The circuit uses a passive buzzer, a PNP transistor, and a 1kΩ resistor. The re
 
 Follow these steps to build the circuit:
 
-1. Connect the base of the PNP transistor to GPIO17 through the resistor.
+1. Connect the base of the PNP transistor to PWM0 through the resistor.
 2. Connect the emitter of the transistor to the power supply (+).
 3. Connect the collector of the transistor to one terminal of the passive buzzer.
 4. Connect the other terminal of the buzzer to the ground (-).
 
-.. image:: ../python/img/1.2.2_PassiveBuzzer_circuit.png
+.. image:: ../python/img/
 
 ----------------------------------------------
 
@@ -77,45 +78,46 @@ The following Python code generates musical notes using a passive buzzer:
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import TonalBuzzer
+   from fusion_hat import Buzzer,PWM
    from time import sleep
 
-   # Initialize a TonalBuzzer connected to GPIO pin 17
-   tb = TonalBuzzer(17)
+   # Initialize a TonalBuzzer connected to PWM 0
+   tb = Buzzer(PWM('P0'))  # Update this pin number based on your setup
+
+   print("test")
 
    def play(tune):
-       """
-       Play a musical tune using the buzzer.
-       :param tune: List of tuples (note, duration), where each tuple represents a note and its duration.
-       """
-       for note, duration in tune:
-           print(note)  # Output the current note being played
-           tb.play(note)  # Play the note on the buzzer
-           sleep(float(duration))  # Delay for the duration of the note
-       tb.stop()  # Stop playing after the tune is complete
+      """
+      Play a musical tune using the buzzer.
+      :param tune: List of tuples (note, duration), where each tuple represents a note and its duration.
+      """
+      for note, duration in tune:
+         print(note)  # Output the current note being played
+         tb.play(note,float(duration))  # Play the note on the buzzer
+      tb.off()  # Stop playing after the tune is complete
 
    # Define a musical tune as a sequence of notes and durations
-   tune = [
-       ('C#4', 0.2), ('D4', 0.2), (None, 0.2),
-       ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),
-       ('F#4', 0.2), ('G4', 0.2), (None, 0.6),
-       ('Eb4', 0.2), ('E4', 0.2), (None, 0.2),
-       ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
-       ('C4', 0.2), ('B4', 0.2), (None, 0.2),
-       ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
-       ('B4', 0.2), ('Bb4', 0.5), (None, 0.6),
-       ('A4', 0.2), ('G4', 0.2), ('E4', 0.2), 
-       ('D4', 0.2), ('E4', 0.2)
-   ]
+   tune = [('C#4', 0.2), ('D4', 0.2), (None, 0.2),
+      ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),
+      ('F#4', 0.2), ('G4', 0.2), (None, 0.6),
+      ('Eb4', 0.2), ('E4', 0.2), (None, 0.2),
+      ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+      ('C4', 0.2), ('B4', 0.2), (None, 0.2),
+      ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+      ('B4', 0.2), ('Bb4', 0.5), (None, 0.6),
+      ('A4', 0.2), ('G4', 0.2), ('E4', 0.2), 
+      ('D4', 0.2), ('E4', 0.2)]
+
 
    try:
-       play(tune)  # Execute the play function to start playing the tune
+      play(tune)  # Execute the play function to start playing the tune
 
    except KeyboardInterrupt:
-       # Handle KeyboardInterrupt for graceful termination
-       pass
+      # Handle KeyboardInterrupt for graceful termination
+      pass
 
-This Python script plays a musical tune using a TonalBuzzer connected to GPIO pin 17 on a Raspberry Pi. When executed:
+
+This Python script plays a musical tune using a passive buzzer connected to PWM 0. When executed:
 
 1. The script iterates through a predefined sequence of musical notes (``tune``), playing each note for a specified duration.
 2. The notes are output to the console as they are played, providing a visual reference.
@@ -129,20 +131,21 @@ This Python script plays a musical tune using a TonalBuzzer connected to GPIO pi
 
 1. **Library Import**
 
-   The ``TonalBuzzer`` class from the ``gpiozero`` library is used to generate tones, and ``time.sleep`` introduces delays for note durations.
+   The ``Buzzer`` class from the ``fusion_hat`` library is used to generate tones, and ``time.sleep`` introduces delays for note durations.
 
    .. code-block:: python
 
-       from gpiozero import TonalBuzzer
-       from time import sleep
+      from fusion_hat import Buzzer,PWM
+      from time import sleep
 
 2. **Buzzer Initialization**
 
-   The ``TonalBuzzer`` is associated with GPIO pin 17 for tone generation.
+   The ``Buzzer`` is associated with PWM0 for tone generation.
 
    .. code-block:: python
 
-       tb = TonalBuzzer(17)
+      # Initialize a TonalBuzzer connected to PWM 0
+      tb = Buzzer(PWM('P0'))  # Update this pin number based on your setup
 
 3. **Playing Notes**
 
@@ -150,12 +153,11 @@ This Python script plays a musical tune using a TonalBuzzer connected to GPIO pi
 
    .. code-block:: python
 
-       def play(tune):
-           for note, duration in tune:
-               print(note)
-               tb.play(note)
-               sleep(float(duration))
-           tb.stop()
+      def play(tune):
+         for note, duration in tune:
+            print(note)  # Output the current note being played
+            tb.play(note,float(duration))  # Play the note on the buzzer
+         tb.off()  # Stop playing after the tune is complete
 
 4. **Tune Definition**
 
@@ -196,7 +198,7 @@ This Python script plays a musical tune using a TonalBuzzer connected to GPIO pi
 1. **No Sound from the Buzzer**  
 
    - **Cause**: Incorrect GPIO pin connection or incompatible buzzer type.  
-   - **Solution**: Ensure the TonalBuzzer is connected to GPIO pin 17 and is compatible with the ``gpiozero.TonalBuzzer`` class.
+   - **Solution**: Ensure the TonalBuzzer is connected to PWM 0.
 
 2. **Intermittent or Stuttering Sound**  
 

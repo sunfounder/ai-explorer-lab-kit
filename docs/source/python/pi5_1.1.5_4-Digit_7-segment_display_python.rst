@@ -34,8 +34,6 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -46,6 +44,11 @@ To complete this project, you will need the following components:
         - \-
     *   - :ref:`cpn_74hc595`
         - |link_74hc595_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
@@ -53,7 +56,7 @@ To complete this project, you will need the following components:
 
 The circuit diagram shows how to connect the 74HC595 shift register to the 4-digit 7-segment display and the Raspberry Pi GPIO pins. The shift register reduces the number of GPIO pins required, allowing efficient control of the display.
 
-.. image:: ../python/img/1.1.5_4_digit_schmatic.png
+.. image:: ../python/img/
 
 ----------------------------------------------
 
@@ -63,10 +66,10 @@ Follow these steps to assemble the circuit:
 
 1. Place the 4-digit 7-segment display and the 74HC595 shift register on the breadboard.
 2. Connect the output pins of the 74HC595 to the segments of the display.
-3. Use GPIO pins on the Raspberry Pi for the data input (SDI), shift register clock (SRCLK), and latch register clock (RCLK).
+3. Use Digital pins on the Fusion HAT for the data input (SDI), shift register clock (SRCLK), and latch register clock (RCLK).
 4. Add resistors to limit current for the display segments.
 
-.. image:: ../python/img/1.1.5_4-Digit_circuit.png
+.. image:: ../python/img/
 
 ----------------------------------------------
 
@@ -77,17 +80,17 @@ The Python code below initializes the display, updates the counter, and manages 
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import OutputDevice
+   from fusion_hat import Pin
    import time
    import threading
 
    # Define GPIO pins for the 74HC595 shift register
-   SDI = OutputDevice(24)   # Serial Data Input
-   RCLK = OutputDevice(23)  # Register Clock
-   SRCLK = OutputDevice(18) # Shift Register Clock
+   SDI = Pin(17,Pin.OUT)   # Serial Data Input
+   RCLK = Pin(4,Pin.OUT)  # Register Clock
+   SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
    # Define GPIO pins for digit selection on the 7-segment display
-   placePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]
+   placePin = [Pin(pin,Pin.OUT) for pin in (23, 24, 25, 12)]
 
    # Define segment codes for numbers 0-9 for the 7-segment display
    number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)
@@ -96,59 +99,73 @@ The Python code below initializes the display, updates the counter, and manages 
    timer1 = 0   # Initialize timer for counter increment
 
    def clearDisplay():
-       for _ in range(8):
-           SDI.on()
-           SRCLK.on()
-           SRCLK.off()
-       RCLK.on()
-       RCLK.off()
+      """ Clear the 7-segment display. """
+      for _ in range(8):
+         SDI.high()
+         SRCLK.high()
+         SRCLK.low()
+      RCLK.high()
+      RCLK.low()
 
    def hc595_shift(data):
-       for i in range(8):
-           SDI.value = bool(0x80 & (data << i))
-           SRCLK.on()
-           SRCLK.off()
-       RCLK.on()
-       RCLK.off()
+      """ Shift a byte of data to the 74HC595 shift register. """
+      for i in range(8):
+         SDI.value(0x80 & (data << i))  # Set SDI high/low based on data bit
+         SRCLK.high()  # Pulse the Shift Register Clock
+         SRCLK.low()
+      RCLK.high()  # Latch data on the output by pulsing Register Clock
+      RCLK.low()
 
    def pickDigit(digit):
-       for pin in placePin:
-           pin.off()
-       placePin[digit].on()
+      """ Select a digit for display on the 7-segment display. """
+      for pin in placePin:
+         pin.low()  # Turn off all digit selection pins
+      placePin[digit].high()  # Turn on the selected digit
 
    def timer():
-       global counter, timer1
-       timer1 = threading.Timer(1.0, timer)
-       timer1.start()
-       counter += 1
-       print(f"Counter: {counter}")
+      """ Timer function to increment the counter every second. """
+      global counter, timer1
+      timer1 = threading.Timer(1.0, timer)  # Reset timer for next increment
+      timer1.start()
+      counter += 1  # Increment counter
+      print("%d" % counter)  # Print current counter value
 
    def setup():
-       global timer1
-       timer1 = threading.Timer(1.0, timer)
-       timer1.start()
+      """ Setup initial state and start the timer. """
+      global timer1
+      timer1 = threading.Timer(1.0, timer)  # Initialize and start the timer
+      timer1.start()
 
    def loop():
-       global counter
-       while True:
-           for i in range(4):
-               clearDisplay()
-               pickDigit(i)
+      """ Main loop to update the 7-segment display with counter value. """
+      global counter
+      while True:
+         for i in range(4):  # Loop through each digit
+               clearDisplay()  # Clear display before setting new digit
+               pickDigit(i)    # Select digit for display
+
+               # Choose the digit of counter to display
                digit = (counter // (10 ** i)) % 10
-               hc595_shift(number[digit])
-               time.sleep(0.001)
+
+               hc595_shift(number[digit])  # Shift digit value to 74HC595
+               time.sleep(0.001)  # Short delay for display stability
 
    def destroy():
-       global timer1
-       timer1.cancel()
-       for device in [SDI, RCLK, SRCLK] + placePin:
-           device.close()
+      """ Cleanup GPIO resources and stop timer on exit. """
+      global timer1
+      timer1.cancel()  # Stop the timer
+      for device in [SDI, RCLK, SRCLK] + placePin:
+         device.close()  # Close GPIO devices
 
    try:
-       setup()
-       loop()
+      setup()  # Initialize the setup
+      while True:
+         loop()  # Start the main loop
+         
    except KeyboardInterrupt:
-       destroy()
+      # Handle script interruption (e.g., Ctrl+C)
+      destroy()  # Cleanup resources on exit
+
 
 
 This Python script controls a 4-digit 7-segment display using a Raspberry Pi and a 74HC595 shift register. When executed:
@@ -171,12 +188,12 @@ The program runs indefinitely, incrementing the displayed counter until the user
    .. code-block:: python
 
       # Define GPIO pins for the 74HC595 shift register
-      SDI = OutputDevice(24)   # Serial Data Input
-      RCLK = OutputDevice(23)  # Register Clock
-      SRCLK = OutputDevice(18) # Shift Register Clock
+      SDI = Pin(17,Pin.OUT)   # Serial Data Input
+      RCLK = Pin(4,Pin.OUT)  # Register Clock
+      SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
       # Define GPIO pins for digit selection on the 7-segment display
-      placePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]
+      placePin = [Pin(pin,Pin.OUT) for pin in (23, 24, 25, 12)]
 
 2. **Segment Codes**
 
@@ -213,7 +230,7 @@ The program runs indefinitely, incrementing the displayed counter until the user
          timer1 = threading.Timer(1.0, timer)
          timer1.start()
          counter += 1
-         print(f"Counter: {counter}")
+         print("%d" % counter)
 
 5. **Cleanup**
 
@@ -222,10 +239,11 @@ The program runs indefinitely, incrementing the displayed counter until the user
    .. code-block:: python
 
       def destroy():
+         """ Cleanup GPIO resources and stop timer on exit. """
          global timer1
-         timer1.cancel()
+         timer1.cancel()  # Stop the timer
          for device in [SDI, RCLK, SRCLK] + placePin:
-            device.close()
+            device.close()  # Close GPIO devices
 
 
 ----------------------------------------------
@@ -235,7 +253,7 @@ The program runs indefinitely, incrementing the displayed counter until the user
 1. **Display Shows Nothing**  
 
    - **Cause**: Incorrect wiring or GPIO pin configuration.  
-   - **Solution**: Double-check the connections to the 74HC595 shift register and ensure the GPIO pins (24, 23, 18) match the defined variables (``SDI``, ``RCLK``, ``SRCLK``).
+   - **Solution**: Double-check the connections to the 74HC595 shift register and ensure the GPIO pins (17, 4, 27) match the defined variables (``SDI``, ``RCLK``, ``SRCLK``).
 
 2. **Digits Do Not Update Correctly**  
 

@@ -34,8 +34,6 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -44,14 +42,18 @@ To complete this project, you will need the following components:
         - |link_resistor_buy|
     *   - :ref:`cpn_rgb_led`
         - |link_rgb_led_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
 **Circuit Diagram**
 
-After connecting the R, G, and B pins of the RGB LED to current-limiting resistors, connect these resistors to GPIO12, GPIO13, and GPIO16, respectively. The longest pin of the LED (GND) is connected to the GND pin of the Raspberry Pi. Different PWM values for the three pins produce various colors.
+After connecting the R, G, and B pins of the RGB LED to current-limiting resistors, connect these resistors to PWM0, PWM1, and PWM2, respectively. The longest pin of the LED (GND) is connected to the GND pin of the Raspberry Pi. Different PWM values for the three pins produce various colors.
 
-.. image:: ../python/img/1.1.2_rgb_led_schematic.png
 
 ----------------------------------------------
 
@@ -60,10 +62,10 @@ After connecting the R, G, and B pins of the RGB LED to current-limiting resisto
 Follow the steps below to build the circuit:
 
 1. Place the RGB LED on the breadboard.
-2. Connect the red, green, and blue pins of the LED to GPIO17, GPIO18, and GPIO27 through resistors.
+2. Connect the red, green, and blue pins of the LED to P0, P1, and P2 through resistors.
 3. Connect the longest pin (GND) of the LED to the GND of the Raspberry Pi.
 
-.. image:: ../python/img/1.1.2_rgbLed_circuit.png
+
 
 ----------------------------------------------
 
@@ -74,36 +76,35 @@ The following Python code cycles through various colors on the RGB LED by settin
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import RGBLED
+   from fusion_hat import RGB_LED,PWM
    from time import sleep
 
-   # Define colors as (red, green, blue) tuples.
-   COLORS = [(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (1, 0, 1), (0, 1, 1)]
-
-   # Initialize the RGB LED with GPIO pins for red, green, and blue.
-   rgb_led = RGBLED(red=17, green=18, blue=27)
+   # Initialize an RGB LED. Connect the red component to P0, green to P1, and blue to P2.
+   rgb_led = RGB_LED(PWM('P0'), PWM('P1'), PWM('P2'),common=RGB_LED.CATHODE)
 
    try:
-       # Cycle through colors indefinitely.
-       while True:
-           for color in COLORS:
-               rgb_led.color = color
-               print(f"Color set to: {color}")
-               sleep(1)
+      # Set the RGB LED to red.
+      rgb_led.color((255, 0, 0))
+      sleep(1)
+
+      # Set the RGB LED to green.
+      rgb_led.color("#00FF22") 
+      sleep(1)
+
+      # Set the RGB LED to purple.
+      rgb_led.color(0xFF00FF)  
+      sleep(1)
+
+      # Set the RGB LED to black.
+      rgb_led.color(0x000000)  
+
    except KeyboardInterrupt:
-       # Exit gracefully on Ctrl+C.
-       pass
+      # Handle a KeyboardInterrupt (Ctrl+C) to exit.
+      rgb_led.color(0x000000)  
+      pass
 
-This Python script controls an RGB LED connected to GPIO pins 17, 18, and 27 of a Raspberry Pi. When executed, the program cycles through a predefined set of colors (``COLORS``), which are represented as RGB tuples:
 
-1. Red ``(1, 0, 0)``
-2. Green ``(0, 1, 0)``
-3. Blue ``(0, 0, 1)``
-4. Yellow ``(1, 1, 0)``
-5. Magenta ``(1, 0, 1)``
-6. Cyan ``(0, 1, 1)``
-
-Each color is displayed for one second, and the current color is printed to the console. The program runs indefinitely until interrupted by pressing ``Ctrl+C``.
+This script demonstrates how to control an RGB LED using the Fusion Hat library. It initializes the RGB LED with specific PWM pins and sets different colors sequentially.
 
 
 ----------------------------------------------
@@ -111,54 +112,66 @@ Each color is displayed for one second, and the current color is printed to the 
 
 **Understanding the Code**
 
-1. **Importing Libraries**
 
-   The ``gpiozero`` library is used for controlling the RGB LED, and the ``time`` library provides a delay function.
+Run the script on a compatible device with a connected RGB LED. The LED will cycle through red, green, and purple before turning off.
 
-   .. code-block:: python
 
-       from gpiozero import RGBLED
-       from time import sleep
+1. **Importing Dependencies**
+   
+   .. code:: python
 
-2. **Defining Colors**
+      from fusion_hat import RGB_LED, PWM
+      from time import sleep
+   
+   The required modules are imported. ``RGB_LED`` and ``PWM`` from the ``fusion_hat`` library manage the RGB LED, and ``sleep`` is used for timing.
 
-   The ``COLORS`` list contains tuples representing different colors in RGB format. Each value ranges from 0 (off) to 1 (full intensity).
+2. **Initializing the RGB LED**
+   
+   .. code:: python
 
-   .. code-block:: python
+      rgb_led = RGB_LED(PWM('P0'), PWM('P1'), PWM('P2'), common=RGB_LED.CATHODE)
+   
+   The RGB LED is initialized with its red, green, and blue components connected to PWM pins ``P0``, ``P1``, and ``P2``, respectively. The LED uses a common cathode configuration.
 
-       COLORS = [(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (1, 0, 1), (0, 1, 1)]
+3. **Setting Colors Sequentially**
+   
+   .. code:: python
 
-3. **Initializing the LED**
+      rgb_led.color((255, 0, 0))  # Red
+      sleep(1)
+      
+      rgb_led.color("#00FF22")  # Green
+      sleep(1)
+      
+      rgb_led.color(0xFF00FF)  # Purple
+      sleep(1)
+   
+   The script sets the RGB LED to different colors using different formats:
 
-   An RGB LED is connected to GPIO pins 17, 18, and 27 for red, green, and blue, respectively.
+   - ``(255, 0, 0)``: Tuple representing red in RGB.
+   - ``"#00FF22"``: Hexadecimal string representing a greenish color.
+   - ``0xFF00FF``: Hexadecimal integer for purple.
 
-   .. code-block:: python
+4. **Turning Off the LED**
+   
+   .. code:: python
 
-       rgb_led = RGBLED(red=17, green=18, blue=27)
+      rgb_led.color(0x000000)
+   
+   The script sets the LED color to black (``0x000000``), effectively turning it off.
 
-4. **Cycling Through Colors**
+5. **Handling Interrupts**
+   
+   .. code:: python
 
-   The ``while`` loop continuously iterates through the ``COLORS`` list, setting the LED to each color with a 1-second delay.
+      except KeyboardInterrupt:
+         rgb_led.color(0x000000)
+         pass
+   
+   If the user interrupts the script using ``Ctrl+C``, the exception is caught, and the LED is turned off before exiting.
 
-   .. code-block:: python
-
-       while True:
-           for color in COLORS:
-               rgb_led.color = color
-               print(f"Color set to: {color}")
-               sleep(1)
-
-5. **Handling Interruptions**
-
-   The ``try-except`` block ensures the program exits gracefully on a ``KeyboardInterrupt`` (Ctrl+C).
-
-   .. code-block:: python
-
-       except KeyboardInterrupt:
-           pass
 
 ----------------------------------------------
-
 
 
 **Troubleshooting**
@@ -166,18 +179,18 @@ Each color is displayed for one second, and the current color is printed to the 
 1. **LED Does Not Light Up**  
 
    - **Cause**: Incorrect wiring or GPIO pin mismatch.  
-   - **Solution**: Verify that the red, green, and blue pins of the RGB LED are connected to the correct GPIO pins (17, 18, 27) and that the LED's common cathode or anode is properly connected.
+   - **Solution**: Verify that the red, green, and blue pins of the RGB LED are connected to the correct pins and that the LED's common cathode or anode is properly connected.
 
-2. **gpiozero Module Not Found**  
 
-   - **Cause**: Missing GPIOZero library.  
-   - **Solution**: Install it using ``pip install gpiozero``.
-
-3. **Flickering or Unstable Colors**  
+2. **Flickering or Unstable Colors**  
 
    - **Cause**: Unstable power supply or improper resistor usage.  
    - **Solution**: Use appropriate resistors and ensure a stable power source.
 
+3. **Incorrect GPIO Setup**  
+
+   - **Cause**: Fusion_hat library is not installed.  
+   - **Solution**: See :ref:`download_the_lib`.
 
 ----------------------------------------------
 
@@ -186,7 +199,7 @@ Each color is displayed for one second, and the current color is printed to the 
 
 1. **Custom Color Sequences**  
 
-   Add more colors to the ``COLORS`` list, including dimmer variations by using fractional values, such as ``(0.5, 0.2, 0.8)`` for a softer tone.
+   Add more colors to the ``COLORS`` list, including dimmer variations, such as ``(125, 50, 200)`` for a softer tone.
 
 
 
@@ -197,8 +210,8 @@ Each color is displayed for one second, and the current color is printed to the 
    .. code-block:: python
 
         while True:
-            user_color = input("Enter RGB values (e.g., 1,0,0): ")
-            r, g, b = map(float, user_color.split(","))
+            user_color = input("Enter RGB values (e.g., 125,0,0): ")
+            r, g, b = map(int, user_color.split(","))
             rgb_led.color = (r, g, b)
 
 
@@ -209,10 +222,10 @@ Each color is displayed for one second, and the current color is printed to the 
 
    .. code-block:: python
 
-        from random import random
-        while True:
-            rgb_led.color = (random(), random(), random())
-            sleep(1)
+      from random import randint
+      while True:
+         rgb_led.color = (randint(1,255) , randint(1,255) , randint(1,255) )
+         sleep(1)
 
 
 ----------------------------------------------

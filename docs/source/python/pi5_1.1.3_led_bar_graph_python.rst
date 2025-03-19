@@ -34,8 +34,6 @@ Here are the components required for this project:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -44,6 +42,10 @@ Here are the components required for this project:
         - |link_resistor_buy|
     *   - :ref:`cpn_bar_graph`
         - \-
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -51,7 +53,7 @@ Here are the components required for this project:
 
 Below is the schematic diagram for the project, showing how to connect the LED Bar Graph to the Raspberry Pi using GPIO pins and resistors for current limitation:
 
-.. image:: ../python/img/1.1.3_LedBarGraph_schematic.png
+
 
 ----------------------------------------------
 
@@ -67,7 +69,7 @@ Follow these steps to assemble the circuit:
 
     Pay attention to the direction when connecting the components. Incorrect connections will result in non-functional LEDs.
 
-.. image:: ../python/img/1.1.3_LedBarGraph_circuit.png
+
 
 ----------------------------------------------
 
@@ -77,58 +79,57 @@ The Python script below lights up the LEDs in different patterns—odd, even, an
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
-   from gpiozero import LED
+   from fusion_hat import Pin
    from time import sleep
 
    # Define GPIO pins where LEDs are connected
-   led_pins = [18, 23, 24, 25, 8, 7, 12, 16, 20, 21]
+   led_pins = [4, 17, 27, 22, 23, 24, 25, 5, 13, 26]
 
    # Create LED objects for each pin
-   leds = [LED(pin) for pin in led_pins]
+   leds = [Pin(pin, Pin.OUT) for pin in led_pins]
 
    def odd_led_bar_graph():
-       # Sequentially light up odd-numbered LEDs (index 0, 2, 4, etc.)
-       for i in range(5):
-           j = i * 2  # Calculate odd index
-           leds[j].on()  # Turn on odd-numbered LED
-           sleep(0.3)    # Delay for visual effect
-           leds[j].off() # Turn off LED
+      # Sequentially light up odd-numbered LEDs (index 0, 2, 4, etc.)
+      for i in range(5):
+         j = i * 2  # Calculate odd index
+         leds[j].high()  # Turn on odd-numbered LED
+         sleep(0.3)    # Delay for visual effect
+         leds[j].low() # Turn off LED
 
    def even_led_bar_graph():
-       # Sequentially light up even-numbered LEDs (index 1, 3, 5, etc.)
-       for i in range(5):
-           j = i * 2 + 1  # Calculate even index
-           leds[j].on()   # Turn on even-numbered LED
-           sleep(0.3)     # Delay for visual effect
-           leds[j].off()  # Turn off LED
+      # Sequentially light up even-numbered LEDs (index 1, 3, 5, etc.)
+      for i in range(5):
+         j = i * 2 + 1  # Calculate even index
+         leds[j].high()   # Turn on even-numbered LED
+         sleep(0.3)     # Delay for visual effect
+         leds[j].low()  # Turn off LED
 
    def all_led_bar_graph():
-       # Sequentially light up all LEDs one by one
-       for led in leds:
-           led.on()       # Turn on LED
-           sleep(0.3)     # Delay for visual effect
-           led.off()      # Turn off LED
+      # Sequentially light up all LEDs one by one
+      for led in leds:
+         led.high()       # Turn on LED
+         sleep(0.3)     # Delay for visual effect
+         led.low()      # Turn off LED
 
    def turn_off_all_leds():
-       # Turn off all LEDs at once
-       for led in leds:
-           led.off()
+      # Turn off all LEDs at once
+      for led in leds:
+         led.low()
 
    try:
-       # Main loop to cycle through LED patterns
-       while True:
-           odd_led_bar_graph()   # Activate odd-numbered LEDs
-           sleep(0.3)            # Pause between patterns
-           even_led_bar_graph()  # Activate even-numbered LEDs
-           sleep(0.3)            # Pause between patterns
-           all_led_bar_graph()   # Activate all LEDs
-           sleep(0.3)            # Pause before restarting
+      # Main loop to cycle through LED patterns
+      while True:
+         odd_led_bar_graph()   # Activate odd-numbered LEDs
+         sleep(0.3)            # Pause between patterns
+         even_led_bar_graph()  # Activate even-numbered LEDs
+         sleep(0.3)            # Pause between patterns
+         all_led_bar_graph()   # Activate all LEDs
+         sleep(0.3)            # Pause before restarting
 
    except KeyboardInterrupt:
-       # Handle interruption (Ctrl+C) gracefully
-       turn_off_all_leds()      # Ensure all LEDs are turned off on exit
-       pass
+      # Handle interruption (Ctrl+C) gracefully
+      turn_off_all_leds()      # Ensure all LEDs are turned off on exit
+      pass
 
 This Python script controls a series of LEDs connected to specific GPIO pins on a Raspberry Pi. When executed, the LEDs perform a series of light patterns in a loop:
 
@@ -149,8 +150,10 @@ After completing these patterns, the script pauses briefly and then repeats the 
 
    .. code-block:: python
 
-       from gpiozero import LED
-       from time import sleep
+
+      from fusion_hat import Pin
+      from time import sleep
+
 
 2. **Defining GPIO Pins**
 
@@ -158,8 +161,11 @@ After completing these patterns, the script pauses briefly and then repeats the 
 
    .. code-block:: python
 
-       led_pins = [18, 23, 24, 25, 8, 7, 12, 16, 20, 21]
-       leds = [LED(pin) for pin in led_pins]
+      # Define GPIO pins where LEDs are connected
+      led_pins = [4, 17, 27, 22, 23, 24, 25, 5, 13, 26]
+
+      # Create LED objects for each pin
+      leds = [Pin(pin, Pin.OUT) for pin in led_pins]
 
 3. **Odd LED Pattern**
 
@@ -223,10 +229,10 @@ After completing these patterns, the script pauses briefly and then repeats the 
    - **Cause**: LEDs remain on after the program is interrupted.  
    - **Solution**: Ensure the ``turn_off_all_leds()`` function is correctly executed in the ``except KeyboardInterrupt`` block.
 
-3. **GPIOZero Module Not Found**  
+3. **Incorrect GPIO Setup**  
 
-   - **Cause**: The ``gpiozero`` library is not installed.  
-   - **Solution**: Install the library with ``pip install gpiozero``.
+   - **Cause**: Fusion_hat library is not installed.  
+   - **Solution**: See :ref:`download_the_lib`.
 
 4. **Timing or Flickering Issues**  
 
@@ -267,12 +273,6 @@ After completing these patterns, the script pauses briefly and then repeats the 
            all_led_bar_graph()
        elif choice == 'wave':
            wave_pattern()
-
-
-
-3. **PWM Control for Smooth Transitions**  
-
-   Replace ``LED`` objects with ``PWMLED`` objects to control brightness for smoother lighting transitions.
 
 
 ----------------------------------------------

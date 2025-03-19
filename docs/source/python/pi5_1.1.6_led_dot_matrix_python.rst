@@ -19,7 +19,7 @@
 
 **Introduction**
 
-An LED dot matrix is a grid of LEDs that can light up in various patterns to display characters, symbols, or animations. This project demonstrates how to control an LED dot matrix to display static shapes, letters, and scrolling text using Python and a Raspberry Pi.
+An LED dot matrix is a grid of LEDs that can light up to display characters, symbols, or animations. This project demonstrates how to control an LED dot matrix to display static shapes.
 
 ----------------------------------------------
 
@@ -34,14 +34,15 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
-    *   - :ref:`cpn_breadboard`
-        - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
         - |link_wires_buy|
     *   - :ref:`cpn_dot_matrix`
         - |link_led_matrix_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
@@ -57,9 +58,8 @@ The circuit connects the LED dot matrix to the Raspberry Pi using SPI communicat
 
 Follow these steps to build the circuit:
 
-1. Place the LED dot matrix on the breadboard.
-2. Connect the SPI interface pins (MOSI, SCK, and CS) to the Raspberry Pi GPIO pins.
-3. Ensure proper power supply connections to the matrix.
+1. Connect the SPI interface pins (MOSI, SCK, and CS) to the Fusion HAT pins.
+2. Ensure proper power supply connections to the matrix.
 
 .. image:: ../img/1.1.6fritzing.png
 
@@ -67,60 +67,47 @@ Follow these steps to build the circuit:
 
 **Writing the Code**
 
-The following Python code controls the LED dot matrix to display a rectangle, a letter, and scrolling text:
+
+
 
 .. code-block:: python
 
-   from luma.core.interface.serial import spi, noop
-   from luma.core.render import canvas
-   from luma.core.virtual import viewport
-   from luma.led_matrix.device import max7219
-   from luma.core.legacy import text
-   from luma.core.legacy.font import proportional, CP437_FONT
-   import time
+    from fusion_hat import LedMatrix
 
-   # Initialize SPI interface and the dot matrix device
-   serial = spi(port=0, device=0, gpio=noop())
-   device = max7219(serial, rotate=1)
-   virtual = viewport(device, width=200, height=8)
+    rgb_matrix = LedMatrix(rotate=0)
 
-   def displayRectangle():
-       with canvas(device) as draw:
-           draw.rectangle(device.bounding_box, outline="white", fill="black")
+    #Define a simple pattern (e.g., a smiley face)
 
-   def displayLetter():
-       with canvas(device) as draw:
-           text(draw, (0, 0), "A", fill="white", font=proportional(CP437_FONT))
+    # pattern = [
+    #     0b00111100,
+    #     0b01000010,
+    #     0b10100101,
+    #     0b10000001,
+    #     0b10100101,
+    #     0b10011001,
+    #     0b01000010,
+    #     0b00111100
+    # ]
 
-   def scrollToDisplayText():
-       with canvas(virtual) as draw:
-           text(draw, (0, 0), "Hello, Nice to meet you!", fill="white", font=proportional(CP437_FONT))
+    pattern = [
+        0b01111110,
+        0b01000000,
+        0b00111100,
+        0b00000010,
+        0b00000001,
+        0b00000001,
+        0b01000010,
+        0b00111100
+    ]
 
-       for offset in range(150):
-           virtual.set_position((offset, 0))
-           time.sleep(0.1)
+    rgb_matrix.display_pattern(pattern) 
 
-   def main():
-       while True:
-           displayRectangle()
-           time.sleep(2)
-           displayLetter()
-           time.sleep(2)
-           scrollToDisplayText()
+    # To keep the display on, prevent the script from exiting (e.g., with a loop)
+    input("Press Enter to exit...")
 
-   if __name__ == '__main__':
-       try:
-           main()
-       except KeyboardInterrupt:
-           pass
+This script demonstrates how to control an LED matrix using the Fusion Hat library. It initializes the LED matrix and displays a predefined pattern.
 
-This Python script is designed to control an LED matrix display using the Luma library. When executed, it performs the following tasks in a loop:
-
-1. Displays a white rectangle outlining the entire LED matrix for 2 seconds.
-2. Displays the letter "A" at the top-left corner of the matrix for 2 seconds.
-3. Scrolls the text "Hello, Nice to meet you!" across the LED matrix horizontally from right to left.
-
-The program runs indefinitely until interrupted by pressing ``Ctrl+C``.
+Run the script on a compatible device with an attached LED matrix. The matrix will display a defined pattern until the user manually exits the script.
 
 
 ----------------------------------------------
@@ -128,55 +115,58 @@ The program runs indefinitely until interrupted by pressing ``Ctrl+C``.
 
 **Understanding the Code**
 
-1. **Libraries and Initialization**
 
-   The ``luma`` library is used for handling LED dot matrix displays, providing functions for rendering text and graphics.
+1. **Importing Dependencies**
+   
+   .. code:: python
 
-   .. code-block:: python
+      from fusion_hat import LedMatrix
+   
+   The required module ``LedMatrix`` from the ``fusion_hat`` library is imported to control the LED matrix.
 
-       from luma.core.interface.serial import spi, noop
-       from luma.led_matrix.device import max7219
+2. **Initializing the LED Matrix**
+   
+   .. code:: python
 
-   Initialize the dot matrix:
+      rgb_matrix = LedMatrix(rotate=0)
+   
+   The LED matrix is initialized with a rotation setting of ``0``. This parameter can be adjusted to rotate the display if necessary.
 
-   .. code-block:: python
+3. **Defining a Display Pattern**
+   
+   .. code:: python
 
-       serial = spi(port=0, device=0, gpio=noop())
-       device = max7219(serial, rotate=1)
+      pattern = [
+          0b01111110,
+          0b01000000,
+          0b00111100,
+          0b00000010,
+          0b00000001,
+          0b00000001,
+          0b01000010,
+          0b00111100
+      ]
+   
+   The pattern is defined as a list of 8-bit binary values, where each bit represents an LED state (1 for ON, 0 for OFF). The chosen pattern forms a specific shape when displayed on an 8x8 LED matrix.
 
-2. **Rectangle Display**
+4. **Displaying the Pattern**
+   
+   .. code:: python
 
-   The ``displayRectangle`` function uses the canvas to draw a rectangle on the dot matrix.
+      rgb_matrix.display_pattern(pattern)
+   
+   The pattern is sent to the LED matrix for display.
 
-   .. code-block:: python
+5. **Keeping the Display Active**
+   
+   .. code:: python
 
-       def displayRectangle():
-           with canvas(device) as draw:
-               draw.rectangle(device.bounding_box, outline="white", fill="black")
+      input("Press Enter to exit...")
+   
+   The script waits for user input before terminating, ensuring that the pattern remains visible until the user decides to exit.
 
-3. **Letter Display**
 
-   The ``displayLetter`` function renders a single letter ("A") on the matrix.
 
-   .. code-block:: python
-
-       def displayLetter():
-           with canvas(device) as draw:
-               text(draw, (0, 0), "A", fill="white", font=proportional(CP437_FONT))
-
-4. **Scrolling Text**
-
-   The ``scrollToDisplayText`` function displays scrolling text by moving the virtual viewport.
-
-   .. code-block:: python
-
-       def scrollToDisplayText():
-           with canvas(virtual) as draw:
-               text(draw, (0, 0), "Hello, Nice to meet you!", fill="white", font=proportional(CP437_FONT))
-
-           for offset in range(150):
-               virtual.set_position((offset, 0))
-               time.sleep(0.1)
 
 ----------------------------------------------
 
@@ -193,73 +183,37 @@ The program runs indefinitely until interrupted by pressing ``Ctrl+C``.
    - **Cause**: Incorrect rotation or device dimensions.  
    - **Solution**: Adjust the ``rotate`` parameter in the ``max7219()`` initialization to match the physical orientation of the LED matrix.
 
-3. **scrollToDisplayText() Does Not Scroll Properly**  
-
-   - **Cause**: Inadequate viewport width or text length mismatch.  
-   - **Solution**: Ensure the ``viewport`` width (``200``) is sufficient for the scrolling text length.
-
-4. **KeyboardInterrupt Does Not Stop the Program Gracefully**  
-
-   - **Cause**: The ``main()`` loop lacks cleanup logic.  
-   - **Solution**: Add cleanup logic to handle interruptions, such as clearing the LED matrix.
-
-5. **ModuleNotFoundError**  
-
-   - **Cause**: Missing Luma library or dependencies.  
-   - **Solution**: Install the required libraries using ``pip install luma.led_matrix luma.core``.
-
-6. **Slow Performance**  
-
-   - **Cause**: High ``time.sleep()`` values or inefficient drawing logic.  
-   - **Solution**: Reduce the sleep duration (e.g., from ``0.1`` to ``0.05``) for smoother scrolling.
-
-
 
 ----------------------------------------------
 
 **Extendable Ideas**
 
-1. **Custom Text Messages**  
+1. **Dynamic Pattern Animation**  
 
-   Allow the user to input custom text to scroll across the LED matrix:
+   - Implement multiple patterns and cycle through them using a loop.  
+   - Introduce smooth transitions between patterns to create animations.  
 
-   .. code-block:: python
+2. **User-Defined Patterns**  
 
-      user_message = input("Enter your message: ")
-      def scrollCustomText(message):
-         with canvas(virtual) as draw:
-               text(draw, (0, 0), message, fill="white", font=proportional(CP437_FONT))
-         for offset in range(len(message) * 6):
-               virtual.set_position((offset, 0))
-               time.sleep(0.1)
+   - Allow users to input custom patterns via a configuration file or user interface.  
+   - Use a simple text-based representation to define new designs easily.  
 
+3. **Real-Time Interaction**  
 
-2. **Multi-Line Scrolling**  
+   - Implement button controls to switch between different patterns.  
+   - Integrate a joystick or touch interface to manipulate the LED matrix dynamically.  
 
-   Extend the scrolling functionality to handle multi-line messages by adjusting the viewport height and positioning text.
+4. **Scrolling Text Display**  
 
-3. **Animations**  
+   - Develop a function to scroll messages across the LED matrix.  
+   - Allow users to input text dynamically and display it character by character.  
 
-   Create animations, such as bouncing text or moving patterns, using the ``canvas()`` method.
-
-
-4. **Font Customization**  
-
-   Use different fonts to vary the appearance of the displayed text. For example:
-   
-   .. code-block:: python
-
-      from luma.core.legacy.font import TINY_FONT
-      text(draw, (0, 0), "Custom Font!", font=proportional(TINY_FONT))
-
-
-5. **Interactive LED Control**  
-
-   Add buttons or sensors to interactively change what is displayed, such as switching between messages or patterns.
 
 ----------------------------------------------
 
 
 **Conclusion**
 
-By completing this project, you have learned how to control an LED dot matrix to display shapes, letters, and scrolling text. This knowledge can be extended to create custom animations and dynamic displays for various applications.
+
+This script provides a simple example of displaying patterns on an LED matrix using the Fusion Hat library. Users can modify the pattern to create different visual designs.
+
