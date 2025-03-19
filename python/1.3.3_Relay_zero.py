@@ -2,7 +2,7 @@
 from fusion_hat import Pin  # Import the class for controlling GPIO pins
 from time import sleep  # Import the sleep function for delay
 
-# Initialize the relay connected to GPIO pin 17, starting in the 'off' state
+# Initialize the relay connected to GPIO pin 17
 relay = Pin(17,Pin.OUT)
 
 try:
