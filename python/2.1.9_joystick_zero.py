@@ -2,7 +2,7 @@
 from fusion_hat import Pin,ADC
 import time
 
-# Initialize the button connected to GPIO pin 22
+# Initialize the Joystick
 BtnPin = Pin(17, Pin.IN, Pin.PULL_UP)
 xAxis = ADC('A1')
 yAxis = ADC('A0')
