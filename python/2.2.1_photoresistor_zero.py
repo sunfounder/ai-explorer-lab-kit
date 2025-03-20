@@ -3,7 +3,7 @@
 from fusion_hat import ADC, PWM
 import time
 
-# Initialize a PWM LED on GPIO pin 22
+# Initialize a PWM LED
 led = PWM('P0')
 
 # Set up the potentiometer
