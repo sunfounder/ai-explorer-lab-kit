@@ -15,7 +15,7 @@ motor = Motor(pwmA, pwmB, is_reversed=False)
 :default: False
 """
 
-motor = Motor(PWM('P8'), PWM('P9'))
+motor = Motor('M0')
 
 try:
     while True:
