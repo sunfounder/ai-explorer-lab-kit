@@ -6,7 +6,7 @@ import math
 
 # Initialize GPIO pins for the button and motor control
 BtnPin = Pin(22, Pin.IN, Pin.PULL_DOWN)
-motor = Motor(PWM('P11'), PWM('P10'))
+motor = Motor('M0')
 thermistor = ADC('A3')
 
 # Initialize variables to track the motor speed level and temperatures
