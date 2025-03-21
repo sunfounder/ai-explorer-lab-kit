@@ -2,7 +2,7 @@
 from fusion_hat import Ultrasonic,Pin
 from time import sleep
 
-# Initialize the DistanceSensor using GPIO Zero library
+# Initialize the DistanceSensor
 # Trigger pin is connected to GPIO 27, Echo pin to GPIO 22
 sensor = Ultrasonic(trig=Pin(27), echo=Pin(22))
 
