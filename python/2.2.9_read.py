@@ -1,3 +1,10 @@
+# SDA - CS
+# SCK - SCK
+# MOSI - MOSI
+# MISO - MISO
+# IRQ - /
+# RST - BSY
+
 from fusion_hat import RC522
 import time
 rc = RC522()
