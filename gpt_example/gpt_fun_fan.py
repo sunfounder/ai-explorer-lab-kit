@@ -88,7 +88,7 @@ def cancel_redirect_error(old_stderr):
     os.dup2(old_stderr, 2)
     os.close(old_stderr)
 
-motor = Motor(PWM('P9'), PWM('P8'))
+motor = Motor('M0')
 touch_sensor = Pin(17, Pin.IN, pull = Pin.PULL_DOWN) 
 buzzer = Buzzer(Pin(4))
 speed = 0
