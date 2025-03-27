@@ -15,8 +15,8 @@ MIN_PW = (1.0 - CORRECTION) / 1000
 
 # Initialize GPIO components
 servo = Servo('P0')
-led1 = Pin(23, Pin.OUT)
-led2 = Pin(24, Pin.OUT)
+led1 = Pin(27, Pin.OUT)
+led2 = Pin(22, Pin.OUT)
 led1.off()
 led2.off()
 
