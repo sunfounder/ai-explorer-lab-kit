@@ -44,8 +44,8 @@ def cancel_redirect_error(old_stderr):
     os.close(old_stderr)
 
 # Initialize hardware components
-buzzer = Buzzer(PWM(17)) 
-led = Pin(23, Pin.OUT)
+buzzer = Buzzer('P0') 
+led = Pin(17, Pin.OUT)
 
 # Create an OpenAI assistant
 instructions_text = (
