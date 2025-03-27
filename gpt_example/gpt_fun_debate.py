@@ -8,11 +8,6 @@ import subprocess
 
 os.system("fusion_hat enable_speaker")
 
-# Define correction factor for fine-tuning servo pulse width
-CORRECTION = 0.45
-MAX_PW = (2.0 + CORRECTION) / 1000
-MIN_PW = (1.0 - CORRECTION) / 1000
-
 # Initialize GPIO components
 servo = Servo('P0')
 led1 = Pin(27, Pin.OUT)
@@ -110,7 +105,7 @@ def play_response(response, player):
     if speech_file_path:
         try:
             # Play the speech and control LEDs/Servo
-            servo.value = 0.5 if player == 0 else -0.5
+            servo.angle(45) if player == 0 else servo.angle(-45)
             led1.on() if player == 0 else led1.off()
             led2.on() if player == 1 else led2.off()
             p = subprocess.Popen(
