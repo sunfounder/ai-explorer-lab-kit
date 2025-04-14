@@ -34,8 +34,6 @@ In this project, you will need the following components:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -48,6 +46,12 @@ In this project, you will need the following components:
         - |link_transistor_buy|
     *   - :ref:`cpn_reed_switch`
         - |link_reed_switch_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+
 
 ----------------------------------------------
 
@@ -60,41 +64,15 @@ In this project, you will need the following components:
 
 **Wiring Diagram**
 
-.. image:: ../python/img/4.1.6_magneticalarmsystem_circuit.png
-  :width: 800
-  :align: center
+
+.. image:: img/fzz/4.1.3_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 
 **Writing the Code**
-
-.. raw:: html
-
-   <run></run>
-
-.. code-block::
-
-    cd ~/zero-w-ai-kit/python
-
-Run the code:
-
-.. raw:: html
-
-   <run></run>
-
-.. code-block::
-
-    sudo python3 4.1.6_MagneticAlarmSystem_zero.py
-
-When the reed switch is affected by a magnet (e.g., the reed switch is on the base and a magnet is inside the vase), the buzzer remains silent. If the magnet is removed (e.g., the vase is moved), the buzzer will emit a sound, alerting you to the disturbance.
-
-.. warning::
-
-    Wenn die Fehlermeldung ``RuntimeError: Cannot determine SOC peripheral base address`` angezeigt wird, lesen Sie bitte :ref:`faq_soc`
-
-----------------------------------------------
-
-**Code**
 
 .. raw:: html
 
@@ -103,32 +81,31 @@ When the reed switch is affected by a magnet (e.g., the reed switch is on the ba
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import Buzzer, Button
+   from fusion_hat import Pin, Buzzer
    import time
 
    # Initialize the buzzer on GPIO pin 27
-   buzzer = Buzzer(27)
+   buzzer = Buzzer(Pin(27))
    # Initialize the reed switch on GPIO pin 17 with pull-up resistor enabled
-   reed_switch = Button(17, pull_up=True)
+   reed_switch = Pin(17, Pin.IN, Pin.PULL_UP)
 
    try:
-       while True:
-           # Check if the reed switch is pressed
-           if reed_switch.is_pressed:
-               # Turn off the buzzer if reed switch is pressed
+      while True:
+         # Check if the reed switch (the window) is closed
+         if reed_switch.value() == 1:
+               # Turn off the buzzer if reed switch (the window) closed
                buzzer.off()
-           else:
-               # If reed switch is not pressed, beep the buzzer
+         else:
+               # If reed switch (the window) is not closed, beep the buzzer
                buzzer.on()
                time.sleep(0.1)  # Buzzer on for 0.1 seconds
                buzzer.off()
                time.sleep(0.1)  # Buzzer off for 0.1 seconds
 
    except KeyboardInterrupt:
-       # Turn off the buzzer when the program is interrupted (e.g., keyboard interrupt)
-       buzzer.off()
-       pass
-
+      # Turn off the buzzer when the program is interrupted (e.g., keyboard interrupt)
+      buzzer.off()
+      pass
 
 This Python script integrates a reed switch and a buzzer to create a simple alarm system. When executed:
 
@@ -146,42 +123,46 @@ This Python script integrates a reed switch and a buzzer to create a simple alar
 
 **Understanding the Code**
 
-#. Import necessary libraries: The ``gpiozero`` library provides classes for controlling GPIO pins, while the ``time`` module handles delays.
+#. Import necessary libraries: The ``fusion_hat`` library provides classes for controlling GPIO pins, while the ``time`` module handles delays.
 
    .. code-block:: python
 
-       from gpiozero import Buzzer, Button
-       import time
+      from fusion_hat import Pin, Buzzer
+      import time
 
 #. Initialize the buzzer and reed switch:
 
    .. code-block:: python
 
-       buzzer = Buzzer(27)
-       reed_switch = Button(17, pull_up=True)
+      # Initialize the buzzer on GPIO pin 27
+      buzzer = Buzzer(Pin(27))
+      # Initialize the reed switch on GPIO pin 17 with pull-up resistor enabled
+      reed_switch = Pin(17, Pin.IN, Pin.PULL_UP)
 
 #. Monitor the reed switch state:
+
+   .. code-block:: python
+
+      if reed_switch.value() == 1:
+         buzzer.off()
+      else:
+         buzzer.on()
+         time.sleep(0.1)
+         buzzer.off()
+         time.sleep(0.1)
+
 
    - If the reed switch is pressed (magnet in place), the buzzer remains off.
    - If the reed switch is released (magnet removed), the buzzer beeps intermittently.
 
-   .. code-block:: python
-
-       if reed_switch.is_pressed:
-           buzzer.off()
-       else:
-           buzzer.on()
-           time.sleep(0.1)
-           buzzer.off()
-           time.sleep(0.1)
 
 #. Graceful shutdown: Use a ``KeyboardInterrupt`` exception to ensure the buzzer is turned off when the program is interrupted.
 
    .. code-block:: python
 
-       except KeyboardInterrupt:
-           buzzer.off()
-           pass
+      except KeyboardInterrupt:
+         buzzer.off()
+         pass
 
 
 ----------------------------------------------
@@ -207,7 +188,7 @@ This Python script integrates a reed switch and a buzzer to create a simple alar
 3. **Buzzer Stays On Constantly**:
 
    - **Cause**: Reed switch logic is inverted or misconfigured.
-   - **Solution**: Confirm the reed switch's ``is_pressed`` state matches its wiring (pull-up resistor enabled).
+   - **Solution**: Confirm the reed switch's ``value()`` state matches its wiring (pull-up resistor enabled).
 
 
 
@@ -217,33 +198,33 @@ This Python script integrates a reed switch and a buzzer to create a simple alar
 
 1. **LED Indicator**: Add an LED to visually indicate the reed switch's state:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         from gpiozero import LED
-         led = LED(22)
-         if reed_switch.is_pressed:
-             led.on()
-         else:
-             led.off()
+      from fusion_hat import Pin
+      led = Pin(22, Pin.OUT)
+      if reed_switch.value()==0:
+         led.on()
+      else:
+         led.off()
 
 2. **Event Logging**: Log the reed switch state changes with timestamps to a file:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         with open("reed_switch_log.txt", "a") as log_file:
-             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-             log_file.write(f"{timestamp} - Switch state: {'Pressed' if reed_switch.is_pressed else 'Not Pressed'}\n")
+      with open("reed_switch_log.txt", "a") as log_file:
+         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+         log_file.write(f"{timestamp} - Switch state: {'Pressed' if reed_switch.value()==0 else 'Not Pressed'}\n")
 
 3. **Custom Buzzer Patterns**: Implement different buzzer patterns based on the reed switch state:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         def buzzer_pattern():
-             for _ in range(3):
-                 buzzer.on()
-                 time.sleep(0.2)
-                 buzzer.off()
-                 time.sleep(0.2)
+      def buzzer_pattern():
+         for _ in range(3):
+            buzzer.on()
+            time.sleep(0.2)
+            buzzer.off()
+            time.sleep(0.2)
 
 
 ----------------------------------------------

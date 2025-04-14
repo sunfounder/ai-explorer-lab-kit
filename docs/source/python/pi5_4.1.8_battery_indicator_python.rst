@@ -35,8 +35,7 @@ The following components are required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -44,9 +43,11 @@ The following components are required for this project:
     *   - Resistors
         - |link_resistor_buy|
     *   - LED Bar Graph
-        - N/A
-    *   - ADC0834 Module
-        - N/A
+        - 
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 ----------------------------------------------
@@ -56,7 +57,7 @@ The following components are required for this project:
 
 The schematic diagram below shows how the components are connected:
 
-.. image:: ../python/img/4.1.11_battery_indicator_schematic.png
+.. image:: ../python/img/4.1.11_battery_ind
    :align: center
 
 
@@ -67,7 +68,11 @@ The schematic diagram below shows how the components are connected:
 
 Refer to the following diagram for setting up the circuit on a breadboard:
 
-.. image:: ../python/img/4.1.11_battery_indicator_circuit.png
+
+.. image:: img/fzz/4.1.8_bb.png
+   :width: 800
+   :align: center
+
 
 
 
@@ -75,74 +80,69 @@ Refer to the following diagram for setting up the circuit on a breadboard:
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.11_BatteryIndicator_zero.py
-
-   After running the program:
-   
-   - Connect the ADC0834 module's third pin and GND to the two terminals of a battery.
-   - Observe the corresponding LEDs on the bar graph light up, representing the battery's voltage level (0-5V).
-
-
-----------------------------------------------
-
-
-**Code**
 
 Here is the Python code for the battery indicator project:
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
-   from gpiozero import LED
-   import ADC0834
-   import time
+    #!/usr/bin/env python3
+    from fusion_hat import Pin,ADC
+    from time import sleep
 
-   # List of GPIO pins connected to the LEDs
-   ledPins = [25, 12, 16, 20, 21, 5, 6, 13, 19, 26]
-   leds = [LED(pin) for pin in ledPins]  # Initialize LEDs for each pin
+    # Define GPIO pins where LEDs are connected
+    led_pins = [4, 17, 27, 22, 23, 24, 25, 5, 13, 26]
 
-   # Initialize the ADC0834 module
-   ADC0834.setup()
+    # Create LED objects for each pin
+    leds = [Pin(pin, Pin.OUT) for pin in led_pins]
 
-   def LedBarGraph(value):
-      """
-      Update the LED bar graph to display the specified level.
-      :param value: Number of LEDs to light up (0-10).
-      """
-      for i in range(10):
-         leds[i].off()  # Turn off all LEDs
-      for i in range(value):
-         leds[i].on()  # Turn on LEDs up to the specified value
+    # Set up the detection pin for the battery
+    btr = ADC('A0')
 
-   try:
-      # Main loop to continuously read ADC values and update LEDs
-      while True:
-         analogVal = ADC0834.getResult()  # Read ADC value
-         LedBarGraph(int(analogVal / 25))  # Scale and update LEDs
-   except KeyboardInterrupt:
-      # Turn off all LEDs when the program is interrupted
-      for led in leds:
-         led.off()
+    def MAP(x, in_min, in_max, out_min, out_max):
+        """
+        Map a value from one range to another.
+        :param x: The value to be mapped.
+        :param in_min: The lower bound of the value's current range.
+        :param in_max: The upper bound of the value's current range.
+        :param out_min: The lower bound of the value's target range.
+        :param out_max: The upper bound of the value's target range.
+        :return: The mapped value.
+        """
+        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
-This Python script uses an ADC0834 analog-to-digital converter to control a 10-LED bar graph based on the analog input value. When executed:
+    def LedBarGraph(value):
+        # Turn off all LEDs
+        for i in range(10):
+            leds[i].off()
+        # Turn on LEDs up to the specified value
+        for i in range(value):
+            leds[i].on()
+
+    try:
+        # Main loop to continuously update LED bar graph
+        while True:
+            # Read voltage value 
+            voltage = btr.read_voltage()
+            print('voltage = %.2f' %(voltage))
+
+            # Convert analog value to LED bar graph level
+            LedBarGraph(int(MAP(voltage, 0, 3.3, 0, 10)))
+            sleep(0.5)
+            
+    except KeyboardInterrupt: 
+        # Turn off all LEDs when program is interrupted
+        for i in range(10):
+            leds[i].off()
+
+This Python script control a 10-LED bar graph based on the analog input value. When executed:
 
 1. **Analog Input Reading**:
 
-   - The ADC0834 module continuously reads analog input values from a connected sensor.
+   - The Fusion HAT continuously reads analog input values from a battery.
 
 2. **LED Bar Graph Display**:
 
-   - The analog input value (0-255) is scaled to a range of 0-10.
+   - The voltage is scaled to a range of 0-10.
    - The corresponding number of LEDs light up on the bar graph to represent the input level.
 
 3. **Dynamic Updates**:
@@ -160,36 +160,36 @@ This Python script uses an ADC0834 analog-to-digital converter to control a 10-L
 
 1. **Library Imports:**
 
-   * ``gpiozero`` is used for controlling LEDs.
-   * ``ADC0834`` is used for interfacing with the ADC module.
-   * ``time`` is used for timing-related functions.
-
    .. code-block:: python
 
-       from gpiozero import LED
-       import ADC0834
-       import time
+      from fusion_hat import Pin,ADC
+      from time import sleep
+
+   * ``fusion_hat`` is used for interfacing with the ADC module and LED Bar Graph.
+   * ``time`` is used for timing-related functions.
 
 2. **LED Initialization:**
 
-   * The GPIO pins for the LEDs are defined, and LED objects are initialized for easy control.
-
    .. code-block:: python
 
-       ledPins = [25, 12, 16, 20, 21, 5, 6, 13, 19, 26]
-       leds = [LED(pin) for pin in ledPins]
+      # Define GPIO pins where LEDs are connected
+      led_pins = [4, 17, 27, 22, 23, 24, 25, 5, 13, 26]
+
+      # Create LED objects for each pin
+      leds = [Pin(pin, Pin.OUT) for pin in led_pins]
+
+   * The GPIO pins for the LEDs are defined, and LED objects are initialized for easy control.
 
 3. **ADC Setup:**
 
-   * The ADC0834 module is initialized to enable analog-to-digital conversion.
-
    .. code-block:: python
 
-       ADC0834.setup()
+      # Set up the detection pin for the battery
+      btr = ADC('A0')
+
+   * The ADC object is initialized to enable analog-to-digital conversion.
 
 4. **Bar Graph Logic:**
-
-   * The ``LedBarGraph`` function turns on LEDs corresponding to the battery level.
 
    .. code-block:: python
 
@@ -199,20 +199,34 @@ This Python script uses an ADC0834 analog-to-digital converter to control a 10-L
            for i in range(value):
                leds[i].on()
 
+
+   * The ``LedBarGraph`` function turns on LEDs corresponding to the battery level.
+
+
+
 5. **Main Loop:**
 
-   * Continuously reads the analog value, scales it, and updates the LED bar graph.
-   * Handles a keyboard interrupt to ensure all LEDs are turned off before exiting.
 
    .. code-block:: python
 
-       try:
-           while True:
-               analogVal = ADC0834.getResult()
-               LedBarGraph(int(analogVal / 25))
-       except KeyboardInterrupt:
-           for led in leds:
-               led.off()
+      try:
+         # Main loop to continuously update LED bar graph
+         while True:
+            # Read voltage value 
+            voltage = btr.read_voltage()
+            print('voltage = %.2f' %(voltage))
+
+            # Convert analog value to LED bar graph level
+            LedBarGraph(int(MAP(voltage, 0, 3.3, 0, 10)))
+            sleep(0.5)
+            
+      except KeyboardInterrupt: 
+         # Turn off all LEDs when program is interrupted
+         for i in range(10):
+            leds[i].off()
+
+   * Continuously reads the voltage from the battery, scales it, and updates the LED bar graph.
+   * Handles a keyboard interrupt to ensure all LEDs are turned off before exiting.
 
 
 
@@ -228,23 +242,17 @@ This Python script uses an ADC0834 analog-to-digital converter to control a 10-L
      - Ensure each LED is connected to the correct GPIO pin listed in ``ledPins``.
      - Verify that the LEDs are functional and properly powered.
 
-2. **Analog Input Not Detected**:
-
-   - **Cause**: Faulty ADC0834 setup or sensor connection.
-   - **Solution**: Confirm the ADC0834 module is properly connected and initialized with ``ADC0834.setup()``.
-
-
-3. **LED Bar Graph Does Not Update**:
+2. **LED Bar Graph Does Not Update**:
 
    - **Cause**: Incorrect ADC value scaling or logic error in ``LedBarGraph``.
    - **Solution**:
 
-     - Verify that ``analogVal`` is being read correctly and scaled to the range 0-10.
+     - Verify that ``voltage`` is being read correctly and scaled to the range 0-10.
      - Add debug prints to confirm correct values:
        
        .. code-block:: python
 
-           print(f"Analog Value: {analogVal}, LEDs On: {int(analogVal / 25)}")
+           print(f"Analog Value: {voltage}, LEDs On: {int(MAP(voltage, 0, 3.3, 0, 10))}")
 
 
 4. **Flickering LEDs**:
@@ -262,34 +270,29 @@ This Python script uses an ADC0834 analog-to-digital converter to control a 10-L
 
 **Extendable Ideas**
 
-1. **Adjustable Brightness**: Use PWM to control the brightness of each LED based on the analog input value.
+1. **Real-Time Data Logging**: Log analog input values and corresponding LED levels to a file for analysis:
+
+   .. code-block:: python
+
+      with open("log.txt", "a") as log_file:
+            log_file.write(f"Analog Value: {voltage}, LEDs On: {int(MAP(voltage, 0, 3.3, 0, 10))}\n")
+
+2. **Interactive Control**: Use buttons or a rotary encoder to adjust the scaling factor or sensitivity of the bar graph.
+
+3. **Custom Threshold Alerts**: Trigger an alert (e.g., buzzer or flashing LEDs) when the analog value exceeds a threshold.
 
      .. code-block:: python
 
-         from gpiozero import PWMLED
-         leds = [PWMLED(pin) for pin in ledPins]
-         leds[i].value = analogVal / 255
-
-2. **Real-Time Data Logging**: Log analog input values and corresponding LED levels to a file for analysis:
-
-     .. code-block:: python
-
-         with open("log.txt", "a") as log_file:
-             log_file.write(f"Analog Value: {analogVal}, LEDs On: {int(analogVal / 25)}\n")
-
-3. **Interactive Control**: Use buttons or a rotary encoder to adjust the scaling factor or sensitivity of the bar graph.
-
-4. **Custom Threshold Alerts**: Trigger an alert (e.g., buzzer or flashing LEDs) when the analog value exceeds a threshold.
-
-     .. code-block:: python
-
-         if analogVal > 200:
-             for led in leds:
-                 led.blink(on_time=0.1, off_time=0.1)
+        if voltage > 2.5:
+            for led in leds:
+                led.on()
+                time.sleep(0.5)
+            for led in leds:
+                led.off()
 
 
 ----------------------------------------------
 
 **Conclusion**
 
-This battery indicator project demonstrates how to use an ADC module and an LED bar graph to visualize voltage levels. It’s a simple yet powerful tool to learn about analog voltage measurement and GPIO control. Try enhancing it with additional features like a digital readout or integrating it into a larger project for real-world applications.
+This battery indicator project demonstrates how to use the Fusion HAT and an LED bar graph to visualize voltage levels. It’s a simple yet powerful tool to learn about analog voltage measurement and GPIO control. Try enhancing it with additional features like a digital readout or integrating it into a larger project for real-world applications.

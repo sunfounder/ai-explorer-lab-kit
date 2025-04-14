@@ -23,29 +23,24 @@ The assistant is designed to be simple, intuitive, and useful for everyday tasks
 
 **What You’ll Need**
 
-The following components are required for this project:
-
+To complete this project, you will need the following components:
 
 .. list-table::
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT
+        - PURCHASE LINK
+
+
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_i2c_lcd`
+        - |link_i2clcd1602_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 ----------------------------------------------
@@ -115,10 +110,14 @@ The following components are required for this project:
    import time
    import json
    import requests
-   import LCD1602  # Import module for interfacing with LCD1602
+   # pip install requests
+
+   from fusion_hat import LCD1602  # Import module for interfacing with lcd
+
+   os.system("fusion_hat enable_speaker")
 
    # Initialize LCD with I2C address 0x27 and enable backlight
-   LCD1602.init(0x27, 1) 
+   lcd=LCD1602(0x27, 1) 
 
    # LCD Initialization
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
@@ -220,18 +219,18 @@ The following components are required for this project:
       Update the LCD display with weather information.
       """
       if not weather_data:
-         LCD1602.clear()
-         LCD1602.write(0, 0, "Weather Unavailable")
+         lcd.clear()
+         lcd.write(0, 0, "Weather Unavailable")
          return
 
       weather=weather_data["weather"][0]["main"]
       t=weather_data["main"]["temp"]
       rh=weather_data["main"]["humidity"]
 
-      LCD1602.clear() 
+      lcd.clear() 
       time.sleep(0.2)
-      LCD1602.write(0,0,f'{weather}')
-      LCD1602.write(0,1,f'{t}{"°C"} {rh}%rh')
+      lcd.write(0,0,f'{weather}')
+      lcd.write(0,1,f'{t}{"°C"} {rh}%rh')
 
    try:
       while True:
@@ -285,6 +284,7 @@ The following components are required for this project:
       client.beta.assistants.delete(assistant.id)
       print("Resources cleaned up.")
 
+
 ----------------------------------------------
 
 **Code Explanation**
@@ -301,19 +301,26 @@ The following components are required for this project:
    import time
    import json
    import requests
-   import LCD1602
+   from fusion_hat import LCD1602 
 
 * OpenAI API: Enables GPT-4 and Whisper integrations.
 * OpenWeatherMap API: Fetches real-time weather data.
 * LCD1602 Module: Interacts with the 16x2 LCD screen to display weather data.
 * SpeechRecognition: Captures audio from the microphone and processes it for text conversion.
 
-2. LCD and OpenAI Setup
+2. LCD, Speaker and OpenAI Setup
 
 .. code-block:: python
 
-   LCD1602.init(0x27, 1) 
+   os.system("fusion_hat enable_speaker")
+
+   # Initialize LCD with I2C address 0x27 and enable backlight
+   lcd=LCD1602(0x27, 1) 
+
+   # LCD Initialization
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
+   # OpenAI Assistant Setup
    assistant = client.beta.assistants.create(
       name="Weather Butler",
       instructions=(
@@ -323,11 +330,14 @@ The following components are required for this project:
       ),
       model="gpt-4-1106-preview",
    )
-   thread = client.beta.threads.create()
 
+   thread = client.beta.threads.create()
+   recognizer = sr.Recognizer()
+
+* Speaker Initialization: Enables the speaker on the Fusion HAT.
 * LCD Initialization: Sets up the LCD with the I2C address and enables the backlight.
 * OpenAI Assistant: Creates a GPT-4 assistant tailored to provide weather-based recommendations.
-
+* Thread and Recognizer: Initializes a thread for the assistant and a recognizer for speech-to-text conversion.
 
 3. Speech-to-Text Conversion
 
@@ -397,18 +407,18 @@ The following components are required for this project:
       Update the LCD display with weather information.
       """
       if not weather_data:
-         LCD1602.clear()
-         LCD1602.write(0, 0, "Weather Unavailable")
+         lcd.clear()
+         lcd.write(0, 0, "Weather Unavailable")
          return
 
       weather=weather_data["weather"][0]["main"]
       t=weather_data["main"]["temp"]
       rh=weather_data["main"]["humidity"]
 
-      LCD1602.clear() 
+      lcd.clear() 
       time.sleep(0.2)
-      LCD1602.write(0,0,f'{weather}')
-      LCD1602.write(0,1,f'{t}{"°C"} {rh}%rh')
+      lcd.write(0,0,f'{weather}')
+      lcd.write(0,1,f'{t}{"°C"} {rh}%rh')
 
 * Updates the LCD display with the retrieved weather data.
 

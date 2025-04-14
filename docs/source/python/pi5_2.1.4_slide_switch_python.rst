@@ -34,8 +34,6 @@ To complete this project, gather the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -48,6 +46,11 @@ To complete this project, gather the following components:
         - |link_slide_switch_buy|
     *   - :ref:`cpn_capacitor`
         - |link_capacitor_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
@@ -55,7 +58,6 @@ To complete this project, gather the following components:
 
 The Slide Switch middle pin is connected to GPIO17, while two LEDs are connected to GPIO22 and GPIO27. The switch toggles between the two LEDs, alternately lighting them up.
 
-.. image:: ../python/img/2.1.4_slide_switch_schematic_1.png
 
 .. image:: ../python/img/2.1.4_slide_switch_schematic_2.png
 
@@ -71,7 +73,11 @@ Follow these steps to build the circuit:
 4. Connect LED2’s anode to GPIO27 via a current-limiting resistor.
 5. Connect the cathodes of both LEDs to GND.
 
-.. image:: ../python/img/2.1.4_slide_switch_circuit.png
+.. image:: img/fzz/2.1.4_bb.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 
@@ -82,48 +88,44 @@ Here’s the Python code to control the LEDs based on the state of the Slide Swi
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import LED, Button  # Import LED and Button classes for GPIO control
-   from time import sleep  # Import sleep function for adding delays
+   from fusion_hat import Pin 
+   from time import sleep  # Import sleep for delay
 
-   # Initialize the slide switch on GPIO pin 17 with the pull-up resistor disabled
-   slide_switch = Button(17, pull_up=False)
-   # Initialize LED1 on GPIO pin 22
-   led1 = LED(22)
-   # Initialize LED2 on GPIO pin 27
-   led2 = LED(27)
+   # Initialize slider (Button) on GPIO pin 17
+   slider = Pin(17, Pin.IN, pull = Pin.PULL_DOWN) 
+
+   # Initialize LED1 connected to GPIO pin 22
+   led1 = Pin(22,Pin.OUT)
+   # Initialize LED2 connected to GPIO pin 27
+   led2 = Pin(27,Pin.OUT)
 
    try:
-       # Main loop to control LED states based on the slide switch's state
-       while True:
-           if slide_switch.is_pressed:  # Check if the slide switch is activated
-               print('    LED1 ON    ')  # Print status message
-               led1.on()   # Turn on LED1
-               led2.off()  # Turn off LED2
-           else:  # If the slide switch is not activated
-               print('    LED2 ON    ')  # Print status message
+      # Continuously monitor the state of the slider and control LEDs accordingly
+      while True:
+         if slider.value() == 1:  # Check if the slider is pressed
                led1.off()  # Turn off LED1
                led2.on()   # Turn on LED2
+         else:  # If the sensor is not pressed
+               led1.on()   # Turn on LED1
+               led2.off()  # Turn off LED2
 
-           sleep(0.5)  # Wait for 0.5 seconds before rechecking the switch state
+         sleep(0.5)  # Pause for 0.5 seconds before rechecking the sensor state
 
    except KeyboardInterrupt:
-       # Handle a keyboard interrupt (Ctrl+C) for a clean exit from the loop
-       pass
+      # Handle a keyboard interrupt (Ctrl+C) for a clean exit from the loop
+      pass
 
-
-This Python script demonstrates the use of a slide switch to control two LEDs on a Raspberry Pi. When executed:
+This Python script demonstrates the use of a slide switch to control two LEDs on the Fusion HAT. When executed:
 
 1. **Slide Switch Activated**:
 
-   - Prints "LED1 ON" to the console.
-   - Turns on LED1 (connected to GPIO pin 22).
-   - Turns off LED2 (connected to GPIO pin 27).
+   - Turns off LED1 (connected to GPIO pin 22).
+   - Turns on LED2 (connected to GPIO pin 27).
 
 2. **Slide Switch Not Activated**:
 
-   - Prints "LED2 ON" to the console.
-   - Turns off LED1.
-   - Turns on LED2.
+   - Turns on LED1.
+   - Turns off LED2.
 
 3. The program continuously checks the state of the slide switch every 0.5 seconds and adjusts the LEDs accordingly.
 
@@ -141,8 +143,8 @@ This Python script demonstrates the use of a slide switch to control two LEDs on
 
    .. code-block:: python
 
-       from gpiozero import LED, Button
-       from time import sleep
+      from fusion_hat import Pin 
+      from time import sleep  # Import sleep for delay
 
 2. **Component Initialization**
 
@@ -150,9 +152,13 @@ This Python script demonstrates the use of a slide switch to control two LEDs on
 
    .. code-block:: python
 
-       slide_switch = Button(17, pull_up=False)
-       led1 = LED(22)
-       led2 = LED(27)
+      # Initialize slider (Button) on GPIO pin 17
+      slider = Pin(17, Pin.IN, pull = Pin.PULL_DOWN) 
+
+      # Initialize LED1 connected to GPIO pin 22
+      led1 = Pin(22,Pin.OUT)
+      # Initialize LED2 connected to GPIO pin 27
+      led2 = Pin(27,Pin.OUT)
 
 3. **State Monitoring and LED Control**
 
@@ -160,14 +166,16 @@ This Python script demonstrates the use of a slide switch to control two LEDs on
 
    .. code-block:: python
 
-       while True:
-           if slide_switch.is_pressed:
-               led1.on()
-               led2.off()
-           else:
-               led1.off()
-               led2.on()
-           sleep(0.5)
+      # Continuously monitor the state of the slider and control LEDs accordingly
+      while True:
+         if slider.value() == 1:  # Check if the slider is pressed
+               led1.off()  # Turn off LED1
+               led2.on()   # Turn on LED2
+         else:  # If the sensor is not pressed
+               led1.on()   # Turn on LED1
+               led2.off()  # Turn off LED2
+
+         sleep(0.5)  # Pause for 0.5 seconds before rechecking the sensor state
 
 4. **Graceful Exit**
 
@@ -187,7 +195,7 @@ This Python script demonstrates the use of a slide switch to control two LEDs on
 1. **Slide Switch Does Not Respond**  
 
    - **Cause**: The slide switch is not connected properly, or the pull-up resistor configuration is incorrect.  
-   - **Solution**: Confirm that the slide switch is connected to GPIO pin 17 and ground. Ensure ``pull_up=False`` matches the active-low switch configuration.
+   - **Solution**: Confirm that the slide switch is connected to GPIO pin 17 and ground. Ensure ``PULL_DOWN`` matches the switch configuration.
 
 
 2. **LEDs Flicker or Behave Erratically**  
@@ -197,7 +205,7 @@ This Python script demonstrates the use of a slide switch to control two LEDs on
 
    .. code-block:: python
 
-      if slide_switch.is_pressed:
+      if slider.value() == 1:
          sleep(0.05)  # Debounce delay
 
 ----------------------------------------------
@@ -216,26 +224,12 @@ This Python script demonstrates the use of a slide switch to control two LEDs on
 
    .. code-block:: python
 
-      from gpiozero import Buzzer
-      buzzer = Buzzer(23)
-      if slide_switch.is_pressed:
+      from fusion_hat import Buzzer
+      buzzer = Buzzer(Pin(22))
+      if slider.value() == 1:
          buzzer.on()
       else:
          buzzer.off()
-
-
-3. **PWM Brightness Control**  
-
-   Use a PWMLED to adjust the brightness of an LED based on the slide switch's state:
-
-   .. code-block:: python
-
-      from gpiozero import PWMLED
-      led1 = PWMLED(22)
-      if slide_switch.is_pressed:
-         led1.value = 0.8  # 80% brightness
-      else:
-         led1.value = 0.2  # 20% brightness
 
 
 ----------------------------------------------
@@ -243,4 +237,4 @@ This Python script demonstrates the use of a slide switch to control two LEDs on
 
 **Conclusion**
 
-This project demonstrates how to use a Slide Switch with a Raspberry Pi to control LEDs. Slide Switches are versatile and durable components, often employed in user interfaces and control systems. Experimenting with them opens up possibilities for creating advanced and interactive projects.
+This project demonstrates how to use a Slide Switch with the Fusion HAT to control LEDs. Slide Switches are versatile and durable components, often employed in user interfaces and control systems. Experimenting with them opens up possibilities for creating advanced and interactive projects.

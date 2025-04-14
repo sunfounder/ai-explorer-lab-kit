@@ -17,10 +17,26 @@ This project is a real-time security monitoring system that utilizes a reed swit
 
 **What You’ll Need**
 
-- Raspberry Pi Zero 2 W
-- Reed switch (for door monitoring)
-- Motion sensor (PIR sensor)
-- Fusion HAT
+Below are the components required for this project:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - PIR Sensor
+        - 
+    *   - Reed Switch Module
+        - |link_reed_switch_buy|
+    *   - Wires
+        - |link_wires_buy|        
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 -----------------------------------------------------------
 

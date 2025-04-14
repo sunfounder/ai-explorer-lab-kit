@@ -3,6 +3,8 @@ Morse Code Decoder
 
 This project is a Morse code decoder that interprets button presses as Morse code signals. Short presses are recognized as dots, and long presses as dashes. The system collects these inputs and sends them to an OpenAI-powered assistant for decoding. Once decoded, the translated message is displayed on the console.
 
+----------------------------------------------
+
 **Features**
 
 - **Morse Code Input**: Button presses represent Morse code signals.
@@ -11,20 +13,51 @@ This project is a Morse code decoder that interprets button presses as Morse cod
 - **Start/Stop Button**: Controls the input session.
 - **LED Indicator**: Signals when Morse input is active.
 
+----------------------------------------------
+
 **What You’ll Need**
 
-- Raspberry Pi (or compatible hardware)
-- Micro Switch button for Morse code input
-- Separate button for start/stop functionality
-- LED for indicating input activity
+To complete this project, you will need the following components:
+
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_led`
+        - |link_led_buy|
+    *   - :ref:`cpn_button`
+        - |link_button_buy|
+    *   - :ref:`cpn_micro_switch`
+        - \-
+    *   - :ref:`cpn_capacitor`
+        - |link_capacitor_buy|        
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+----------------------------------------------
 
 **Wiring Diagram**
 
 *(Omitted for brevity)*
 
+----------------------------------------------
+
 **Code**
 
 *(Omitted for brevity)*
+
+----------------------------------------------
 
 **Code Explanation**
 
@@ -122,6 +155,8 @@ This project is structured into several key functional components:
        finally:
            client.beta.assistants.delete(assistant.id)
            print("\n Delete Assistant ID")
+
+----------------------------------------------
 
 **Debugging Tips**
 

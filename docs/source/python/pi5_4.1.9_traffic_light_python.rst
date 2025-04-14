@@ -35,8 +35,7 @@ The following components are required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -46,9 +45,13 @@ The following components are required for this project:
     *   - LEDs (Red, Green, Yellow)
         - |link_led_buy|
     *   - 4-Digit 7-Segment Display
-        - N/A
+        - 
     *   - 74HC595 Shift Register
         - |link_74hc595_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 
@@ -58,7 +61,7 @@ The following components are required for this project:
 
 Below is the schematic diagram for the traffic light simulation project:
 
-.. image:: ../python/img/4.1.12_traffic_light_schematic.png
+.. image:: ../python/img/4.1.12_tra
    :align: center
 
 
@@ -69,7 +72,10 @@ Below is the schematic diagram for the traffic light simulation project:
 
 Refer to the wiring diagram for assembling the components:
 
-.. image:: ../python/img/4.1.12_traffic_light_circuit.png
+
+.. image:: img/fzz/4.1.9_bb.png
+   :width: 800
+   :align: center
 
 
 
@@ -77,166 +83,125 @@ Refer to the wiring diagram for assembling the components:
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.12_TrafficLight_zero.py
-
-   Once the program is running:
-
-   * The red LED will light up for 60 seconds, followed by the green LED for 30 seconds, and the yellow LED for 5 seconds.
-   * This sequence repeats continuously, with the 4-digit 7-segment display showing the countdown for each state.
-
-
-----------------------------------------------
-
-
-**Code**
 
 Here is the Python script for the traffic light simulation:
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
+   #!/usr/bin/env python3
 
-    from gpiozero import OutputDevice, LED
-    import threading
+   from fusion_hat import Pin
+   import threading
 
-    # Setup GPIO pins for 74HC595 shift register
-    SDI = OutputDevice(24)   # Serial Data Input
-    RCLK = OutputDevice(23)  # Register Clock
-    SRCLK = OutputDevice(18) # Shift Register Clock
+   # Setup GPIO pins for 74HC595 shift register
+   SDI = Pin(17,Pin.OUT)   # Serial Data Input
+   RCLK = Pin(4,Pin.OUT)  # Register Clock
+   SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
-    # Setup GPIO pins for digit selection on 7-segment display
-    placePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]
+   # Define GPIO pins for digit selection on the 7-segment display
+   placePin = [Pin(pin,Pin.OUT) for pin in (23, 24, 25, 12)]
 
-    # Segment codes for numbers 0-9 on 7-segment display
-    number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)
+   # Segment codes for numbers 0-9 on 7-segment display
+   number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)
 
-    # Setup GPIO pins for traffic light LEDs
-    ledPinR = LED(25) # Red LED
-    ledPinG = LED(8)  # Green LED
-    ledPinY = LED(7)  # Yellow LED
+   # Setup GPIO pins for traffic light LEDs
+   ledPinR = Pin(5,Pin.OUT) # Red LED
+   ledPinG = Pin(6,Pin.OUT)  # Green LED
+   ledPinY = Pin(13,Pin.OUT)  # Yellow LED
 
-    # Duration settings for traffic lights
-    greenLight = 30
-    yellowLight = 5
-    redLight = 60
+   # Duration settings for traffic lights
+   greenLight = 30
+   yellowLight = 5
+   redLight = 60
 
-    # Traffic light color names
-    lightColor = ("Red", "Green", "Yellow")
+   # Traffic light color names
+   lightColor = ("Red", "Green", "Yellow")
 
-    # Initialize state variables
-    colorState = 0
-    counter = redLight
-    timer1 = None
+   # Initialize state variables
+   colorState = 0
+   counter = 60
+   timer1 = None
 
-    def setup():
-        """ Initialize the traffic light system and start the timer. """
-        global timer1
-        timer1 = threading.Timer(1.0, timer)
-        timer1.start()
+   def setup():
+      """ Initialize the traffic light system and start the timer. """
+      global timer1
+      timer1 = threading.Timer(1.0, timer)
+      timer1.start()
 
-    def clearDisplay():
-        """ Clear the 7-segment display. """
-        for _ in range(8):
-            SDI.on()
-            SRCLK.on()
-            SRCLK.off()
-        RCLK.on()
-        RCLK.off()
+   def clearDisplay():
+      """ Clear the 7-segment display. """
+      for _ in range(8):
+         SDI.high()
+         SRCLK.high()
+         SRCLK.low()
+      RCLK.high()
+      RCLK.low()
 
-    def hc595_shift(data):
-        """ Shift data to the 74HC595 shift register for digit display. """
-        for i in range(8):
-            SDI.value = 0x80 & (data << i)
-            SRCLK.on()
-            SRCLK.off()
-        RCLK.on()
-        RCLK.off()
+   def hc595_shift(data):
+      """ Shift data to the 74HC595 shift register for digit display. """
+      for i in range(8):
+         SDI.value(0x80 & (data << i))
+         SRCLK.high()
+         SRCLK.low()
+      RCLK.high()
+      RCLK.low()
 
-    def pickDigit(digit):
-        """ Select a specific digit to display on the 7-segment display. """
-        for pin in placePin:
-            pin.off()
-        placePin[digit].on()
+   def pickDigit(digit):
+      """ Select a specific digit to display on the 7-segment display. """
+      for pin in placePin:
+         pin.low()
+      placePin[digit].high()
 
-    def timer():
-        """ Handle the timing for traffic light changes. """
-        global counter, colorState, timer1
-        timer1 = threading.Timer(1.0, timer)
-        timer1.start()
-        counter -= 1
-        if counter == 0:
-            counter = [redLight, greenLight, yellowLight][colorState]
-            colorState = (colorState + 1) % 3
-        print(f"Counter: {counter}, Current Light: {lightColor[colorState]}")
+   def timer():
+      """ Handle the timing for traffic light changes. """
+      global counter, colorState, timer1
+      timer1 = threading.Timer(1.0, timer)
+      timer1.start()
+      counter -= 1
+      if counter == 0:
+         counter = [greenLight, yellowLight, redLight][colorState]
+         colorState = (colorState + 1) % 3
+      print(f"counter : {counter}    color: {lightColor[colorState]}")
 
-    def lightup():
-        """ Update the traffic light LED based on the current state. """
-        ledPinR.off()
-        ledPinG.off()
-        ledPinY.off()
-        [ledPinR, ledPinG, ledPinY][colorState].on()
+   def lightup():
+      """ Update the traffic light LED based on the current state. """
+      global colorState
+      ledPinR.low()
+      ledPinG.low()
+      ledPinY.low()
+      [ledPinR, ledPinG, ledPinY][colorState].high()
 
-    def display():
-        """ Display the current counter value on the 7-segment display. """
-        global counter
-        for i in range(4):
-            digit = counter // (10 ** (3 - i)) % 10
-            clearDisplay()
-            pickDigit(3 - i)
-            hc595_shift(number[digit])
+   def display():
+      """ Display the current counter value on the 7-segment display. """
+      global counter
 
-    def loop():
-        """ Main loop to continuously update display and lights. """
-        while True:
-            display()
-            lightup()
+      for i in range(4):
+         digit = counter // (10 ** (3 - i)) % 10
+         if i == 0 and digit == 0:
+               continue
+         clearDisplay()
+         pickDigit(3 - i)
+         hc595_shift(number[digit])
 
-    def destroy():
-        """ Clean up resources when the script is terminated. """
-        global timer1
-        timer1.cancel()
-        ledPinR.off()
-        ledPinG.off()
-        ledPinY.off()
+   def loop():
+      """ Main loop to continuously update display and lights. """
+      while True:
+         display()
+         lightup()
 
-    try:
-        setup()
-        loop()
-    except KeyboardInterrupt:
-        destroy()
+   def destroy():
+      """ Clean up resources when the script is terminated. """
+      global timer1
+      timer1.cancel()
+      ledPinR.low()
+      ledPinG.low()
+      ledPinY.low()
 
-This Python script simulates a traffic light system with a countdown timer displayed on a 7-segment display. It includes the following functionalities:
-
-1. **Traffic Light Control**:
-
-   - Three LEDs (Red, Green, Yellow) represent the traffic lights.
-   - The traffic light cycles through:
-
-     - Red light for 60 seconds.
-     - Green light for 30 seconds.
-     - Yellow light for 5 seconds.
-
-2. **Countdown Display**:
-
-   - A 4-digit 7-segment display shows the remaining time for the current light.
-   - The display updates in real-time, counting down every second.
-
-3. **State Management** The traffic light and countdown automatically transition between states based on the configured durations.
-
-4. **Continuous Operation** The system continuously runs the traffic light cycle, updating the LEDs and display.
-
-5. **Graceful Exit** On ``Ctrl+C``, the timer stops, LEDs turn off, and the script exits cleanly.
-
+   try:
+      setup()
+      loop()
+   except KeyboardInterrupt:
+      destroy()
 
 ----------------------------------------------
 
@@ -281,7 +246,7 @@ This Python script simulates a traffic light system with a countdown timer displ
    - **Cause**: Incorrect wiring or faulty LEDs.
    - **Solution**:
 
-     - Verify that the LEDs are correctly connected to GPIO pins 25 (Red), 8 (Green), and 7 (Yellow).
+     - Verify that the LEDs are correctly connected to GPIO pins 5 (Red), 6 (Green), and 13 (Yellow).
      - Test each LED individually using a simple GPIO control script.
 
 2. **7-Segment Display Does Not Show Countdown**:
@@ -289,7 +254,7 @@ This Python script simulates a traffic light system with a countdown timer displ
    - **Cause**: Incorrect wiring or shift register configuration.
    - **Solution**:
 
-     - Ensure the shift register's ``SDI``, ``RCLK``, and ``SRCLK`` pins are properly connected to GPIO 24, 23, and 18, respectively.
+     - Ensure the shift register's ``SDI``, ``RCLK``, and ``SRCLK`` pins are properly connected to GPIO 17, 4, and 27, respectively.
      - Verify the digit selection pins match the ``placePin`` configuration.
 
 3. **Countdown Timer Freezes**:
@@ -312,25 +277,25 @@ This Python script simulates a traffic light system with a countdown timer displ
 
 1. **Pedestrian Crossing**: Add a pedestrian crossing button that temporarily interrupts the traffic cycle to allow pedestrians to cross safely.
 
-     .. code-block:: python
+   .. code-block:: python
 
-         from gpiozero import Button
-         pedestrian_button = Button(2)
+      from fusion_hat import Pin
+      pedestrian_button = Pin(22, Pin.IN, Pin.PULL_DOWN)
 
-         def handle_pedestrian():
-             global colorState, counter
-             if colorState == 1:  # If Green Light
-                 counter = 5  # Shorten green light duration
-         pedestrian_button.when_pressed = handle_pedestrian
+      def handle_pedestrian():
+            global colorState, counter
+            if colorState == 1:  # If Green Light
+               counter = 5  # Shorten green light duration
+      pedestrian_button.when_activated = handle_pedestrian
 
 2. **Adaptive Timing**: Adjust the durations of the traffic lights dynamically based on real-time traffic density.
 
 3. **Event Logging**: Log traffic light state changes with timestamps to a file for analysis:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         with open("traffic_log.txt", "a") as log_file:
-             log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {lightColor[colorState]} light\n")
+      with open("traffic_log.txt", "a") as log_file:
+            log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {lightColor[colorState]} light\n")
 
 ----------------------------------------------
 

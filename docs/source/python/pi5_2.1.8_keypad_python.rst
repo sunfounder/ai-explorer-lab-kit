@@ -32,18 +32,17 @@ Here are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - Keypad
-      - 
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - Keypad
+        - 
+    *   - Wires
+        - |link_wires_buy|  
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -52,9 +51,7 @@ Here are the components required for this project:
 
 Below are the schematic diagrams for the project:
 
-.. image:: ../python/img/2.1.8_keypad_chematic_1.png
-
-.. image:: ../python/img/2.1.8_keypad_chematic_2.png
+.. image:: ../python/img/
 
 
 ----------------------------------------------
@@ -63,7 +60,11 @@ Below are the schematic diagrams for the project:
 
 Connect the components as shown in the wiring diagram below:
 
-.. image:: ../python/img/2.1.8_keypad_circuit.png
+.. image:: img/fzz/2.1.8_bb.png
+   :width: 800
+   :align: center
+
+
 
 Ensure that all connections are secure and that the GPIO pins are correctly assigned to the rows and columns of the keypad.
 
@@ -72,85 +73,39 @@ Ensure that all connections are secure and that the GPIO pins are correctly assi
 
 **Writing the Code**
 
-To run the program, follow these steps:
-
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 2.1.8_Keypad_zero.py
-
-When the script is executed, the values of pressed buttons on the keypad will be printed on the screen in real time.
-
-.. warning::
-    If you encounter the error ``RuntimeError: Cannot determine SOC peripheral base address``, refer to the :ref:`faq_soc` for troubleshooting steps.
-
-
-----------------------------------------------
-
-**Code**
-
 Below is the Python code used for this project:
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
-   from gpiozero import DigitalOutputDevice, Button
+   from fusion_hat import Keypad
    from time import sleep
 
-   class Keypad:
-       def __init__(self, rows_pins, cols_pins, keys):
-           """
-           Initialize the Keypad with specified row and column pins and keypad layout.
-           :param rows_pins: List of GPIO pins for the rows.
-           :param cols_pins: List of GPIO pins for the columns.
-           :param keys: List of keys in the keypad layout.
-           """
-           self.rows = [DigitalOutputDevice(pin) for pin in rows_pins]  # Initialize row pins
-           self.cols = [Button(pin, pull_up=False) for pin in cols_pins]  # Initialize column pins
-           self.keys = keys  # Set the keypad layout
-
-       def read(self):
-           """
-           Read the currently pressed keys on the keypad.
-           :return: A list of pressed keys.
-           """
-           pressed_keys = []
-           for i, row in enumerate(self.rows):
-               row.on()  # Activate the current row
-               for j, col in enumerate(self.cols):
-                   if col.is_pressed:  # Check if a column button is pressed
-                       index = i * len(self.cols) + j
-                       pressed_keys.append(self.keys[index])  # Get the corresponding key
-               row.off()  # Deactivate the row
-           return pressed_keys
-
    try:
-       rows_pins = [18, 23, 24, 25]
-       cols_pins = [10, 22, 27, 17]
-       keys = ["1", "2", "3", "A",
+      # Configure rows, columns, and keypad layout
+      # pin from left to right - 4 17 27 22 23 24 25 12
+      rows_pins = [4, 17, 27, 22]
+      cols_pins = [23, 24, 25, 12]
+      keys = ["1", "2", "3", "A",
                "4", "5", "6", "B",
                "7", "8", "9", "C",
                "*", "0", "#", "D"]
 
-       keypad = Keypad(rows_pins, cols_pins, keys)
-       last_key_pressed = []
+      # Create an instance of the Keypad class
+      keypad = Keypad(rows_pins, cols_pins, keys)
+      last_key_pressed = []
 
-       while True:
-           pressed_keys = keypad.read()
-           if pressed_keys and pressed_keys != last_key_pressed:
-               print(pressed_keys)  # Display the pressed keys
+
+      # Continuously read the keypad and print newly pressed keys
+      while True:
+         pressed_keys = keypad.read()
+         if pressed_keys and pressed_keys != last_key_pressed:
+               print(pressed_keys)  # Print the list of pressed keys
                last_key_pressed = pressed_keys
-           sleep(0.1)  # Delay to reduce CPU usage
+         sleep(0.1)  # Short delay to reduce CPU load
 
    except KeyboardInterrupt:
-       pass  # Graceful exit on Ctrl+C
+      # Handle a keyboard interrupt (Ctrl+C) for a clean exit
+      pass
 
 
 The provided Python script implements a 4x4 keypad using the GPIO pins of a Raspberry Pi. When executed:
@@ -176,57 +131,43 @@ The provided Python script implements a 4x4 keypad using the GPIO pins of a Rasp
 **Understanding the Code**
 
 1. **Imports:**
-   The script uses ``gpiozero`` for GPIO control and ``time`` for implementing delays.
 
    .. code-block:: python
 
-       from gpiozero import DigitalOutputDevice, Button
-       from time import sleep
+      from fusion_hat import Keypad
+      from time import sleep
 
-2. **Keypad Class:**
-   The ``Keypad`` class handles row activation, column detection, and key mapping.
+   The script uses ``fusion_hat`` for Keypad control and ``time`` for implementing delays.
 
-   .. code-block:: python
-
-       class Keypad:
-           def __init__(self, rows_pins, cols_pins, keys):
-               self.rows = [DigitalOutputDevice(pin) for pin in rows_pins]
-               self.cols = [Button(pin, pull_up=False) for pin in cols_pins]
-               self.keys = keys
-
-           def read(self):
-               pressed_keys = []
-               for i, row in enumerate(self.rows):
-                   row.on()
-                   for j, col in enumerate(self.cols):
-                       if col.is_pressed:
-                           index = i * len(self.cols) + j
-                           pressed_keys.append(self.keys[index])
-                   row.off()
-               return pressed_keys
-
-3. **Main Script:**
-
-   - Configures GPIO pins for the rows and columns.
-   - Defines the keypad layout.
-   - Continuously reads and prints pressed keys.
+2. **Main Script:**
 
    .. code-block:: python
 
-       rows_pins = [18, 23, 24, 25]
-       cols_pins = [10, 22, 27, 17]
-       keys = ["1", "2", "3", "A",
+      # Configure rows, columns, and keypad layout
+      # pin from left to right - 4 17 27 22 23 24 25 12
+      rows_pins = [4, 17, 27, 22]
+      cols_pins = [23, 24, 25, 12]
+      keys = ["1", "2", "3", "A",
                "4", "5", "6", "B",
                "7", "8", "9", "C",
                "*", "0", "#", "D"]
 
-       keypad = Keypad(rows_pins, cols_pins, keys)
+      # Create an instance of the Keypad class
+      keypad = Keypad(rows_pins, cols_pins, keys)
+      last_key_pressed = []
 
-       while True:
-           pressed_keys = keypad.read()
-           if pressed_keys:
-               print(pressed_keys)
-           sleep(0.1)
+
+      # Continuously read the keypad and print newly pressed keys
+      while True:
+         pressed_keys = keypad.read()
+         if pressed_keys and pressed_keys != last_key_pressed:
+               print(pressed_keys)  # Print the list of pressed keys
+               last_key_pressed = pressed_keys
+         sleep(0.1)  # Short delay to reduce CPU load
+
+   - Configures pins for the rows and columns.
+   - Defines the keypad layout.
+   - Continuously reads and prints pressed keys.
 
 
 ----------------------------------------------
@@ -244,17 +185,6 @@ The provided Python script implements a 4x4 keypad using the GPIO pins of a Rasp
    - **Cause**: Keypad layout mismatch with ``keys`` or row/column order.  
    - **Solution**: Ensure the ``keys`` list matches the physical keypad layout. Double-check row and column pin order.
 
-3. **Multiple Keys Detected as Pressed**:
-
-   - **Cause**: Signal interference or bouncing.  
-   - **Solution**: Introduce a debounce mechanism:
-     
-     .. code-block:: python
-
-         if col.is_pressed:
-             sleep(0.05)  # Debounce delay
-             if col.is_pressed:
-                 pressed_keys.append(self.keys[index])
 
 ----------------------------------------------
 
@@ -270,14 +200,14 @@ The provided Python script implements a 4x4 keypad using the GPIO pins of a Rasp
 
 2. **LED or Buzzer Feedback**: Provide visual or auditory feedback when keys are pressed:
      
-     .. code-block:: python
+      .. code-block:: python
 
-         from gpiozero import Buzzer
-         buzzer = Buzzer(5)
+         from fusion_hat import Pin
+         led = Pin(26, Pin.OUT)
          if pressed_keys:
-             buzzer.on()
-             sleep(0.1)
-             buzzer.off()
+            led.on()
+            sleep(0.1)
+            led.off()
 
 
 3. **Event Trigger**: Trigger specific actions based on key presses, such as controlling appliances.
@@ -286,4 +216,4 @@ The provided Python script implements a 4x4 keypad using the GPIO pins of a Rasp
 
 **Conclusion**
 
-This experiment demonstrates how to interface a keypad with a Raspberry Pi and process input in Python. By understanding how the row-column scanning method works, you can build interactive applications like access control systems, calculators, or custom input devices.
+This experiment demonstrates how to interface a keypad with a Fusion HAT and process input in Python. By understanding how the row-column scanning method works, you can build interactive applications like access control systems, calculators, or custom input devices.

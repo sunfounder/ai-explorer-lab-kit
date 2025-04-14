@@ -33,16 +33,17 @@ Here are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Ultrasonic Sensor Module
-      - |link_ultrasonic_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+    *   - Wires
+        - |link_wires_buy|
+    *   - Ultrasonic Sensor Module
+        - |link_ultrasonic_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 
 ----------------------------------------------
@@ -52,7 +53,7 @@ Here are the components required for this project:
 
 Below is the schematic diagram for the ultrasonic sensor module:
 
-.. image:: ../python/img/2.2.8_ultrasonic_schematic.png
+.. image:: ../python/img/2.2.8_ultra
 
 
 
@@ -62,9 +63,11 @@ Below is the schematic diagram for the ultrasonic sensor module:
 
 Assemble the circuit as shown in the diagram below:
 
-.. image:: ../python/img/2.2.8_ultrasonic_circuit.png
+.. image:: img/fzz/2.2.7_bb.png
+   :width: 800
+   :align: center
 
-Ensure the connections are secure, with the Echo pin connected to GPIO 24 and the Trigger pin to GPIO 23 of the Raspberry Pi.
+Ensure the connections are secure, with the Echo pin connected to GPIO 22 and the Trigger pin to GPIO 27 of the Raspberry Pi.
 
 
 ----------------------------------------------
@@ -72,56 +75,33 @@ Ensure the connections are secure, with the Echo pin connected to GPIO 24 and th
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 2.2.8_Ultrasonic_zero.py
-
-Once the script is running: The ultrasonic sensor detects the distance to the nearest obstacle and prints the measured distance on the screen in centimeters.
-
-.. warning::
-    If you encounter the error ``RuntimeError: Cannot determine SOC peripheral base address``, refer to the :ref:`faq_soc` for troubleshooting steps.
-
-
-----------------------------------------------
-
-
-**Code**
 
 Below is the Python code for this project:
 
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import DistanceSensor
+   from fusion_hat import Ultrasonic,Pin
    from time import sleep
 
-   # Initialize the DistanceSensor using GPIO Zero library
-   # Trigger pin is connected to GPIO 23, Echo pin to GPIO 24
-   sensor = DistanceSensor(echo=24, trigger=23)
+   # Initialize the DistanceSensor
+   # Trigger pin is connected to GPIO 27, Echo pin to GPIO 22
+   sensor = Ultrasonic(trig=Pin(27), echo=Pin(22))
 
    try:
-       # Main loop to continuously measure and report distance
-       while True:
-           dis = sensor.distance * 100  # Measure distance and convert from meters to centimeters
-           print('Distance: {:.2f} cm'.format(dis))  # Print the distance with two decimal precision
-           sleep(0.3)  # Wait for 0.3 seconds before the next measurement
+      # Main loop to continuously measure and report distance
+      while True:
+         dis = sensor.read() # Measure distance in centimeters
+         print('Distance: {:.2f} cm'.format(dis))  # Print the distance with two decimal precision
+         sleep(0.3)  # Wait for 0.3 seconds before the next measurement
 
    except KeyboardInterrupt:
-       # Handle KeyboardInterrupt (Ctrl+C) to gracefully exit the loop
-       pass
-
+      # Handle KeyboardInterrupt (Ctrl+C) to gracefully exit the loop
+      pass
 
 This Python script uses an ultrasonic distance sensor to measure the distance to an object and displays the result on the console. When executed:
 
-1. The sensor, connected to GPIO pins 23 (trigger) and 24 (echo), continuously measures the distance to the nearest object.
+1. The sensor, connected to GPIO pins 27 (trigger) and 22 (echo), continuously measures the distance to the nearest object.
 2. The distance is calculated in meters and converted to centimeters, then displayed in the format: ``Distance: <value> cm`` with two decimal places of precision.
 3. The distance is updated every 0.3 seconds, allowing for near real-time monitoring.
 4. The program runs indefinitely until interrupted with ``Ctrl+C``, at which point it exits gracefully.
@@ -134,34 +114,39 @@ This Python script uses an ultrasonic distance sensor to measure the distance to
 
 1. **Imports:**
 
-   The script imports the ``DistanceSensor`` class from the ``gpiozero`` library to interact with the ultrasonic sensor and the ``sleep`` function from the ``time`` module to introduce delays.
 
    .. code-block:: python
 
-       from gpiozero import DistanceSensor
-       from time import sleep
+      from fusion_hat import Ultrasonic,Pin
+      from time import sleep
+
+   The script imports the ``Ultrasonic`` class from the ``fusion_hat`` library to interact with the ultrasonic sensor and the ``sleep`` function from the ``time`` module to introduce delays.
+
 
 2. **Initialization:**
 
-   The ultrasonic sensor is initialized with the Echo pin connected to GPIO 24 and the Trigger pin to GPIO 23. This setup enables the Raspberry Pi to send and receive ultrasonic signals.
+   .. code-block:: python
+
+      sensor = Ultrasonic(trig=Pin(27), echo=Pin(22))
+
+   The ultrasonic sensor is initialized with the Echo pin connected to GPIO 22 and the Trigger pin to GPIO 27. This setup enables the Raspberry Pi to send and receive ultrasonic signals.
+
+3. **Main Loop:**
+
 
    .. code-block:: python
 
-       sensor = DistanceSensor(echo=24, trigger=23)
-
-3. **Main Loop:**
+      while True:
+         dis = sensor.read() # Measure distance in centimeters
+         print('Distance: {:.2f} cm'.format(dis))  # Print the distance with two decimal precision
+         sleep(0.3)  # Wait for 0.3 seconds before the next measurement
 
    * Continuously measures the distance to the nearest object.
    * Converts the distance from meters to centimeters.
    * Prints the distance with two decimal places of precision.
    * Includes a 0.3-second delay to allow the sensor to stabilize between measurements.
 
-   .. code-block:: python
 
-       while True:
-           dis = sensor.distance * 100  # Convert distance to centimeters
-           print('Distance: {:.2f} cm'.format(dis))
-           sleep(0.3)
 
 4. **Graceful Exit:**
 
@@ -169,8 +154,8 @@ This Python script uses an ultrasonic distance sensor to measure the distance to
 
    .. code-block:: python
 
-       except KeyboardInterrupt:
-           pass
+      except KeyboardInterrupt:
+         pass
 
 
 ----------------------------------------------
@@ -183,8 +168,8 @@ This Python script uses an ultrasonic distance sensor to measure the distance to
    - **Cause**: The sensor is not properly connected or powered.
    - **Solution**:
 
-      - Ensure the trigger pin is connected to GPIO 23 and the echo pin to GPIO 24.
-      - Verify that the sensor has a stable power supply (usually 5V or 3.3V depending on the model).
+      - Ensure the trigger pin is connected to GPIO 27 and the echo pin to GPIO 22.
+      - Verify that the sensor has a stable power supply.
 
 2. **Constant or Incorrect Distance Values**:
 
@@ -216,26 +201,13 @@ This Python script uses an ultrasonic distance sensor to measure the distance to
 
   .. code-block:: python
 
-      from gpiozero import Buzzer
-      buzzer = Buzzer(27)
+      from fusion_hat import Buzzer
+      buzzer = Buzzer(Pin(4))
       if dis < 10:
-          buzzer.on()
+         buzzer.on()
       else:
-          buzzer.off()
+         buzzer.off()
 
-3. **LED Indicators**: Use LEDs to indicate distance ranges:
-
-  .. code-block:: python
-
-      from gpiozero import LED
-      green_led = LED(17)
-      red_led = LED(18)
-      if dis < 10:
-          red_led.on()
-          green_led.off()
-      else:
-          green_led.on()
-          red_led.off()
 
 ----------------------------------------------
 

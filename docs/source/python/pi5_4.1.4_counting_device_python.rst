@@ -35,8 +35,7 @@ The following components are required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -44,11 +43,16 @@ The following components are required for this project:
     *   - Resistors
         - |link_resistor_buy|
     *   - 4-Digit 7-Segment Display
-        - Not Applicable
+        - 
     *   - 74HC595 Shift Register
         - |link_74hc595_buy|
     *   - PIR Motion Sensor
-        - Not Applicable
+        - 
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 
 ----------------------------------------------
@@ -58,7 +62,7 @@ The following components are required for this project:
 
 Below is the circuit diagram for the project:
 
-.. image:: ../python/img/4.1.7_counting_device_schematic.png
+.. image:: ../python/img/4.1.7
    :align: center
 
 
@@ -69,28 +73,11 @@ Below is the circuit diagram for the project:
 
 Follow the wiring diagram to connect the components correctly:
 
-.. image:: ../python/img/4.1.7_counting_device_circuit.png
+
+.. image:: img/fzz/4.1.4_bb.png
+   :width: 800
    :align: center
 
-
-----------------------------------------------
-
-
-**Writing the Code**
-
-1. Open the Raspberry Pi terminal and navigate to the code directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.7_CountingDevice_zero.py
-
-Once the script runs, the number displayed on the 4-digit 7-segment display will increment by 1 each time the PIR sensor detects motion.
 
 .. note::
 
@@ -101,98 +88,101 @@ Once the script runs, the number displayed on the 4-digit 7-segment display will
    :align: center
 
 
+
 ----------------------------------------------
 
 
-**Code**
+**Writing the Code**
+
 
 Below is the Python script used in this project:
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
-    from gpiozero import OutputDevice, MotionSensor
+   #!/usr/bin/env python3
+   from fusion_hat import Pin
 
-    # Initialize PIR motion sensor on GPIO 26
-    pir = MotionSensor(26)
+   # Initialize PIR motion sensor on GPIO 22
+   pir = Pin(22, Pin.IN, pull= Pin.PULL_DOWN)
 
-    # Initialize shift register pins
-    SDI = OutputDevice(24)    # Serial Data Input
-    RCLK = OutputDevice(23)   # Register Clock Input
-    SRCLK = OutputDevice(18)  # Shift Register Clock Input
+   # Define GPIO pins for the 74HC595 shift register
+   SDI = Pin(17,Pin.OUT)   # Serial Data Input
+   RCLK = Pin(4,Pin.OUT)  # Register Clock
+   SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
-    # Initialize 7-segment display pins
-    placePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]
+   # Define GPIO pins for digit selection on the 7-segment display
+   placePin = [Pin(pin,Pin.OUT) for pin in (23, 24, 25, 12)]
 
-    # Define digit codes for 7-segment display
-    number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)
+   # Define digit codes for 7-segment display
+   number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)
 
-    # Counter for the displayed number
-    counter = 0
+   # Counter for the displayed number
+   counter = 0
 
-    def clearDisplay():
-        """Clears the display by turning off all segments."""
-        for _ in range(8):
-            SDI.on()
-            SRCLK.on()
-            SRCLK.off()
-        RCLK.on()
-        RCLK.off()
+   def clearDisplay():
+      """ Clear the 7-segment display. """
+      for _ in range(8):
+         SDI.high()
+         SRCLK.high()
+         SRCLK.low()
+      RCLK.high()
+      RCLK.low()
 
-    def hc595_shift(data):
-        """Shifts data into the 74HC595 shift register."""
-        for i in range(8):
-            SDI.value = 0x80 & (data << i)
-            SRCLK.on()
-            SRCLK.off()
-        RCLK.on()
-        RCLK.off()
+   def hc595_shift(data):
+      """ Shift a byte of data to the 74HC595 shift register. """
+      for i in range(8):
+         SDI.value(0x80 & (data << i))  # Set SDI high/low based on data bit
+         SRCLK.high()  # Pulse the Shift Register Clock
+         SRCLK.low()
+      RCLK.high()  # Latch data on the output by pulsing Register Clock
+      RCLK.low()
 
-    def pickDigit(digit):
-        """Activates a specific digit of the 7-segment display."""
-        for pin in placePin:
-            pin.off()
-        placePin[digit].on()
+   def pickDigit(digit):
+      """ Select a digit for display on the 7-segment display. """
+      for pin in placePin:
+         pin.low()  # Turn off all digit selection pins
+      placePin[digit].high()  # Turn on the selected digit
 
-    def display():
-        """Updates the 7-segment display with the current counter value."""
-        global counter
-        clearDisplay()
-        pickDigit(0)
-        hc595_shift(number[counter % 10])
 
-        clearDisplay()
-        pickDigit(1)
-        hc595_shift(number[counter % 100 // 10])
+   def display():
+      # Updates the display with the current counter value
+      global counter
+      clearDisplay()
+      pickDigit(0)
+      hc595_shift(number[counter % 10])
 
-        clearDisplay()
-        pickDigit(2)
-        hc595_shift(number[counter % 1000 // 100])
+      clearDisplay()
+      pickDigit(1)
+      hc595_shift(number[counter % 100//10])
 
-        clearDisplay()
-        pickDigit(3)
-        hc595_shift(number[counter % 10000 // 1000])
+      clearDisplay()
+      pickDigit(2)
+      hc595_shift(number[counter % 1000//100])
 
-    def loop():
-        """Main loop to update the display and check for motion."""
-        global counter
-        currentState = 0
-        lastState = 0
-        while True:
-            display()
-            currentState = 1 if pir.motion_detected else 0
-            if currentState == 1 and lastState == 0:
-                counter += 1
-            lastState = currentState
+      clearDisplay()
+      pickDigit(3)
+      hc595_shift(number[counter % 10000//1000])
 
-    try:
-        loop()
-    except KeyboardInterrupt:
-        # Turn off all pins when the script is interrupted
-        SDI.off()
-        SRCLK.off()
-        RCLK.off()
-        pass
+   def loop():
+      # Main loop to update display and check for motion
+      global counter
+      currentState = 0
+      lastState = 0
+      while True:
+         display()
+         currentState = 1 if pir.value()==1 else 0
+         if currentState == 1 and lastState == 0:
+               counter += 1
+         lastState = currentState
+
+   try:
+      loop()
+   except KeyboardInterrupt:
+      # Turn off all pins when the script is interrupted
+      SDI.low()
+      SRCLK.low()
+      RCLK.low()
+      pass
 
 This Python script integrates a PIR motion sensor and a 7-segment display driven by a 74HC595 shift register. The script performs the following:
 
@@ -256,14 +246,13 @@ This Python script integrates a PIR motion sensor and a 7-segment display driven
    - **Cause**: Motion sensor state changes not detected.
    - **Solution**:
 
-     - Ensure the ``pir.motion_detected`` value updates correctly.
+     - Ensure the ``pir.value()`` value updates correctly.
      - Add debugging prints to confirm state transitions in the ``loop()`` function.
 
 4. **Flickering Display**:
 
    - **Cause**: Insufficient delay or improper timing in the display update.
-   - **Solution**:
-     - Add a small delay in the ``display()`` function to stabilize the display:
+   - **Solution**: Add a small delay in the ``display()`` function to stabilize the display:
 
        .. code-block:: python
 
@@ -276,37 +265,37 @@ This Python script integrates a PIR motion sensor and a 7-segment display driven
 
 1. **Bidirectional Counter**: Add another PIR sensor to detect motion in opposite directions and decrement the counter:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         pir2 = MotionSensor(27)
-         if pir2.motion_detected:
-             counter -= 1
+      pir2 = Pin(16, Pin.IN, pull= Pin.PULL_DOWN)
+      if pir2.value()==1:
+         counter -= 1
 
 2. **Threshold-Based Alerts**: Trigger an alert (e.g., LED or buzzer) when the counter exceeds a predefined value:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         from gpiozero import Buzzer
-         buzzer = Buzzer(22)
-         if counter > 50:
-             buzzer.on()
-         else:
-             buzzer.off()
+      from fusion_hat import Buzzer
+      buzzer = Buzzer(Pin(22))
+      if counter > 50:
+            buzzer.on()
+      else:
+            buzzer.off()
 
 3. **Data Logging**: Log the counter value and timestamps to a file for analysis:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         with open("motion_log.txt", "a") as log_file:
-             log_file.write(f"{time.time():.3f}, Counter: {counter}\n")
+      with open("motion_log.txt", "a") as log_file:
+            log_file.write(f"{time.time():.3f}, Counter: {counter}\n")
 
 4. **Timer-Based Reset**: Reset the counter after a specific period of inactivity:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         last_motion_time = time.time()
-         if time.time() - last_motion_time > 300:  # 5 minutes
-             counter = 0
+      last_motion_time = time.time()
+      if time.time() - last_motion_time > 300:  # 5 minutes
+            counter = 0
 
 5. **Event-Based Triggers**: Trigger specific actions (e.g., controlling appliances) when the counter reaches specific values.
 

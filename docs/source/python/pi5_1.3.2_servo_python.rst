@@ -34,14 +34,13 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
-    *   - :ref:`cpn_breadboard`
-        - |link_breadboard_buy|
-    *   - :ref:`cpn_wires`
-        - |link_wires_buy|
     *   - :ref:`cpn_servo`
         - |link_servo_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
@@ -55,13 +54,12 @@ The circuit diagram below shows the connections required for controlling the ser
 
 **Wiring Diagram**
 
-Follow these steps to build the circuit:
 
-1. Connect the servo signal pin to GPIO pin 18 on the Raspberry Pi.
-2. Connect the servo power pin to the 5V pin on the Raspberry Pi.
-3. Connect the ground pin of the servo to the GND pin on the Raspberry Pi.
+.. image:: img/fzz/1.3.2_bb.png
+   :width: 800
+   :align: center
 
-.. image:: ../img/image125.png
+
 
 ----------------------------------------------
 
@@ -71,59 +69,26 @@ The following Python code demonstrates how to control the servo motor by moving 
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
-   from gpiozero import Servo
+   from fusion_hat import Servo
    from time import sleep
 
-   # Set the GPIO pin number where the servo motor is connected
-   myGPIO = 17
+   servo = Servo('P0')
 
-   # Define a correction factor to fine-tune servo pulse width
-   myCorrection = 0.45
-   maxPW = (2.0 + myCorrection) / 1000  # Calculate maximum pulse width
-   minPW = (1.0 - myCorrection) / 1000  # Calculate minimum pulse width
-
-   # Initialize the Servo object with custom pulse widths
-   servo = Servo(myGPIO, min_pulse_width=minPW, max_pulse_width=maxPW)
-
-   try:
-       while True:
-           # Position the servo at the middle and wait
-           servo.mid()
-           print("mid")  # Indicate current position
-           sleep(0.5)    # Brief pause for 0.5 seconds
-
-           # Move the servo to its minimum position and wait
-           servo.min()
-           print("min")  # Indicate current position
-           sleep(1)      # Hold position for 1 second
-
-           # Return the servo to the middle position and wait
-           servo.mid()
-           print("mid")  # Indicate current position
-           sleep(0.5)    # Brief pause for 0.5 seconds
-
-           # Move the servo to its maximum position and wait
-           servo.max()
-           print("max")  # Indicate current position
-           sleep(1)      # Hold position for 1 second
-
-   except KeyboardInterrupt:
-       # Gracefully terminate the script on a keyboard interrupt (Ctrl+C)
-       pass
+   while True:
+      for i in range(-90, 91, 10):
+         servo.angle(i)
+         sleep(0.1)
+      for i in range(90, -91, -10):
+         servo.angle(i)
+         sleep(0.1)
 
 
-This Python script controls a servo motor connected to GPIO pin 17 on a Raspberry Pi. When executed:
+This Python script controls a servo motor connected to PWM 0. When executed:
 
-1. The servo moves through three positions in a continuous loop:
-
-   - **Middle** (``servo.mid()``): Positions the servo at its neutral (centered) position and pauses for 0.5 seconds.
-   - **Minimum** (``servo.min()``): Moves the servo to its minimum position (fully counterclockwise) and pauses for 1 second.
-   - **Maximum** (``servo.max()``): Moves the servo to its maximum position (fully clockwise) and pauses for 1 second.
-
-2. Each position is printed to the console as the servo moves.
-
-3. The program runs indefinitely until interrupted by pressing ``Ctrl+C``.
+1. The servo moves from -90 degrees to 90 degrees in 10-degree increments.
+2. It pauses for 0.1 seconds between each movement.
+3. It then reverses the direction and moves from 90 degrees to -90 degrees in 10-degree increments.
+4. The process repeats indefinitely.
 
 
 ----------------------------------------------
@@ -132,50 +97,34 @@ This Python script controls a servo motor connected to GPIO pin 17 on a Raspberr
 
 1. **Library Import**
 
-   The ``gpiozero`` library simplifies GPIO interactions, while the ``time`` library provides delay functions.
+   The ``fusion_hat`` library simplifies GPIO interactions, while the ``time`` library provides delay functions.
 
    .. code-block:: python
 
-       from gpiozero import Servo
-       from time import sleep
+      from fusion_hat import Servo
+      from time import sleep
 
 2. **Servo Initialization**
 
-   The ``Servo`` object is initialized with GPIO pin 17 and custom pulse width settings to fine-tune the servo movement.
+   The ``Servo`` object is initialized with PWM 0.
 
    .. code-block:: python
 
-       servo = Servo(myGPIO, min_pulse_width=minPW, max_pulse_width=maxPW)
+      servo = Servo('P0')
 
 3. **Servo Movement**
 
-   The servo is moved to different positions (``mid``, ``min``, ``max``) in a continuous loop, with each position printed to the console and held for a specific duration.
+   The servo is moved to different angles in a loop. The ``angle`` method sets the servo's position, and ``sleep`` pauses the loop for a specified duration.
 
    .. code-block:: python
 
-       while True:
-           servo.mid()
-           print("mid")
-           sleep(0.5)
-           servo.min()
-           print("min")
-           sleep(1)
-           servo.mid()
-           print("mid")
-           sleep(0.5)
-           servo.max()
-           print("max")
-           sleep(1)
-
-4. **Interrupt Handling**
-
-   The ``try-except`` block ensures the program stops gracefully when interrupted using Ctrl+C.
-
-   .. code-block:: python
-
-       except KeyboardInterrupt:
-           pass
-
+      while True:
+         for i in range(-90, 91, 10):
+            servo.angle(i)
+            sleep(0.1)
+         for i in range(90, -91, -10):
+            servo.angle(i)
+            sleep(0.1)
 
 
 ----------------------------------------------
@@ -185,66 +134,47 @@ This Python script controls a servo motor connected to GPIO pin 17 on a Raspberr
 1. **Servo Does Not Move**  
 
    - **Cause**: Incorrect GPIO pin connection or power supply issues.  
-   - **Solution**: Ensure the servo is connected to GPIO pin 17, with a stable 5V power source and a ground connection.
+   - **Solution**: Ensure the servo is connected to PWM 0 and verify the power supply.
 
-2. **Servo Vibrates or Makes Noise**  
-
-   - **Cause**: Incorrect pulse width or signal interference.  
-   - **Solution**: Adjust the ``myCorrection`` factor to fine-tune the ``min_pulse_width`` and ``max_pulse_width`` values.
-
-
-
-3. **Script Fails to Exit Gracefully** 
-
-   - **Cause**: The ``try...except`` block may not properly handle interruptions.  
-   - **Solution**: Ensure the ``pass`` statement in the ``except KeyboardInterrupt`` block is implemented to terminate the program cleanly.
-
-4. **Servo Movement is Erratic or Unresponsive**  
+2. **Servo Movement is Erratic or Unresponsive**  
 
    - **Cause**: Insufficient power supply to the servo.  
-   - **Solution**: Use an external power source for the servo if the Raspberry Pi's 5V pin cannot provide sufficient current.
-
+   - **Solution**: Use an external power source for the servo if the Fusion HAT does not provide enough power.
 
 ----------------------------------------------
 
 
 **Extendable Ideas**
 
-1. **Smooth Motion Control**  
 
-   Implement gradual movements by incrementally changing the servo position using ``servo.value``:
-
-   .. code-block:: python
-
-      for position in [-1, -0.5, 0, 0.5, 1]:
-         servo.value = position
-         sleep(0.5)
-
-
-2. **User-Controlled Servo**  
+1. **User-Controlled Servo**  
 
    Allow users to control the servo position interactively through keyboard input:
 
    .. code-block:: python
 
       while True:
-         position = float(input("Enter position (-1 to 1): "))
-         servo.value = position
+         position = float(input("Enter position (-90 to 90): "))
+         servo.angle(position)
 
-3. **Servo Sweep**  
 
-   Create a sweeping motion where the servo oscillates smoothly between its minimum and maximum positions:
+2. **Servo Position Tracking**  
+
+   Record the servo position over time and plot the trajectory:
 
    .. code-block:: python
-         
-      for position in range(-10, 11):
-         servo.value = position / 10.0
-         sleep(0.1)
 
+      positions = []
+      for i in range(-90, 91, 10):
+         servo.angle(i)
+         sleep(0.1)
+         positions.append(servo.angle())
+      plt.plot(positions)
+      plt.show()
 
 ----------------------------------------------
 
 
 **Conclusion**
 
-This project demonstrates how to control a servo motor using a Raspberry Pi and the GPIO Zero library. Understanding servo control opens the door to building robots, mechanical arms, and other motion-based projects.
+This project demonstrates how to control a servo motor. Understanding servo control opens the door to building robots, mechanical arms, and other motion-based projects.

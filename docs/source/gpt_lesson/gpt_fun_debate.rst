@@ -47,22 +47,20 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_servo`
+        - |link_servo_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_led`
+        - |link_led_buy|        
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 
 ----------------------------------------------
@@ -82,20 +80,17 @@ The following components are required for this project:
    import openai
    from keys import OPENAI_API_KEY
    import readline  # Optimize keyboard input, only need to import
-   import sys
+   import sys,os
    from pathlib import Path
-   from gpiozero import Servo, LED
+   from fusion_hat import Servo, Pin
    import subprocess
 
-   # Define correction factor for fine-tuning servo pulse width
-   CORRECTION = 0.45
-   MAX_PW = (2.0 + CORRECTION) / 1000
-   MIN_PW = (1.0 - CORRECTION) / 1000
+   os.system("fusion_hat enable_speaker")
 
    # Initialize GPIO components
-   servo = Servo(5, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW)
-   led1 = LED(23)
-   led2 = LED(24)
+   servo = Servo('P0')
+   led1 = Pin(27, Pin.OUT)
+   led2 = Pin(22, Pin.OUT)
    led1.off()
    led2.off()
 
@@ -189,7 +184,7 @@ The following components are required for this project:
       if speech_file_path:
          try:
                # Play the speech and control LEDs/Servo
-               servo.value = 0.5 if player == 0 else -0.5
+               servo.angle(45) if player == 0 else servo.angle(-45)
                led1.on() if player == 0 else led1.off()
                led2.on() if player == 1 else led2.off()
                p = subprocess.Popen(
@@ -217,16 +212,12 @@ The following components are required for this project:
 
    finally:
       # Cleanup GPIO and OpenAI resources
-      servo.mid()
-      servo.close()
+      servo.angle(0)
       led1.off()
-      led1.close()
       led2.off()
-      led2.close()
       for assistant in assistants:
          client.beta.assistants.delete(assistant.id)
       print("Resources cleaned up. Exiting.")
-
 
 
 ----------------------------------------------

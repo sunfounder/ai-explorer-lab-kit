@@ -19,7 +19,7 @@
 
 **Introduction**
 
-The ADC (Analog-to-Digital Converter) function is essential for converting analog signals to digital ones. In this experiment, we use the ADC0834 module to achieve this conversion, utilizing a potentiometer. The potentiometer adjusts the voltage, a physical quantity, which the ADC then digitizes. This experiment also demonstrates how the potentiometer can control the brightness of an LED.
+The ADC (Analog-to-Digital Converter) function is essential for converting analog signals to digital ones. In this experiment, we use the Fusion HAT to achieve this conversion, utilizing a potentiometer. The potentiometer adjusts the voltage, a physical quantity, which the ADC then digitizes. This experiment also demonstrates how the potentiometer can control the brightness of an LED.
 
 ----------------------------------------------
 
@@ -31,22 +31,23 @@ Here are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Potentiometer
-      - |link_potentiometer_buy|
-    * - ADC0834 Module
-      - 
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - Breadboard
+        - |link_breadboard_buy|
+    *   - Wires
+        - |link_wires_buy|
+    *   - Resistor
+        - |link_resistor_buy|
+    *   - LED
+        - |link_led_buy|
+    *   - Potentiometer
+        - |link_potentiometer_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -54,9 +55,7 @@ Here are the components required for this project:
 
 Below are the schematic diagrams for the project:
 
-.. image:: ../python/img/2.1.7_potentiometer_second_1.png
-
-.. image:: ../python/img/2.1.7_potentiometer_second_2.png
+.. image:: ../python/img/2.1.
 
 ----------------------------------------------
 
@@ -64,35 +63,15 @@ Below are the schematic diagrams for the project:
 
 Build the circuit as shown in the image below:
 
-.. image:: ../python/img/2.1.7_Potentiometer_circuit.png
+.. image:: img/fzz/2.1.7_bb.png
+   :width: 800
+   :align: center
 
-.. note::
-    Place the chip in the correct position as depicted in the diagram. Ensure the grooves on the chip face the left when placed.
+
 
 ----------------------------------------------
 
 **Writing the Code**
-
-Navigate to the source code directory:
-
-.. code-block:: bash
-
-    cd ~/zero-w-ai-kit/python
-
-Run the Python script:
-
-.. code-block:: bash
-
-    sudo python3 2.1.7_Potentiometer_zero.py
-
-When the script runs, rotating the potentiometer's knob changes the LED brightness accordingly.
-
-.. warning::
-    If you encounter the error ``RuntimeError: Cannot determine SOC peripheral base address``, refer to the :ref:`faq_soc`.
-
-----------------------------------------------
-
-**Code**
 
 Below is the code for the experiment:
 
@@ -100,53 +79,54 @@ Below is the code for the experiment:
 
    #!/usr/bin/env python3
 
-   from gpiozero import PWMLED
-   import ADC0834
+   from fusion_hat import ADC, PWM
    import time
 
-   # Initialize a PWM LED on GPIO pin 22
-   led = PWMLED(22)
+   # Initialize a PWM LED
+   led = PWM('P0')
 
-   # Set up the ADC0834 module
-   ADC0834.setup()
+   # Set up the potentiometer
+   pot = ADC('A0')
 
    def MAP(x, in_min, in_max, out_min, out_max):
-       """
-       Map a value from one range to another.
-       :param x: The value to be mapped.
-       :param in_min: The lower bound of the value's current range.
-       :param in_max: The upper bound of the value's current range.
-       :param out_min: The lower bound of the value's target range.
-       :param out_max: The upper bound of the value's target range.
-       :return: The mapped value.
-       """
-       return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+      """
+      Map a value from one range to another.
+      :param x: The value to be mapped.
+      :param in_min: The lower bound of the value's current range.
+      :param in_max: The upper bound of the value's current range.
+      :param out_min: The lower bound of the value's target range.
+      :param out_max: The upper bound of the value's target range.
+      :return: The mapped value.
+      """
+      return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
    try:
-       while True:
-           # Get the current reading from the ADC0834 module
-           res = ADC0834.getResult()
-           print('res = %d' % res)
+      while True:
+         # Get the current reading from the ADC port
+         result = pot.read()
+         voltage = pot.read_voltage() # Get the voltage from the ADC port, in Volts (0-3.3V)
+         print('result = %d voltage = %.2f' %(result,voltage))
 
-           # Map the ADC value to a range suitable for setting LED brightness
-           R_val = MAP(res, 0, 255, 0, 100)
+         # Map the ADC value to a range suitable for setting LED brightness
+         value = MAP(result, 0, 4095, 0, 100)
 
-           # Set the LED brightness
-           led.value = float(R_val / 100)
+         # Set the LED brightness
+         led.pulse_width_percent(value)
 
-           # Wait for 0.2 seconds before reading again
-           time.sleep(0.2)
+         # Wait for 1 seconds before reading again
+         time.sleep(0.2)
 
-   except KeyboardInterrupt:
-       led.value = 0  # Turn off the LED
+   # Graceful exit when 'Ctrl+C' is pressed
+   except KeyboardInterrupt: 
+      led.pulse_width_percent(0)  # Turn off the LED
 
 
-This Python script uses an ADC0834 module to read analog input and control the brightness of a PWM LED connected to a Raspberry Pi. When executed:
+This Python script uses an Fusion HAT to read analog input and control the brightness of a PWM LED. When executed:
 
-1. The ADC0834 module continuously reads an analog signal, converting it to a digital value between 0 and 255.
+1. The Fusion HAT continuously reads an analog signal, converting it to a digital value between 0 and 4095.
 2. This value is mapped to a range between 0 and 100, representing the brightness percentage of the LED.
-3. The brightness of the PWM LED (connected to GPIO pin 22) is dynamically adjusted based on the mapped value.
-4. The raw ADC value (``res``) is printed to the console in real time.
+3. The brightness of the PWM LED is dynamically adjusted based on the mapped value.
+4. The raw ADC value and voltage is printed to the console in real time.
 5. The program runs indefinitely until interrupted with ``Ctrl+C``, at which point the LED turns off.
 
 
@@ -156,47 +136,66 @@ This Python script uses an ADC0834 module to read analog input and control the b
 **Understanding the Code**
 
 1. **Imports:**
-   The script uses ``gpiozero`` for PWM LED control, ``ADC0834`` for analog-to-digital conversion, and ``time`` for implementing delays.
+
 
    .. code-block:: python
 
-       from gpiozero import PWMLED
-       import ADC0834
-       import time
+      from fusion_hat import ADC, PWM
+      import time
+
+   The script uses ``fusion_hat`` for PWM LED control and analog-to-digital conversion, and ``time`` for implementing delays.
 
 2. **Initialization:**
-   The ``PWMLED`` object connects to GPIO pin 22, and the ADC0834 module is initialized.
+
 
    .. code-block:: python
 
-       led = PWMLED(22)
-       ADC0834.setup()
+      # Initialize a PWM LED
+      led = PWM('P0')
+
+      # Set up the potentiometer
+      pot = ADC('A0')
+
+   The script initializes a PWM LED on pin ``P0`` and an ADC on pin ``A0``.
 
 3. **MAP Function:**
-   The ``MAP`` function converts values from one range to another, essential for mapping ADC readings to LED brightness.
 
    .. code-block:: python
 
        def MAP(x, in_min, in_max, out_min, out_max):
            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
+   The ``MAP`` function converts values from one range to another, essential for mapping ADC readings to LED brightness.
+
+
 4. **Main Loop:**
 
-   - Continuously read ADC values.
-   - Map ADC readings (0-255) to brightness levels (0-100).
-   - Adjust LED brightness and wait for 0.2 seconds before repeating.
 
    .. code-block:: python
 
-       try:
-           while True:
-               res = ADC0834.getResult()
-               print('res = %d' % res)
-               R_val = MAP(res, 0, 255, 0, 100)
-               led.value = float(R_val / 100)
-               time.sleep(0.2)
-       except KeyboardInterrupt:
-           led.value = 0  # Turn off the LED
+      try:
+         while True:
+            # Get the current reading from the ADC port
+            result = pot.read()
+            voltage = pot.read_voltage()
+            print('result = %d voltage = %.2f' %(result,voltage))
+
+            # Map the ADC value to a range suitable for setting LED brightness
+            value = MAP(result, 0, 4095, 0, 100)
+
+            # Set the LED brightness
+            led.pulse_width_percent(value)
+
+            # Wait for 1 seconds before reading again
+            time.sleep(0.2)
+
+      # Graceful exit when 'Ctrl+C' is pressed
+      except KeyboardInterrupt: 
+         led.pulse_width_percent(0)  # Turn off the LED
+
+   - Continuously read ADC values.
+   - Map ADC readings (0-4095) to brightness levels (0-100).
+   - Adjust LED brightness and wait for 0.2 seconds before repeating.
 
 
 ----------------------------------------------
@@ -206,36 +205,28 @@ This Python script uses an ADC0834 module to read analog input and control the b
 1. **LED Does Not Respond**  
 
    - **Cause**: Incorrect wiring or GPIO pin configuration.  
-   - **Solution**: Ensure the LED is connected to GPIO pin 22 with an appropriate resistor.
+   - **Solution**: Ensure the LED is connected to PWM 0 with an appropriate resistor.
 
 2. **ADC Values Always Zero**  
 
-   - **Cause**: Incorrect wiring of the ADC0834 module or sensor.  
-   - **Solution**: Verify the ADC0834 connections, including power, ground, chip select, clock, and data lines. Ensure the input sensor is functioning.
+   - **Cause**: Incorrect wiring of the sensor.  
+   - **Solution**: Verify the sensor connections. Ensure the input sensor is functioning.
 
 3. **Mapping Issues**  
 
    - **Cause**: Incorrect ``MAP()`` function parameters.  
-   - **Solution**: Ensure the input range (``in_min``, ``in_max``) matches the ADC0834 output range (0–255) and the output range (``out_min``, ``out_max``) is suitable for LED brightness control (0–100).
+   - **Solution**: Ensure the input range (``in_min``, ``in_max``) matches the output range (0–4095) and the output range (``out_min``, ``out_max``) is suitable for LED brightness control (0–100).
 
 ----------------------------------------------
 
 **Extendable Ideas**
 
 
-1. **Multi-Channel Input**: Use multiple channels of the ADC0834 to control multiple LEDs or other devices:
+1. **Threshold-Based Behavior**: Add logic to turn the LED on or off based on specific ADC value thresholds:
 
    .. code-block:: python
 
-      channel_0 = ADC0834.getResult(0)
-      channel_1 = ADC0834.getResult(1)
-
-
-2. **Threshold-Based Behavior**: Add logic to turn the LED on or off based on specific ADC value thresholds:
-
-   .. code-block:: python
-
-      if res > 200:
+      if result > 2048:
          led.on()
       else:
          led.off()
@@ -244,4 +235,4 @@ This Python script uses an ADC0834 module to read analog input and control the b
 
 **Conclusion**
 
-This experiment demonstrates how to utilize the ADC0834 module and a potentiometer to control the brightness of an LED. By understanding analog-to-digital conversion and PWM control, you can expand this knowledge to build more complex interactive systems.
+This experiment demonstrates how to utilize the Fusion HAT and a potentiometer to control the brightness of an LED. By understanding analog-to-digital conversion and PWM control, you can expand this knowledge to build more complex interactive systems.

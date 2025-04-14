@@ -36,8 +36,6 @@ The following components are required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -48,6 +46,10 @@ The following components are required for this project:
         - |link_camera_buy|
     *   - PIR Motion Sensor
         - 
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 ----------------------------------------------
@@ -69,35 +71,13 @@ Below is the circuit diagram for this project:
 
 Follow this wiring diagram to set up the circuit:
 
-.. image:: ../python/img/4.1.4_automatic_capture_circuit.png
+
+.. image:: img/fzz/4.1.2_bb.png
    :width: 800
    :align: center
 
 
 
-----------------------------------------------
-
-**Writing the Code**
-
-1. Ensure that your Raspberry Pi is set up with I2C enabled. Refer to :ref:`3.1.1_py` for setup instructions.
-
-2. Navigate to the code directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-3. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.4_AutomaticCaptureCamera_zero.py
-
-Once the script is running, the PIR sensor will monitor the surroundings. When it detects movement (such as a passing squirrel), the camera will capture a photo every 3 seconds. The number of photos taken will be displayed in the terminal.
-
-.. note::
-
-   You can also open the script ``4.1.4_AutomaticCaptureCamera_zero.py`` in a Python IDE, run it using the "Run" button, and stop it with the "Stop" button.
 
 For best performance, adjust the two potentiometers on the PIR module: one controls sensitivity, and the other adjusts detection distance. Turn both counterclockwise to the end.
 
@@ -106,47 +86,50 @@ For best performance, adjust the two potentiometers on the PIR module: one contr
    :align: center
 
 
+
 ----------------------------------------------
 
+**Writing the Code**
 
-**Code**
 
 Here is the Python code used for this project:
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
-    from picamera2 import Picamera2, Preview
-    from gpiozero import MotionSensor
-    import time
-    import os
+   #!/usr/bin/env python3
+   from picamera2 import Picamera2, Preview
+   from fusion_hat import Pin
+   import time
+   import os
 
-    # Retrieve the current user's home directory
-    user_home = os.path.expanduser('~')
+   # Retrieve the current user's login name and home directory
+   user = os.getlogin()
+   user_home = os.path.expanduser(f'~{user}')
 
-    # Initialize the camera
-    camera = Picamera2()
-    camera.start()
+   # Initialize the camera
+   camera = Picamera2()
+   camera.start()
 
-    # Initialize the PIR motion sensor on GPIO pin 17
-    pir = MotionSensor(17)
+   # Initialize the motion sensor on GPIO pin 17
+   pir = Pin(17, Pin.IN, Pin.PULL_DOWN) 
 
-    try:
-        i = 1  # Initialize the image counter
-        while True:
-            if pir.motion_detected:
-                # Capture a photo when motion is detected
-                camera.capture_file(f'{user_home}/capture_{i}.jpg')
-                print(f'Captured photo #{i}')
-                time.sleep(3)  # Wait 3 seconds before the next capture
-                i += 1  # Increment the photo counter
-            else:
-                print('Waiting for motion...')
-                time.sleep(0.5)  # Check for motion every 0.5 seconds
+   try:
+      i = 1  # Initialize the image count
+      while True:
+         if pir.value() == 1:
+               # Capture an image when motion is detected and save it with a unique number
+               camera.capture_file(f'{user_home}/capture%s.jpg' % i)
+               print('The number is %s' % i)  # Print the image count
+               time.sleep(3)  # Wait for 3 seconds before next detection
+               i += 1  # Increment the image count
+         else:
+               # print('waiting')  # Print 'waiting' when no motion is detected
+               time.sleep(0.5)  # Check for motion every 0.5 seconds
 
-    except KeyboardInterrupt:
-        # Handle cleanup on exit
-        camera.stop_preview()
+   except KeyboardInterrupt:
+      # Stop the camera and turn off the LED if a KeyboardInterrupt occurs
+      camera.stop_preview()
+      pass
 
 
 This Python script integrates a PIR motion sensor and a Raspberry Pi camera to create a motion-triggered photo capture system. When executed:
@@ -177,40 +160,36 @@ This Python script integrates a PIR motion sensor and a Raspberry Pi camera to c
 
 1. **Imports:**
 
-   The script imports necessary libraries for camera control (``Picamera2``), motion detection (``MotionSensor``), and system utilities (``os`` and ``time``).
 
    .. code-block:: python
 
-       from picamera2 import Picamera2, Preview
-       from gpiozero import MotionSensor
-       import time
-       import os
+      from picamera2 import Picamera2, Preview
+      from fusion_hat import Pin
+      import time
+      import os
+
+   The script imports necessary libraries for camera control (``Picamera2``), motion detection (``Pin``), and system utilities (``os`` and ``time``).
+
 
 2. **Camera Initialization:**
-
-   Initializes the ``Picamera2`` instance and starts the camera.
 
    .. code-block:: python
 
        camera = Picamera2()
        camera.start()
 
-3. **PIR Sensor Setup:**
+   Initializes the ``Picamera2`` instance and starts the camera.
 
-   Configures the motion sensor on GPIO pin 17 to detect movement.
+3. **PIR Sensor Setup:**
 
    .. code-block:: python
 
-       pir = MotionSensor(17)
+      # Initialize the motion sensor on GPIO pin 17
+      pir = Pin(17, Pin.IN, Pin.PULL_DOWN) 
+
+   Configures the motion sensor on GPIO pin 17 to detect movement.
 
 4. **Motion Detection Loop:**
-
-   In the main loop, the script:
-
-   * Captures and saves a photo when motion is detected.
-   * Prints the number of photos captured.
-   * Waits for 3 seconds between captures to avoid duplicates.
-   * Prints "Waiting for motion..." if no motion is detected and checks every 0.5 seconds.
 
    .. code-block:: python
 
@@ -225,14 +204,21 @@ This Python script integrates a PIR motion sensor and a Raspberry Pi camera to c
                print('Waiting for motion...')
                time.sleep(0.5)
 
-5. **Graceful Exit:**
+   In the main loop, the script:
 
-   Handles a keyboard interrupt (Ctrl+C) to stop the script and clean up resources.
+   * Captures and saves a photo when motion is detected.
+   * Prints the number of photos captured.
+   * Waits for 3 seconds between captures to avoid duplicates.
+   * Prints "Waiting for motion..." if no motion is detected and checks every 0.5 seconds.
+
+5. **Graceful Exit:**
 
    .. code-block:: python
 
-       except KeyboardInterrupt:
-           camera.stop_preview()
+      except KeyboardInterrupt:
+         camera.stop_preview()
+
+   Handles a keyboard interrupt (Ctrl+C) to stop the script and clean up resources.
 
 ----------------------------------------------
 
@@ -274,21 +260,21 @@ This Python script integrates a PIR motion sensor and a Raspberry Pi camera to c
 
 1. **Timestamped Filenames**: Save photos with timestamps in their filenames for better organization:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         timestamp = time.strftime("%Y%m%d-%H%M%S")
-         camera.capture_file(f'{user_home}/capture_{timestamp}.jpg')
+      timestamp = time.strftime("%Y%m%d-%H%M%S")
+      camera.capture_file(f'{user_home}/capture_{timestamp}.jpg')
 
 2. **LED Indicator**: Add an LED that lights up when the PIR sensor detects motion:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         from gpiozero import LED
-         led = LED(18)
-         if pir.motion_detected:
-             led.on()
-         else:
-             led.off()
+      from fusion_hat import Pin
+      led = Pin(27)
+      if pir.value() == 1:
+         led.on()
+      else:
+         led.off()
 
 3. **Photo Gallery Management**: Automatically organize captured photos into folders based on date or event.
 

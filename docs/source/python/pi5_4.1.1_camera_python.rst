@@ -33,22 +33,27 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - Breadboard
+        - |link_breadboard_buy|
+    *   - Wires
+        - |link_wires_buy|
+    *   - Resistor
+        - |link_resistor_buy|
+    *   - LED
+        - |link_led_buy|
+    *   - Button
+        - |link_button_buy|
+    *   - Camera Module
+        - |link_camera_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+
 
 ----------------------------------------------
 
@@ -67,95 +72,76 @@ Below is the GPIO pin mapping for this project:
 
 Follow this wiring diagram to set up the circuit:
 
-.. image:: ../python/img/4.1.1_camera_circuit.png
-  :width: 800
-  :align: center
+.. image:: img/fzz/4.1.1_bb.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------
 
 **Writing the Code**
 
-Navigate to the directory containing the Python script:
-
-.. code-block:: bash
-
-    cd ~/zero-w-ai-kit/python
-
-Run the script using the following command:
-
-.. code-block:: bash
-
-    sudo python3 4.1.1_Camera_zero.py
-
-Once the script is running, pressing the button will make the LED flash and capture a photo named ``my_photo.jpg``, saved in the ``~`` directory.
-
-.. note::
-    You can also open the script ``4.1.1_Camera_zero.py`` in a Python IDE, execute it by clicking the "Run" button, and stop it with the "Stop" button.
-
-To download the photo to your PC, refer to :ref:`filezilla`.
-
-
-----------------------------------------------
-
-**Code**
-
 Here is the Python code used for this project:
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
    from picamera2 import Picamera2, Preview
-   from gpiozero import LED, Button
+   from fusion_hat import Pin
    import time
    import os
 
-   # Get the current user's home directory
-   user_home = os.path.expanduser('~')
+   # Get the current user's login name and home directory
+   user = os.getlogin()
+   user_home = os.path.expanduser(f'~{user}')
 
    # Initialize the camera
    camera = Picamera2()
    camera.start()
 
-   # Initialize LED and button
-   led = LED(17)  # LED connected to GPIO pin 17
-   button = Button(18)  # Button connected to GPIO pin 18
-
-   # Variable to track the camera's status
+   # Initialize a variable to track the camera's status
    global status
    status = False
 
-   def take_photos():
-       """Triggers the camera to capture a photo when the button is pressed."""
-       global status
-       status = True
+   # Set up LED and button with their GPIO pin numbers
+   led = Pin(17, Pin.OUT)
+   button = Pin(4, Pin.IN, Pin.PULL_DOWN)
+
+   def takePhotos(pin):
+      """Function to set the camera's status to True when the button is pressed."""
+      global status
+      status = True
 
    try:
-       # Assign the function to the button press event
-       button.when_pressed = take_photos
-
-       # Main loop
-       while True:
-           if status:
-               # Blink the LED to indicate a photo is being taken
-               for _ in range(5):
-                   led.on()
-                   time.sleep(0.1)
-                   led.off()
-                   time.sleep(0.1)
-
-               # Capture and save the photo
+      # Assign the function to be called when the button is pressed
+      button.when_activated = takePhotos
+      
+      # Main loop
+      while True:
+         # Check if the button has been pressed
+         if status:
+               # Blink the LED five times
+               for i in range(5):
+                  led.on()
+                  time.sleep(0.1)
+                  led.off()
+                  time.sleep(0.1)
+               # Capture and save a photo
                camera.capture_file(f'{user_home}/my_photo.jpg')
-               print("Photo captured!")
+               print('Take a photo!')          
+               # Reset the status
                status = False
-           else:
+         else:
+               # Turn off the LED if not capturing
                led.off()
-           time.sleep(1)
+         
+         # Wait for a short period before checking the button status again
+         time.sleep(1)
 
    except KeyboardInterrupt:
-       # Cleanup on exit
-       camera.stop_preview()
-       led.off()
+      # Stop the camera and turn off the LED if a KeyboardInterrupt occurs
+      camera.stop_preview()
+      led.off()
+      pass
 
 
 This Python script integrates a Raspberry Pi camera with an LED and a button to create an interactive photo capture system. When executed:
@@ -163,7 +149,7 @@ This Python script integrates a Raspberry Pi camera with an LED and a button to 
 1. **Initial Setup**:
 
    - The camera starts and is ready to capture photos.
-   - An LED (connected to GPIO pin 17) and a button (connected to GPIO pin 18) are initialized.
+   - An LED (connected to GPIO pin 17) and a button (connected to GPIO pin 4) are initialized.
 
 2. **Photo Capture Trigger**:
 
@@ -179,6 +165,8 @@ This Python script integrates a Raspberry Pi camera with an LED and a button to 
 
    - On ``Ctrl+C``, the script stops the camera preview and turns off the LED.
 
+To download the photo to your PC, refer to :ref:`filezilla`.
+
 
 
 ----------------------------------------------
@@ -187,65 +175,85 @@ This Python script integrates a Raspberry Pi camera with an LED and a button to 
 
 1. **Imports:**
 
-   The script uses ``Picamera2`` to control the camera, ``gpiozero`` for GPIO management, and ``os`` for file handling.
 
    .. code-block:: python
 
-       from picamera2 import Picamera2, Preview
-       from gpiozero import LED, Button
-       import time
-       import os
+      from picamera2 import Picamera2, Preview
+      from fusion_hat import Pin
+      import time
+      import os
+
+   The script uses ``Picamera2`` to control the camera, ``fusion_hat`` for GPIO management, and ``os`` for file handling.
+
 
 2. **User Home Directory:**
 
-   The photo is saved in the user's home directory for easy access.
 
    .. code-block:: python
 
-       user_home = os.path.expanduser('~')
+      user = os.getlogin()
+      user_home = os.path.expanduser(f'~{user}')
+
+   The photo is saved in the user's home directory for easy access.
+
 
 3. **Camera Initialization:**
 
-   Initializes the camera and starts it for capturing photos.
 
    .. code-block:: python
 
-       camera = Picamera2()
-       camera.start()
+      camera = Picamera2()
+      camera.start()
+
+   Initializes the camera and starts it for capturing photos.
+
 
 4. **GPIO Setup:**
 
-   Configures the LED and button using GPIO pins 17 and 18, respectively.
 
    .. code-block:: python
 
-       led = LED(17)
-       button = Button(18)
+      led = Pin(17, Pin.OUT)
+      button = Pin(4, Pin.IN, Pin.PULL_DOWN)
+
+   Configures the LED and button using GPIO pins 17 and 4, respectively.
+
 
 5. **Button Press Event:**
 
-   Assigns the ``take_photos`` function to execute whenever the button is pressed.
-
    .. code-block:: python
 
-       button.when_pressed = take_photos
+      button.when_activated = takePhotos
+
+
+   Assigns the ``take_photos`` function to execute whenever the button is pressed.
+
 
 6. **Main Loop:**
 
-   Continuously checks the ``status`` variable. When a button press is detected, the LED blinks five times, and the camera captures a photo.
-
    .. code-block:: python
 
-       while True:
-           if status:
-               for _ in range(5):
-                   led.on()
-                   time.sleep(0.1)
-                   led.off()
-                   time.sleep(0.1)
+      while True:
+         # Check if the button has been pressed
+         if status:
+               # Blink the LED five times
+               for i in range(5):
+                  led.on()
+                  time.sleep(0.1)
+                  led.off()
+                  time.sleep(0.1)
+               # Capture and save a photo
                camera.capture_file(f'{user_home}/my_photo.jpg')
+               print('Take a photo!')          
+               # Reset the status
                status = False
-           time.sleep(1)
+         else:
+               # Turn off the LED if not capturing
+               led.off()
+
+
+   Continuously checks the ``status`` variable. When a button press is detected, the LED blinks five times, and the camera captures a photo.
+
 
 7. **Graceful Exit:**
 
@@ -253,9 +261,9 @@ This Python script integrates a Raspberry Pi camera with an LED and a button to 
 
    .. code-block:: python
 
-       except KeyboardInterrupt:
-           camera.stop_preview()
-           led.off()
+      except KeyboardInterrupt:
+         camera.stop_preview()
+         led.off()
 
 
 
@@ -268,7 +276,7 @@ This Python script integrates a Raspberry Pi camera with an LED and a button to 
    - **Cause**: The button is not wired correctly or the camera is not initialized.
    - **Solution**:
 
-     - Ensure the button is connected to GPIO pin 18 and ground.
+     - Ensure the button is connected to GPIO pin 4 and ground.
      - Verify that the camera is properly connected and enabled via ``raspi-config``.
 
 2. **LED Does Not Blink**:
@@ -296,15 +304,6 @@ This Python script integrates a Raspberry Pi camera with an LED and a button to 
 
      - Ensure the camera is properly connected and restart the Raspberry Pi.
      - Check for conflicting processes using ``sudo lsof /dev/video*``.
-
-5. **Button Press Not Detected**:
-
-   - **Cause**: Incorrect button wiring or configuration.
-   - **Solution**:
-
-     - Verify the button is connected to GPIO pin 18 and ground.
-     - Ensure the internal pull-up resistor is configured correctly in the ``gpiozero.Button`` class.
-
 
 
 ----------------------------------------------
@@ -346,4 +345,4 @@ This Python script integrates a Raspberry Pi camera with an LED and a button to 
 
 **Conclusion**
 
-This project introduces a basic camera setup with a button-triggered shutter mechanism. It combines GPIO control with the Picamera2 library to demonstrate how to create interactive Raspberry Pi projects. Experiment further to expand its functionality and create more engaging applications.
+This project introduces a basic camera setup with a button-triggered shutter mechanism. It combines GPIO control with the Picamera2 library to demonstrate how to create interactive projects. Experiment further to expand its functionality and create more engaging applications.

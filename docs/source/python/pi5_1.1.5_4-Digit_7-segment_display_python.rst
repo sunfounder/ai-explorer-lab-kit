@@ -69,7 +69,10 @@ Follow these steps to assemble the circuit:
 3. Use Digital pins on the Fusion HAT for the data input (SDI), shift register clock (SRCLK), and latch register clock (RCLK).
 4. Add resistors to limit current for the display segments.
 
-.. image:: ../python/img/
+.. image:: img/fzz/1.1.5_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

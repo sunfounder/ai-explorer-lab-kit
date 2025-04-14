@@ -36,8 +36,7 @@ Below are the components required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -47,13 +46,19 @@ Below are the components required for this project:
     *   - LED
         - |link_led_buy|
     *   - PIR Motion Sensor
-        - Not Applicable
+        - 
     *   - Servo Motor
         - |link_servo_buy|
     *   - Buzzer
         - |link_passive_buzzer_buy|
     *   - Transistor
         - |link_transistor_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+
 
 
 ----------------------------------------------
@@ -74,34 +79,11 @@ Below is the circuit diagram for this project:
 
 Follow the wiring diagram to assemble the circuit:
 
-.. image:: ../python/img/4.1.8_welcome_circuit.png
+
+.. image:: img/fzz/4.1.5_bb.png
+   :width: 800
    :align: center
 
-
-----------------------------------------------
-
-
-**Writing the Code**
-
-1. Open the Raspberry Pi terminal and navigate to the project folder:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.8_Welcome_zero.py
-
-Once the script runs, the system will detect motion using the PIR sensor. When motion is detected:
-
-* The LED turns on.
-* The servo motor simulates the door opening.
-* The buzzer plays a welcoming chime.
-
-The system resets after the chime, closing the door and turning off the LED, ready for the next person.
 
 .. note::
 
@@ -112,8 +94,8 @@ The system resets after the chime, closing the door and turning off the LED, rea
    :align: center
 
 
-
 ----------------------------------------------
+
 
 **Code**
 
@@ -121,67 +103,76 @@ Below is the Python script for the project:
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
-    from gpiozero import LED, MotionSensor, Servo, TonalBuzzer
-    import time
+   from fusion_hat import Pin, Servo, Buzzer,PWM
+   import time
 
-    # GPIO setup
-    ledPin = LED(6)
-    pirPin = MotionSensor(21)
-    buzPin = TonalBuzzer(27)
+   # GPIO pin setup for LED, motion sensor (PIR), and buzzer
+   ledPin = Pin(17, Pin.OUT)
+   pirPin = Pin(22, Pin.IN, Pin.PULL_DOWN)
+   buzPin = Buzzer(PWM('P0'))
 
-    # Servo setup with pulse width correction
-    correction = 0.45
-    maxPW = (2.0 + correction) / 1000
-    minPW = (1.0 - correction) / 1000
-    servoPin = Servo(25, min_pulse_width=minPW, max_pulse_width=maxPW)
+   # Initialize servo with custom pulse widths
+   servoPin = Servo('P4')
 
-    # Chime tune
-    tune = [('C#4', 0.2), ('D4', 0.2), (None, 0.2),
-            ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),
-            ('F#4', 0.2), ('G4', 0.2), (None, 0.6)]
+   # Musical tune for buzzer, with notes and durations
+   tune = [('C#4', 0.2), ('D4', 0.2), (None, 0.2),
+         ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),
+         ('F#4', 0.2), ('G4', 0.2), (None, 0.6),
+         ('Eb4', 0.2), ('E4', 0.2), (None, 0.2),
+         ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+         ('C4', 0.2), ('B4', 0.2), (None, 0.2),
+         ('F#4', 0.2), ('G4', 0.2), (None, 0.2),
+         ('B4', 0.2), ('Bb4', 0.5), (None, 0.6),
+         ('A4', 0.2), ('G4', 0.2), ('E4', 0.2), 
+         ('D4', 0.2), ('E4', 0.2)]
 
-    def setAngle(angle):
-        """Move the servo to a specific angle."""
-        servoPin.value = angle / 180
-        time.sleep(0.001)
+   def setAngle(angle):
+      """
+      Move the servo to a specified angle.
+      :param angle: Angle in degrees (0-180).
+      """
+      servoPin.angle(angle)       # Set servo position
+      time.sleep(0.001)           # Short delay for servo movement
 
-    def doorbell():
-        """Play a welcoming chime."""
-        for note, duration in tune:
-            buzPin.play(note)
-            time.sleep(duration)
-        buzPin.stop()
+   def doorbell():
+      """
+      Play a musical tune using the buzzer.
+      """
+      for note, duration in tune:
+         buzPin.play(note,float(duration))       # Play the note
+      buzPin.off()               # Stop buzzer after playing the tune
 
-    def closedoor():
-        """Close the door and turn off the LED."""
-        ledPin.off()
-        for angle in range(180, -1, -1):
-            setAngle(angle)
-            time.sleep(0.01)
+   def closedoor():
+      # Turn off LED and move servo to close door
+      ledPin.off()
+      for i in range(180, -1, -1):
+         setAngle(i)             # Move servo from 180 to 0 degrees
+         time.sleep(0.001)       # Short delay for smooth movement
+      time.sleep(1)               # Wait after closing door
 
-    def opendoor():
-        """Open the door, play chime, and reset."""
-        ledPin.on()
-        for angle in range(0, 181):
-            setAngle(angle)
-            time.sleep(0.01)
-        doorbell()
-        closedoor()
+   def opendoor():
+      # Turn on LED, open door (move servo), play tune, close door
+      ledPin.on()
+      for i in range(0, 181):
+         setAngle(i)             # Move servo from 0 to 180 degrees
+         time.sleep(0.001)       # Short delay for smooth movement
+      time.sleep(1)               # Wait before playing the tune
+      doorbell()                  # Play the doorbell tune
+      closedoor()                 # Close the door after the tune
 
-    def loop():
-        """Main loop to detect motion and operate the system."""
-        while True:
-            if pirPin.motion_detected:
-                opendoor()
-            time.sleep(0.1)
+   def loop():
+      # Main loop to check for motion and operate door
+      while True:
+         if pirPin.value()==1:
+               opendoor()               # Open door if motion detected
+         time.sleep(0.1)              # Short delay in loop
 
-    try:
-        loop()
-    except KeyboardInterrupt:
-        buzPin.stop()
-        ledPin.off()
-
+   try:
+      loop()
+   except KeyboardInterrupt:
+      # Clean up GPIO on user interrupt (e.g., Ctrl+C)
+      buzPin.off()
+      ledPin.off()
 
 This Python script integrates a PIR motion sensor, servo motor, LED, and buzzer to create an automated welcoming system. When executed:
 
@@ -208,7 +199,7 @@ This Python script integrates a PIR motion sensor, servo motor, LED, and buzzer 
 
 2. **Servo Control:** The servo motor opens and closes the door using angles from 0° to 180°.
 
-3. **Buzzer Melody:** A welcoming tune is played using the ``TonalBuzzer``.
+3. **Buzzer Melody:** A welcoming tune is played using the ``Buzzer``.
 
 4. **Reset:** After the chime, the system closes the door and turns off the LED, ready for the next event.
 
@@ -224,7 +215,7 @@ This Python script integrates a PIR motion sensor, servo motor, LED, and buzzer 
    - **Cause**: PIR sensor not wired correctly or environmental interference.
    - **Solution**:
 
-     - Ensure the PIR sensor is connected to GPIO pin 21, power, and ground.
+     - Ensure the PIR sensor is connected to GPIO pin 22, power, and ground.
      - Adjust the sensor's sensitivity and delay potentiometers if available.
 
 2. **Servo Not Moving**:
@@ -232,21 +223,20 @@ This Python script integrates a PIR motion sensor, servo motor, LED, and buzzer 
    - **Cause**: Incorrect servo configuration or power supply issues.
    - **Solution**:
 
-     - Verify the servo is connected to GPIO pin 25 and powered correctly.
-     - Check the ``min_pulse_width`` and ``max_pulse_width`` values in the servo setup.
+     - Verify the servo is connected to P4 and powered correctly.
 
 3. **Chime Not Playing**:
 
    - **Cause**: Buzzer misconfiguration or incorrect tune format.
    - **Solution**:
 
-     - Ensure the buzzer is connected to GPIO pin 27.
+     - Ensure the buzzer is connected to P0.
      - Verify the ``tune`` list contains valid note and duration pairs.
 
 4. **LED Not Turning On**:
 
    - **Cause**: LED wiring or GPIO configuration issues.
-   - **Solution**: Verify the LED is connected to GPIO pin 6 with an appropriate resistor.
+   - **Solution**: Verify the LED is connected to GPIO pin 17 with an appropriate resistor.
 
 ----------------------------------------------
 

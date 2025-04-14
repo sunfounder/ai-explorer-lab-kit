@@ -34,8 +34,7 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
+
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -44,12 +43,12 @@ To complete this project, you will need the following components:
         - |link_resistor_buy|
     *   - :ref:`cpn_led`
         - |link_led_buy|
-    *   - :ref:`cpn_transistor`
-        - |link_transistor_buy|
     *   - :ref:`cpn_relay`
-        - |link_relay_buy|
-    *   - :ref:`cpn_diode`
-        - |link_diode_buy|
+        - 
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -57,7 +56,7 @@ To complete this project, you will need the following components:
 
 The circuit diagram below shows the connections required to control the relay with a Raspberry Pi.
 
-.. image:: ../python/img/1.3.3_relay_schematic.png
+.. image:: ../python/img/1
 
 ----------------------------------------------
 
@@ -65,12 +64,15 @@ The circuit diagram below shows the connections required to control the relay wi
 
 Follow these steps to build the circuit:
 
-1. Connect the relay module to GPIO17 on the Raspberry Pi through a transistor to handle current safely.
-2. Use a resistor to limit the base current of the transistor.
-3. Add a diode across the relay coil to prevent voltage spikes when the relay switches off.
-4. Optionally, connect an LED in the circuit to indicate the relay's state.
+1. Connect the relay module to GPIO17 on the Fusion HAT.
+2. Optionally, connect an LED in the circuit to indicate the relay's state.
 
-.. image:: ../python/img/1.3.3_relay_circuit.png
+
+.. image:: img/fzz/1.3.3_bb.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 
@@ -80,31 +82,31 @@ The following Python code toggles the relay on and off with a 1-second interval:
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
-   from gpiozero import OutputDevice  # Import the class for controlling GPIO pins
-   from time import sleep  # Import the sleep function for delay
+    #!/usr/bin/env python3
+    from fusion_hat import Pin  # Import the class for controlling GPIO pins
+    from time import sleep  # Import the sleep function for delay
 
-   # Initialize the relay connected to GPIO pin 17, starting in the 'off' state
-   relay = OutputDevice(17, initial_value=False)
+    # Initialize the relay connected to GPIO pin 17, starting in the 'off' state
+    relay = Pin(17,Pin.OUT)
 
-   try:
-       # Loop to continuously toggle the relay's state every second
-       while True:
-           print('Relay open...')  # Inform that the relay is being activated
-           relay.on()  # Turn on the relay (assuming active low configuration)
-           sleep(1)   # Maintain the relay in the on state for 1 second
+    try:
+        # Loop to continuously toggle the relay's state every second
+        while True:
+            print('Relay open...')  # Inform that the relay is being activated
+            relay.high()  # Turn on the relay 
+            sleep(1)   # Maintain the relay in the on state for 1 second
 
-           print('...Relay close')  # Inform that the relay is being deactivated
-           relay.off()  # Turn off the relay
-           sleep(1)   # Maintain the relay in the off state for 1 second
+            print('...Relay close')  # Inform that the relay is being deactivated
+            relay.low()  # Turn off the relay
+            sleep(1)   # Maintain the relay in the off state for 1 second
 
-   except KeyboardInterrupt:
-       # Handle a keyboard interrupt (Ctrl+C) to exit the loop
-       relay.off()  # Ensure the relay is turned off before exiting
-       pass
+    except KeyboardInterrupt:
+        # Handle a keyboard interrupt (Ctrl+C) to exit the loop
+        relay.off()  # Ensure the relay is turned off before exiting
+        pass
 
 
-This Python script controls a relay connected to GPIO pin 17 on a Raspberry Pi. When executed:
+This Python script controls a relay connected to GPIO pin 17 on the Fusion HAT. When executed:
 
 1. The relay alternates between "open" (activated) and "close" (deactivated) states every second.
 
@@ -124,20 +126,20 @@ This Python script controls a relay connected to GPIO pin 17 on a Raspberry Pi. 
 
 1. **Library Import**
 
-   The ``gpiozero`` library is used for GPIO control, and the ``time`` module provides delay functionality.
+   The ``fusion_hat`` library is used for GPIO control, and the ``time`` module provides delay functionality.
 
    .. code-block:: python
 
-       from gpiozero import OutputDevice
-       from time import sleep
+        from fusion_hat import Pin  # Import the class for controlling GPIO pins
+        from time import sleep  # Import the sleep function for delay
 
 2. **Relay Initialization**
 
-   An ``OutputDevice`` object is created for GPIO17, with ``initial_value=False`` to ensure the relay starts in the off state.
+   An ``Pin`` object is created for GPIO17.
 
    .. code-block:: python
 
-       relay = OutputDevice(17, initial_value=False)
+       relay = Pin(17,Pin.OUT)
 
 3. **Relay Control Loop**
 

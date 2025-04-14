@@ -54,7 +54,7 @@ Below are the components required for this project:
 
    .. code-block:: bash
 
-       cd ~/zero-w-ai-kit/python
+      cd ~/ai-explorer-lab-kit/python
 
 3. **Run the Python Script:**
 
@@ -62,13 +62,13 @@ Below are the components required for this project:
 
    .. code-block:: bash
 
-       sudo python3 3.1.1_PhotographModule_zero.py
+      sudo python3 3.1.1_PhotographModule_zero.py
 
    After running the script, the camera will take a photo. The image will be saved as ``my_photo.jpg`` in the ``~`` directory (your home folder).
 
 .. note::
     
-    You can also open the ``3.1.1_PhotographModule.py`` file using a Python IDE, run the script by clicking the "Run" button, and stop it with the "Stop" button.
+   You can also open the ``3.1.1_PhotographModule.py`` file using a Python IDE, run the script by clicking the "Run" button, and stop it with the "Stop" button.
 
 If you wish to download the photo to your PC, refer to the :ref:`filezilla` guide.
 

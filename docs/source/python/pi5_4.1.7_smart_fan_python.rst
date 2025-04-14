@@ -35,26 +35,23 @@ Here are the components you’ll need for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
         - |link_wires_buy|
     *   - Resistors
         - |link_resistor_buy|
-    *   - Power Module
-        - N/A
     *   - Thermistor
         - |link_thermistor_buy|
-    *   - L293D Motor Driver
-        - N/A
-    *   - ADC0834 Module
-        - N/A
     *   - Button
         - |link_button_buy|
     *   - Motor
         - |link_motor_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 
@@ -64,128 +61,133 @@ Here are the components you’ll need for this project:
 
 The circuit diagram below illustrates how to connect the thermistor, button, motor driver, and motor:
 
-.. image:: ../python/img/4.1.10_smart_fan_schematic.png
-   :align: center
-
+.. image:: ../python/img/4.1.10_smart
 ----------------------------------------------
 
 **Wiring Diagram**
 
 Refer to the following image for the breadboard layout and wiring connections:
 
-.. image:: ../python/img/4.1.10_smart_fan_circuit.png
 
-----------------------------------------------
-
-**Power Supply Note:**
-
-Use a 9V battery for the power module. Connect the module’s jumper cap to the 5V bus strip on the breadboard.
-
-.. image:: ../python/img/4.1.10_smart_fan_battery.jpeg
+.. image:: img/fzz/4.1.7_bb.png
+   :width: 800
    :align: center
+
 
 ----------------------------------------------
 
 **Writing the Code**
-
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.10_SmartFan_zero.py
-
-   Once the code is running:
-
-   * Press the button to adjust the fan speed through five levels: **0-4**. When at level 4, pressing the button again will stop the fan.
-   * The fan speed adjusts automatically if the temperature rises or falls by more than 2°C, increasing or decreasing the speed by one level.
-
-
-----------------------------------------------
-
-
-**Code**
 
 Here’s the Python script for this project:
 
 .. code-block:: python
 
     #!/usr/bin/env python3
-    from gpiozero import Motor, Button
+
+    from fusion_hat import Motor, PWM, Pin, ADC
     from time import sleep
-    import ADC0834
     import math
 
-    # Initialize button, motor, and ADC0834 for temperature sensing
-    BtnPin = Button(22)
-    motor = Motor(forward=5, backward=6, enable=13)
-    ADC0834.setup()
+    # Initialize GPIO pins for the button and motor control
+    BtnPin = Pin(22, Pin.IN, Pin.PULL_DOWN)
+    motor = Motor('M0')
+    thermistor = ADC('A3')
 
-    # Initialize speed level and temperature tracking variables
+    # Initialize variables to track the motor speed level and temperatures
     level = 0
     currentTemp = 0
     markTemp = 0
 
     def temperature():
         """
-        Reads and calculates the current temperature in Celsius.
+        Reads and calculates the current temperature from the sensor.
+        Returns:
+            float: The current temperature in Celsius.
         """
-        analogVal = ADC0834.getResult()
-        Vr = 5 * float(analogVal) / 255
-        Rt = 10000 * Vr / (5 - Vr)
+        # Read analog value from the thermistor
+        analogVal = thermistor.read()
+        # Convert analog value to voltage and then to resistance
+        Vr = 3.3 * float(analogVal) / 4095
+        if 3.3 - Vr <= 0.1:
+            print("Please check the sensor")
+            return None
+        Rt = 10000 * Vr / (3.3 - Vr)
+        # Calculate temperature in Celsius
         temp = 1 / (((math.log(Rt / 10000)) / 3950) + (1 / (273.15 + 25)))
-        return temp - 273.15
+        Cel = temp - 273.15
+        return Cel
 
     def motor_run(level):
         """
-        Adjusts motor speed based on the speed level.
+        Adjusts the motor speed based on the specified level.
+        Args:
+            level (int): Desired motor speed level.
+        Returns:
+            int: Adjusted motor speed level.
         """
+        # Stop the motor if the level is 0
         if level == 0:
-            motor.stop()
-        else:
-            motor.forward(speed=level / 4)
+            motor.speed(0)
+            return 0
+        # Cap the level at 4 for maximum speed
+        if level >= 4:
+            level = 4
+        # Set the motor speed
+        motor.speed(level*25)
         return level
 
     def changeLevel():
         """
-        Handles button press to cycle through speed levels and updates reference temperature.
+        Changes the motor speed level when the button is pressed and updates the reference temperature.
         """
-        global level, markTemp
+        global level, currentTemp, markTemp
+        
+        # Cycle through levels 0-4
         level = (level + 1) % 5
+        print("Button pressed, level changed to:", level)
+        # Update the reference temperature
         markTemp = currentTemp
 
-    BtnPin.when_pressed = changeLevel
+    # Bind the button press event to changeLevel function
+    BtnPin.when_activated = changeLevel
 
     def main():
         """
-        Monitors temperature and adjusts fan speed accordingly.
+        Main function to continuously monitor and respond to temperature changes.
         """
-        global currentTemp, markTemp
+        global level, currentTemp, markTemp
+        # Set initial reference temperature
         markTemp = temperature()
         while True:
+            # Continuously read current temperature
             currentTemp = temperature()
-            if level > 0:
-                if currentTemp - markTemp >= 2:
-                    level = min(level + 1, 4)
+            if currentTemp == None:
+                continue
+            # Adjust motor level based on temperature difference
+            if level != 0:
+                if currentTemp - markTemp <= -5:
+                    level -= 1
                     markTemp = currentTemp
-                elif currentTemp - markTemp <= -2:
-                    level = max(level - 1, 0)
+                    print("Temperature decreased, level changed to:", level," ,temperature:",currentTemp)
+                elif currentTemp - markTemp >= 5:
+                    if level < 4:
+                        level += 1
                     markTemp = currentTemp
-            motor_run(level)
+                    print("Temperature increased, level changed to:", level," ,temperature:",currentTemp)
+            # Run the motor at the adjusted level
+            level = motor_run(level)
+            sleep(0.5)
 
+    # Run the main function and handle KeyboardInterrupt
     try:
         main()
     except KeyboardInterrupt:
-        motor.stop()
+        # Stop the motor when the script is interrupted
+        motor.speed(0)
 
-This Python script integrates a motor, button, and ADC0834-based temperature sensor to create a temperature-controlled fan system with adjustable speed. When executed:
+This Python script integrates a motor, button, and temperature sensor to create a temperature-controlled fan system with adjustable speed. When executed:
 
-1. **Temperature Sensing**: Reads the current temperature in Celsius using the ADC0834 module and a thermistor.
+1. **Temperature Sensing**: Reads the current temperature in Celsius using the thermistor.
 
 2. **Manual Speed Adjustment**:
 
@@ -208,60 +210,113 @@ This Python script integrates a motor, button, and ADC0834-based temperature sen
 
 1. **Temperature Calculation:**
 
-   The ``temperature()`` function reads the thermistor’s analog value, converts it into resistance, and calculates the corresponding temperature using a mathematical formula.
-
    .. code-block:: python
 
-       def temperature():
-           analogVal = ADC0834.getResult()
-           Vr = 5 * float(analogVal) / 255
-           Rt = 10000 * Vr / (5 - Vr)
-           temp = 1 / (((math.log(Rt / 10000)) / 3950) + (1 / (273.15 + 25)))
-           return temp - 273.15
+      def temperature():
+         """
+         Reads and calculates the current temperature from the sensor.
+         Returns:
+            float: The current temperature in Celsius.
+         """
+         # Read analog value from the thermistor
+         analogVal = thermistor.read()
+         # Convert analog value to voltage and then to resistance
+         Vr = 3.3 * float(analogVal) / 4095
+         if 3.3 - Vr <= 0.1:
+            print("Please check the sensor")
+            return None
+         Rt = 10000 * Vr / (3.3 - Vr)
+         # Calculate temperature in Celsius
+         temp = 1 / (((math.log(Rt / 10000)) / 3950) + (1 / (273.15 + 25)))
+         Cel = temp - 273.15
+         return Cel
+
+
+   The ``temperature()`` function reads the thermistor’s analog value, converts it into resistance, and calculates the corresponding temperature using a mathematical formula.
+
 
 2. **Motor Speed Control:**
 
-   The ``motor_run()`` function adjusts the motor’s speed based on the ``level`` variable. The speed is normalized to a value between 0 and 1.
-
    .. code-block:: python
 
-       def motor_run(level):
-           if level == 0:
-               motor.stop()
-           else:
-               motor.forward(speed=level / 4)
-           return level
+      def motor_run(level):
+         """
+         Adjusts the motor speed based on the specified level.
+         Args:
+            level (int): Desired motor speed level.
+         Returns:
+            int: Adjusted motor speed level.
+         """
+         # Stop the motor if the level is 0
+         if level == 0:
+            motor.speed(0)
+            return 0
+         # Cap the level at 4 for maximum speed
+         if level >= 4:
+            level = 4
+         # Set the motor speed
+         motor.speed(level*25)
+         return level
+
+
+   The ``motor_run()`` function adjusts the motor’s speed based on the ``level`` variable. The speed is normalized to a value between 0 and 1.
+
 
 3. **Manual Speed Adjustment:**
 
-   The ``changeLevel()`` function cycles through speed levels 0-4 when the button is pressed.
-
    .. code-block:: python
 
-       def changeLevel():
-           global level, markTemp
-           level = (level + 1) % 5
-           markTemp = currentTemp
+      def changeLevel():
+         """
+         Changes the motor speed level when the button is pressed and updates the reference temperature.
+         """
+         global level, currentTemp, markTemp
+         
+         # Cycle through levels 0-4
+         level = (level + 1) % 5
+         print("Button pressed, level changed to:", level)
+         # Update the reference temperature
+         markTemp = currentTemp
+
+      # Bind the button press event to changeLevel function
+      BtnPin.when_activated = changeLevel
+
+
+   The ``changeLevel()`` function cycles through speed levels 0-4 when the button is pressed.
+
 
 4. **Automatic Speed Adjustment:**
 
-   The ``main()`` function continuously monitors temperature and adjusts the fan speed if the temperature deviates by more than 2°C from the reference temperature.
-
    .. code-block:: python
 
-       def main():
-           global currentTemp, markTemp
-           markTemp = temperature()
-           while True:
-               currentTemp = temperature()
-               if level > 0:
-                   if currentTemp - markTemp >= 2:
-                       level = min(level + 1, 4)
-                       markTemp = currentTemp
-                   elif currentTemp - markTemp <= -2:
-                       level = max(level - 1, 0)
-                       markTemp = currentTemp
-               motor_run(level)
+      def main():
+         """
+         Main function to continuously monitor and respond to temperature changes.
+         """
+         global level, currentTemp, markTemp
+         # Set initial reference temperature
+         markTemp = temperature()
+         while True:
+            # Continuously read current temperature
+            currentTemp = temperature()
+            if currentTemp == None:
+                  continue
+            # Adjust motor level based on temperature difference
+            if level != 0:
+                  if currentTemp - markTemp <= -5:
+                     level -= 1
+                     markTemp = currentTemp
+                     print("Temperature decreased, level changed to:", level," ,temperature:",currentTemp)
+                  elif currentTemp - markTemp >= 5:
+                     if level < 4:
+                        level += 1
+                     markTemp = currentTemp
+                     print("Temperature increased, level changed to:", level," ,temperature:",currentTemp)
+            # Run the motor at the adjusted level
+            level = motor_run(level)
+            sleep(0.5)
+
+   The ``main()`` function continuously monitors temperature and adjusts the fan speed if the temperature deviates by more than 2°C from the reference temperature.
 
 
 
@@ -275,15 +330,14 @@ This Python script integrates a motor, button, and ADC0834-based temperature sen
    - **Cause**: Incorrect wiring or insufficient power supply.
    - **Solution**:
 
-     - Verify the motor is connected to GPIO pins 5 (forward), 6 (backward), and 13 (enable).
+     - Verify the motor is connected to M0.
      - Ensure the motor's power supply matches its voltage requirements.
 
 2. **Temperature Reading is Incorrect**:
 
-   - **Cause**: Incorrect ADC0834 setup or faulty thermistor.
+   - **Cause**: Faulty thermistor.
    - **Solution**:
 
-     - Verify the ADC0834 module is properly connected and initialized with ``ADC0834.setup()``.
      - Check the thermistor wiring and ensure it is within the specified range.
 
 3. **Button Press Not Detected**:
@@ -304,22 +358,15 @@ This Python script integrates a motor, button, and ADC0834-based temperature sen
 
 **Extendable Ideas**
 
-1. **Display Temperature and Speed**: Use an LCD or OLED screen to show the current temperature and fan speed level.
 
-     .. code-block:: python
-
-         from LCD1602 import write
-         write(0, 0, f"Temp: {currentTemp:.2f}C")
-         write(1, 0, f"Speed: {level}")
-
-2. **Overheat Alert**: Add a buzzer or LED to alert the user when the temperature exceeds a critical threshold.
+1. **Overheat Alert**: Add a buzzer or LED to alert the user when the temperature exceeds a critical threshold.
 
      .. code-block:: python
 
          if currentTemp > 50:
              buzzer.on()
 
-3. **Smart Button Functions**: Long-press the button to reset the speed level to 0 or toggle automatic/manual modes.
+2. **Smart Button Functions**: Long-press the button to reset the speed level to 0 or toggle automatic/manual modes.
 
 ----------------------------------------------
 

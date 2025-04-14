@@ -30,20 +30,14 @@ The following components are required for this project:
 
     * - COMPONENT INTRODUCTION
       - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+
+    *   - Keypad
+        - 
+    *   - Wires
+        - |link_wires_buy|  
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
 
 ----------------------------------------------
 
@@ -60,7 +54,7 @@ The following components are required for this project:
    import openai
    from keys import OPENAI_API_KEY
    import sys
-   from gpiozero import DigitalOutputDevice, Button
+   from fusion_hat import Keypad
 
    # Initialize OpenAI client
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
@@ -93,30 +87,6 @@ The following components are required for this project:
    thread = client.beta.threads.create()
 
 
-   class Keypad:
-      """
-      A class to represent a 4x4 keypad.
-      """
-      def __init__(self, rows_pins, cols_pins, keys):
-         self.rows = [DigitalOutputDevice(pin) for pin in rows_pins]
-         self.cols = [Button(pin, pull_up=False) for pin in cols_pins]
-         self.keys = keys
-
-      def read(self):
-         """
-         Reads the pressed keys on the keypad.
-         """
-         pressed_keys = []
-         for i, row in enumerate(self.rows):
-               row.on()
-               for j, col in enumerate(self.cols):
-                  if col.is_pressed:
-                     index = i * len(self.cols) + j
-                     pressed_keys.append(self.keys[index])
-               row.off()
-         return pressed_keys
-
-
    def process_user_input(keypad, count):
       """
       Handles user input through the keypad or initiates the test.
@@ -133,8 +103,8 @@ The following components are required for this project:
 
    try:
       # Configure rows, columns, and keypad layout
-      rows_pins = [18, 23, 24, 25]
-      cols_pins = [10, 22, 27, 17]
+      rows_pins = [4, 17, 27, 22]
+      cols_pins = [23, 24, 25, 12]
       keys = ["1", "2", "3", "A",
                "4", "5", "6", "B",
                "7", "8", "9", "C",
@@ -190,7 +160,6 @@ The following components are required for this project:
       client.beta.assistants.delete(assistant.id)
       print("\n Delete Assistant ID")
 
-
 ----------------------------------------------
 
 **Code Explanation**
@@ -199,7 +168,7 @@ The following components are required for this project:
 1. **Import Libraries**
 
    * ``openai``: Interacts with the OpenAI API.
-   * ``gpiozero``: Manages GPIO pins for controlling digital output devices (keypad rows) and buttons (keypad columns).
+   * ``fusion_hat``: Manages GPIO pins for controlling digital output devices (keypad rows) and buttons (keypad columns).
    * ``sys``: Handles system-specific functions like reading command-line arguments (though not heavily used here).
 
 2. **Initialize OpenAI Client**
@@ -232,17 +201,8 @@ The following components are required for this project:
 
    A conversation thread maintains context between your user messages and the assistant's responses.
 
-5. **Keypad Class**
 
-   .. code-block:: python
-
-      class Keypad:
-          ...
-   
-   * Initializes row pins (``DigitalOutputDevice``) and column pins (``Button``) to read button presses.  
-   * The ``read`` method scans each row and column to detect pressed keys.
-
-6. **User Input Processing**
+5. **User Input Processing**
 
    .. code-block:: python
 
@@ -253,7 +213,7 @@ The following components are required for this project:
    * Otherwise, reads pressed keys from the keypad.  
    * Each key press is returned, and the count is incremented.
 
-7. **Main Loop**
+6. **Main Loop**
 
    .. code-block:: python
 
@@ -264,7 +224,7 @@ The following components are required for this project:
    * Repeats until the user has answered 10 questions.  
    * Sends the message (``msg``) to the GPT assistant and retrieves the assistant's response.
 
-8. **OpenAI Assistant Calls**
+7. **OpenAI Assistant Calls**
 
    .. code-block:: python
 
@@ -274,7 +234,7 @@ The following components are required for this project:
    * ``create``: Creates a user message in the thread.  
    * ``create_and_poll``: Runs the assistant and polls until completion.
 
-9. **Response Handling**
+8. **Response Handling**
 
    .. code-block:: python
 
@@ -285,7 +245,7 @@ The following components are required for this project:
    * Iterates through ``messages.data`` to find the assistant's final response (``role == 'assistant'``).
    * Prints the user and assistant messages.
 
-10. **Cleanup**
+9. **Cleanup**
 
    .. code-block:: python
 
@@ -301,8 +261,8 @@ The following components are required for this project:
 
 1. **Keypad Not Responding:**
 
-   * Ensure that the row and column pins are correctly connected to the Raspberry Pi GPIO pins.
-   * Verify that the ``gpiozero`` library is installed and properly configured for your setup.
+   * Ensure that the row and column pins are correctly connected to the GPIO pins.
+   * Verify that the ``fusion_hat`` library is installed and properly configured for your setup.
 
 2. **GPT Assistant Not Responding:**
 

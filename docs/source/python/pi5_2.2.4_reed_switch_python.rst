@@ -31,20 +31,23 @@ Below are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Reed Switch Module
-      - |link_reed_switch_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - Breadboard
+        - |link_breadboard_buy|
+    *   - Wires
+        - |link_wires_buy|
+    *   - Resistor
+        - |link_resistor_buy|
+    *   - LED
+        - |link_led_buy|
+    *   - Reed Switch Module
+        - |link_reed_switch_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 ----------------------------------------------
@@ -53,10 +56,6 @@ Below are the components required for this project:
 **Circuit Diagram**
 
 Below are the schematic diagrams for the project:
-
-.. image:: ../python/img/2.2.4_reed_switch_schematic_1.png
-    :width: 400
-    :align: center
 
 .. image:: ../python/img/2.2.4_reed_switch_schematic_2.png
     :width: 400
@@ -70,9 +69,9 @@ Below are the schematic diagrams for the project:
 
 Assemble the circuit as shown below:
 
-.. image:: ../python/img/2.2.4_reed_switch_circuit.png
-    :width: 700
-    :align: center
+.. image:: img/fzz/2.2.4_bb.png
+   :width: 800
+   :align: center
 
 Ensure all connections are secure and match the schematic to avoid functionality issues.
 
@@ -82,70 +81,43 @@ Ensure all connections are secure and match the schematic to avoid functionality
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 2.2.4_ReedSwitch_zero.py
-
-When the script is running:
-
-* The green LED lights up initially.
-* When a magnet is near the reed switch, the red LED turns on, and the green LED turns off.
-* Removing the magnet reverses this behavior.
-
-.. warning::
-    If you encounter the error ``RuntimeError: Cannot determine SOC peripheral base address``, refer to the :ref:`faq_soc` for troubleshooting steps.
-
-
-
-----------------------------------------------
-
-**Code**
 
 Below is the Python code for this project:
 
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import LED, Button
+   from fusion_hat import Pin
+   from signal import pause  # Import pause function from signal module
 
-   # Initialize the reed switch and LEDs using GPIO Zero
-   reed_switch = Button(17, pull_up=True)  # Reed switch on GPIO 17 with internal pull-up resistor
-   green_led = LED(27)                     # Green LED on GPIO pin 27
-   red_led = LED(22)                       # Red LED on GPIO pin 22
+   # Initialize the reed sensor
+   reed_switch = Pin(17,Pin.IN, pull=Pin.PULL_UP)  # reed sensor connected to GPIO pin 17, pull-up resistor disabled
+   green_led = Pin(27, Pin.OUT)  # Green LED connected to GPIO pin 27
+   red_led = Pin(22, Pin.OUT)   # Red LED connected to GPIO pin 22
 
-   def update_leds():
-       """
-       Update the state of the LEDs based on the reed switch.
-       """
-       if reed_switch.is_pressed:
-           green_led.off()  # Turn off the green LED
-           red_led.on()     # Turn on the red LED
-       else:
-           green_led.on()   # Turn on the green LED
-           red_led.off()    # Turn off the red LED
+   def detect():
+      if reed_switch.value() == 0:  # Check if the sensor is actived
+         red_led.high()   # Turn on red LED
+         green_led.low()  # Turn off green LED
+      else:  # If the sensor is not actived
+         red_led.low()  # Turn off red LED
+         green_led.high()  # Turn on green LED
 
    try:
-       green_led.on()  # Turn on the green LED at the start
-       while True:
-           # Assign callbacks for reed switch state changes
-           reed_switch.when_pressed = update_leds   # When the switch is pressed
-           reed_switch.when_released = update_leds  # When the switch is released
+      green_led.high() # Turn on green LED initially
+      reed_switch.when_activated = detect  # Set up an interrupt to detect changes in the reed sensor state
+      reed_switch.when_deactivated = detect  # Set up an interrupt to detect changes in the reed sensor state
+
+      # Run an event loop that waits for button events and keeps the script running
+      print("CTRL + C to exit")
+      pause()
+
 
    except KeyboardInterrupt:
-       # Clean up resources and exit gracefully
-       green_led.off()
-       red_led.off()
-       pass
+      # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully
+      pass
 
-This Python script controls two LEDs using a reed switch connected to a Raspberry Pi. When executed:
+This Python script controls two LEDs using a reed switch. When executed:
 
 1. The green LED (connected to GPIO pin 27) is initially turned on.
 2. The reed switch (connected to GPIO pin 17) controls the LEDs:
@@ -163,44 +135,50 @@ This Python script controls two LEDs using a reed switch connected to a Raspberr
 
 1. **Initialization:**
 
-   The script uses the ``gpiozero`` library to initialize the reed switch on GPIO pin 17 with an internal pull-up resistor, and two LEDs on GPIO pins 27 (green) and 22 (red).
-
    .. code-block:: python
 
-       reed_switch = Button(17, pull_up=True)
-       green_led = LED(27)
-       red_led = LED(22)
+      reed_switch = Pin(17,Pin.IN, pull=Pin.PULL_UP)  # reed sensor connected to GPIO pin 17, pull-up resistor disabled
+      green_led = Pin(27, Pin.OUT)  # Green LED connected to GPIO pin 27
+      red_led = Pin(22, Pin.OUT)   # Red LED connected to GPIO pin 22
+
+   The script uses the ``fusion_hat`` library to initialize the reed switch on GPIO pin 17 with an internal pull-up resistor, and two LEDs on GPIO pins 27 (green) and 22 (red).
 
 2. **LED Control Function:**
 
-   The ``update_leds`` function determines the state of the LEDs based on whether the reed switch is activated by a magnet.
 
    .. code-block:: python
 
-       def update_leds():
-           if reed_switch.is_pressed:
-               green_led.off()
-               red_led.on()
-           else:
-               green_led.on()
-               red_led.off()
+      def detect():
+         if reed_switch.value() == 0:  # Check if the sensor is actived
+            red_led.high()   # Turn on red LED
+            green_led.low()  # Turn off green LED
+         else:  # If the sensor is not actived
+            red_led.low()  # Turn off red LED
+            green_led.high()  # Turn on green LED
+
+
+   The ``detect`` function determines the state of the LEDs based on whether the reed switch is activated by a magnet.
 
 3. **Main Loop:**
+
+   .. code-block:: python
+
+      try:
+         green_led.high() # Turn on green LED initially
+         reed_switch.when_activated = detect 
+         reed_switch.when_deactivated = detect 
+
+         print("CTRL + C to exit")
+         pause()
+
+      except KeyboardInterrupt:
+         # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully
+         pass
+
 
    * Initially turns on the green LED.
    * Continuously checks the state of the reed switch and updates the LEDs accordingly.
    * Handles ``KeyboardInterrupt`` (e.g., pressing ``Ctrl+C``) to clean up resources and exit gracefully.
-
-   .. code-block:: python
-
-       try:
-           green_led.on()
-           while True:
-               reed_switch.when_pressed = update_leds
-               reed_switch.when_released = update_leds
-       except KeyboardInterrupt:
-           green_led.off()
-           red_led.off()
 
 
 
@@ -212,7 +190,7 @@ This Python script controls two LEDs using a reed switch connected to a Raspberr
 1. **Reed Switch Not Responding**:
 
    - **Cause**: Incorrect reed switch wiring or configuration.
-   - **Solution**: Ensure the reed switch is connected to GPIO pin 17 and ground. Confirm that the internal pull-up resistor is enabled with ``pull_up=True``.
+   - **Solution**: Ensure the reed switch is connected to GPIO pin 17 and ground. Confirm that the internal pull-up resistor is enabled with ``pull=Pin.PULL_UP``.
 
 2. **LEDs Always On or Off**:
 
@@ -227,10 +205,10 @@ This Python script controls two LEDs using a reed switch connected to a Raspberr
 
    .. code-block:: python
 
-      from gpiozero import Buzzer
-      buzzer = Buzzer(18)
-      def update_leds():
-         if reed_switch.is_pressed:
+      from fusion_hat import Buzzer
+      buzzer = Buzzer(Pin(4))
+      def detect():
+         if reed_switch.value() == 0:
             green_led.off()
             red_led.on()
             buzzer.on()
@@ -247,9 +225,9 @@ This Python script controls two LEDs using a reed switch connected to a Raspberr
 
       import time
       start_time = None
-      def update_leds():
+      def detect():
          global start_time
-         if reed_switch.is_pressed:
+         if reed_switch.value() == 0:
             start_time = time.time()
          else:
             duration = time.time() - start_time
@@ -260,4 +238,4 @@ This Python script controls two LEDs using a reed switch connected to a Raspberr
 
 **Conclusion**
 
-This project demonstrates how to use a reed switch module with a Raspberry Pi to control LEDs. By understanding the basics of magnetic switches and GPIO programming, you can expand this knowledge to create automated systems and interactive projects for various applications.
+This project demonstrates how to use a reed switch module with a fusion_hat to control LEDs. By understanding the basics of magnetic switches and GPIO programming, you can expand this knowledge to create automated systems and interactive projects for various applications.

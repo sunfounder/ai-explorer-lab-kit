@@ -19,7 +19,7 @@
 
 **Introduction**
 
-A joystick is an input device commonly used for gaming, robotics, and navigation systems. It typically has two axes (X and Y) for directional control and a button (Z-axis or SW) for additional input. In this project, you will learn how a joystick works by manipulating it and displaying the corresponding values of the X, Y, and button states on the screen.
+A joystick is an input device commonly used for gaming, robotics, and navigation systems. It typically has two axes (X and Y) for directional control and a button (Btn or SW) for additional input. In this project, you will learn how a joystick works by manipulating it and displaying the corresponding values of the X, Y, and button states on the screen.
 
 
 ----------------------------------------------
@@ -33,22 +33,17 @@ Below are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - Joystick
-      - 
-    * - ADC0834 Module
-      - 
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
 
-
+    *   - Joystick
+        - 
+    *   - Wires
+        - |link_wires_buy|  
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -56,9 +51,7 @@ Below are the components required for this project:
 
 When using a joystick, the data for the X and Y axes are analog values that require an ADC (Analog-to-Digital Converter) like the ADC0834 to be converted to digital values. The button (Z-axis or SW) is digital and can be directly read using a GPIO pin.
 
-.. image:: ../python/img/2.1.9_joystick_schematic_1.png
-
-.. image:: ../python/img/2.1.9_joystick_schematic_2.png
+.. image:: ../python/img/2.1.9_joy
 
 
 ----------------------------------------------
@@ -68,12 +61,16 @@ When using a joystick, the data for the X and Y axes are analog values that requ
 
 Build the circuit as shown in the diagram below:
 
-.. image:: ../python/img/2.1.9_Joystick_circuit.png
+.. image:: img/fzz/2.1.9_bb.png
+   :width: 800
+   :align: center
+
+
 
 Ensure that:
 
-- The VRX and VRY pins of the joystick are connected to CH0 and CH1 of the ADC0834.
-- The SW pin of the joystick is connected to a GPIO pin (e.g., GPIO 22).
+- The VRX and VRY pins of the joystick are connected to ADC pins.
+- The SW pin of the joystick is connected to a GPIO pin 17.
 - Power and ground connections are correctly set.
 
 
@@ -82,68 +79,55 @@ Ensure that:
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 2.1.9_Joystick_zero.py
-
-After running the code, manipulate the joystick, and observe the X, Y, and button values displayed on the screen.
-
-.. warning::
-    If you encounter the error ``RuntimeError: Cannot determine SOC peripheral base address``, refer to the :ref:`faq_soc` for troubleshooting steps.
-
-
-
-----------------------------------------------
-
-**Code**
-
 Below is the Python code used for this project:
 
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import Button
-   import ADC0834
+   from fusion_hat import Pin,ADC
    import time
 
-   # Initialize the button connected to GPIO pin 22
-   BtnPin = Button(22)
+   # Initialize the button connected to GPIO pin 17
+   BtnPin = Pin(17, Pin.IN, Pin.PULL_UP)
+   xAxis = ADC('A1')
+   yAxis = ADC('A0')
 
-   # Setup the ADC0834 ADC
-   ADC0834.setup()
+   def MAP(x, in_min, in_max, out_min, out_max):
+      """
+      Map a value from one range to another.
+      :param x: The value to be mapped.
+      :param in_min: The lower bound of the value's current range.
+      :param in_max: The upper bound of the value's current range.
+      :param out_min: The lower bound of the value's target range.
+      :param out_max: The upper bound of the value's target range.
+      :return: The mapped value.
+      """
+      return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
    try:
-       # Main loop to read and print ADC values and button state
-       while True:
-           # Read X and Y values from ADC channels 0 and 1
-           x_val = ADC0834.getResult(0)
-           y_val = ADC0834.getResult(1)
+      # Main loop to read and print ADC values and button state
+      while True:
+         # Read X and Y values from ADC channels
+         x_val = MAP(xAxis.read(),0,4095,-100,100)
+         y_val = MAP(yAxis.read(),0,4095,-100,100)
 
-           # Read the state of the button (pressed or not)
-           Btn_val = BtnPin.value
+         # Read the state of the button (pressed or not)
+         Btn_val = BtnPin.value()
 
-           # Print the X, Y, and button values
-           print('X: %d  Y: %d  Btn: %d' % (x_val, y_val, Btn_val))
+         # Print the X, Y, and button values
+         print('X: %d  Y: %d  Btn: %d' % (x_val, y_val, Btn_val))
 
-           # Delay of 0.2 seconds before the next read
-           time.sleep(0.2)
+         # Delay of 0.2 seconds before the next read
+         time.sleep(0.2)
 
+   # Gracefully handle script termination (e.g., via KeyboardInterrupt)
    except KeyboardInterrupt: 
-       # Gracefully handle script termination (e.g., via KeyboardInterrupt)
-       pass
+      pass
 
-This Python script combines an analog-to-digital converter (ADC0834) and a joystick to read and display real-time data on a Raspberry Pi. When executed:
+This Python script read and display real-time joystick data on a Fusion HAT. When executed:
 
-1. The script continuously reads the X and Y values from the ADC0834 on channels 0 and 1.
-2. It monitors the button connected to GPIO pin 22 to detect whether it is pressed or not.
+1. The script continuously reads the X and Y values from the Fusion HAT.
+2. It monitors the button connected to GPIO pin 17 to detect whether it is pressed or not.
 3. The X, Y, and button state values are printed to the console in the format ``X: <value>  Y: <value>  Btn: <value>``, where:
 
    - ``X`` and ``Y`` are the analog readings from the ADC0834.
@@ -157,61 +141,74 @@ This Python script combines an analog-to-digital converter (ADC0834) and a joyst
 **Understanding the Code**
 
 1. **Imports:**
-   The script uses the ``gpiozero`` library for GPIO handling and ``ADC0834`` for reading analog values.
 
    .. code-block:: python
 
-       from gpiozero import Button
-       import ADC0834
-       import time
+      from fusion_hat import Pin,ADC
+      import time
+
+   The script imports necessary modules: ``fusion_hat`` for GPIO functionalities, and ``time`` for adding delays.
 
 2. **Initialization:**
-   The button connected to GPIO 22 is initialized, and the ADC0834 module is set up for reading analog signals from the joystick.
 
    .. code-block:: python
 
-       BtnPin = Button(22)
-       ADC0834.setup()
+      # Initialize the Joystick
+      BtnPin = Pin(17, Pin.IN, Pin.PULL_UP)
+      xAxis = ADC('A1')
+      yAxis = ADC('A0')
+
+   The script initializes the joystick by creating instances of the ``Pin`` and ``ADC`` classes. The button is set to input mode with an internal pull-up resistor enabled, and the X and Y axes are set to read from ADC channels A0 and A1, respectively.
+
 
 3. **Main Loop:**
+
+   .. code-block:: python
+
+      try:
+         # Main loop to read and print ADC values and button state
+         while True:
+            # Read X and Y values from ADC channels
+            x_val = MAP(xAxis.read(),0,4095,-100,100)
+            y_val = MAP(yAxis.read(),0,4095,-100,100)
+
+            # Read the state of the button (pressed or not)
+            Btn_val = BtnPin.value()
+
+            # Print the X, Y, and button values
+            print('X: %d  Y: %d  Btn: %d' % (x_val, y_val, Btn_val))
+
+            # Delay of 0.2 seconds before the next read
+            time.sleep(0.2)
+
+      # Gracefully handle script termination (e.g., via KeyboardInterrupt)
+      except KeyboardInterrupt: 
+         pass
 
    - Reads X and Y values from ADC channels 0 and 1, respectively.
    - Reads the button state (pressed or not) from the SW pin.
    - Prints the X, Y, and button values to the screen every 0.2 seconds.
-
-   .. code-block:: python
-
-       try:
-           while True:
-               x_val = ADC0834.getResult(0)
-               y_val = ADC0834.getResult(1)
-               Btn_val = BtnPin.value
-               print('X: %d  Y: %d  Btn: %d' % (x_val, y_val, Btn_val))
-               time.sleep(0.2)
-       except KeyboardInterrupt:
-           pass
-
-
 
 
 ----------------------------------------------
 
 **Troubleshooting**
 
-1. **No Output in the Console**:
 
-   - **Cause**: Joystick not wired correctly.
-   - **Solution**: Ensure the ADC0834 is properly connected, with its power, ground, and data pins correctly wired to the Raspberry Pi. Verify the button connection to GPIO pin 22 and ground.
+1. **ADC Values Not in Expected Range**:
 
-2. **Button State Always 1 or 0**:
+   - **Cause**: Incorrect ADC channel configuration or wiring issues.
+   - **Solution**: Verify the ADC channel configuration and wiring. Ensure the joystick is connected to the correct ADC channels.
 
-   - **Cause**: Incorrect pull-up or pull-down configuration.
-   - **Solution**: Verify the button wiring. Ensure it pulls the GPIO pin low when pressed. The ``gpiozero.Button`` class defaults to internal pull-up.
+2. **Button State Always 0**:
+
+   - **Cause**: Incorrect button wiring or pull-up/pull-down configuration.
+   - **Solution**: Verify the button wiring. Check the pull-up/pull-down configuration to ensure the button is properly connected to the SW pin.
 
 3. **ADC Values Are Constant**:
 
    - **Cause**: The ADC channels are not connected to any input.
-   - **Solution**: Connect analog sensors, potentiometers, or joysticks to ADC channels 0 and 1 to provide variable inputs.
+   - **Solution**: Connect joysticks to ADC channels 0 and 1 to provide variable inputs.
 
 
 ----------------------------------------------
@@ -229,20 +226,8 @@ This Python script combines an analog-to-digital converter (ADC0834) and a joyst
       with open("sensor_log.txt", "a") as log_file:
             log_file.write(f"X: {x_val}, Y: {y_val}, Btn: {Btn_val}\n")
 
-3. **Event Triggering**: Use the button press to toggle between different modes:
-     
-     .. code-block:: python
-
-         mode = 0
-         def toggle_mode():
-             global mode
-             mode = (mode + 1) % 2
-             print(f"Mode changed to: {mode}")
-
-         BtnPin.when_pressed = toggle_mode
-
 ----------------------------------------------
 
 **Conclusion**
 
-This experiment demonstrates how to interface a joystick with a Raspberry Pi using the ADC0834 module for analog-to-digital conversion. By understanding how to read and interpret joystick inputs, you can build interactive systems for gaming, robotics, or other applications.
+This experiment demonstrates how to interface a joystick with a Fusion HAT for analog-to-digital conversion. By understanding how to read and interpret joystick inputs, you can build interactive systems for gaming, robotics, or other applications.

@@ -27,22 +27,25 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - Breadboard
+        - |link_breadboard_buy|
+    *   - Wires
+        - |link_wires_buy|
+    *   - Resistors
+        - |link_resistor_buy|
+    *   - LED
+        - |link_led_buy|
+    *   - Buzzer (Tonal)
+        - |link_passive_buzzer_buy|
+    *   - Transistor
+        - |link_transistor_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -58,7 +61,7 @@ The following components are required for this project:
 **Code**
 
 .. code-block:: python
-      
+
    import openai
    from keys import OPENAI_API_KEY
    import readline # optimize keyboard input, only need to import
@@ -68,7 +71,9 @@ The following components are required for this project:
 
    import speech_recognition as sr
 
-   from gpiozero import TonalBuzzer,LED
+   from fusion_hat import Buzzer,Pin,PWM
+
+   os.system("fusion_hat enable_speaker")
 
    # gets API Key from environment variable OPENAI_API_KEY
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
@@ -90,8 +95,6 @@ The following components are required for this project:
       return transcription.text
 
    def redirect_error_2_null():
-      # https://github.com/spatialaudio/python-sounddevice/issues/11
-
       devnull = os.open(os.devnull, os.O_WRONLY)
       old_stderr = os.dup(2)
       sys.stderr.flush()
@@ -104,8 +107,8 @@ The following components are required for this project:
       os.close(old_stderr)
 
    # Initialize hardware components
-   buzzer = TonalBuzzer(17) 
-   led = LED(23)
+   buzzer = Buzzer('P0') 
+   led = Pin(17, Pin.OUT)
 
    # Create an OpenAI assistant
    instructions_text = (
@@ -131,9 +134,8 @@ The following components are required for this project:
       """
       for note, duration in tune:
          print(note)  # Output the current note being played
-         buzzer.play(note)  # Play the note on the buzzer
-         sleep(float(duration))  # Delay for the duration of the note
-      buzzer.stop()  # Stop playing after the tune is complete
+         buzzer.play(note,float(duration))  # Play the note on the buzzer
+      buzzer.off()  # Stop playing after the tune is complete
       sleep(1)
 
    try:
@@ -193,10 +195,11 @@ The following components are required for this project:
                               except Exception as e:
                                  print(f"Error processing assistant response: {e}")
 
+
                      break # only last reply
 
    finally:
-      buzzer.close()
+      buzzer.off()
       client.beta.assistants.delete(assistant.id)
 
 
@@ -217,11 +220,11 @@ The following components are required for this project:
    import os
    from time import sleep
    import speech_recognition as sr
-   from gpiozero import TonalBuzzer,LED
+   from fusion_hat import Buzzer,Pin,PWM
 
 * openai: Interacts with OpenAI's GPT and Whisper models.
 * speech_recognition: Captures and processes audio input.
-* gpiozero: Controls GPIO components such as the buzzer and LED.
+* fusion_hat: Controls GPIO components such as the buzzer and LED.
 
 
 2. Initialize OpenAI Client
@@ -272,11 +275,14 @@ Redirect ALSA Errors: Suppresses ALSA-related errors to prevent unnecessary cons
 .. code-block:: python
 
    def play_tune(tune):
+      """
+      Play a musical tune using the buzzer.
+      :param tune: List of tuples (note, duration), where each tuple represents a note and its duration.
+      """
       for note, duration in tune:
-         print(note)
-         buzzer.play(note)
-         sleep(float(duration))
-      buzzer.stop()
+         print(note)  # Output the current note being played
+         buzzer.play(note,float(duration))  # Play the note on the buzzer
+      buzzer.off()  # Stop playing after the tune is complete
       sleep(1)
 
 Play Melody on Buzzer:
@@ -290,8 +296,8 @@ Play Melody on Buzzer:
 .. code-block:: python
       
    # Initialize hardware components
-   buzzer = TonalBuzzer(17) 
-   led = LED(23)
+   buzzer = Buzzer(PWM('P0')) 
+   led = Pin(17, Pin.OUT)
 
 Initializes GPIO components for audio playback and status indication.
 
@@ -394,7 +400,7 @@ Process GPT Response:
 .. code-block:: python
 
    finally:
-      buzzer.close()
+      buzzer.off()
       client.beta.assistants.delete(assistant.id)
 
 Ensures hardware components are reset and OpenAI resources are released.

@@ -67,7 +67,10 @@ Follow these steps to build the circuit:
 3. Connect the collector of the transistor to one terminal of the passive buzzer.
 4. Connect the other terminal of the buzzer to the ground (-).
 
-.. image:: ../python/img/
+.. image:: img/fzz/1.2.2_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

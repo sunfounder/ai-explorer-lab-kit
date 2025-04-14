@@ -34,7 +34,6 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-
     *   - :ref:`cpn_wires`
         - |link_wires_buy|
     *   - :ref:`cpn_i2c_lcd`
@@ -60,7 +59,9 @@ Follow these steps to build the circuit:
 2. Ensure proper power supply connections to the LCD1602.
 3. Verify the wiring to avoid errors.
 
-.. image:: ../python/img/
+.. image:: img/fzz/1.1.7_bb.png
+   :width: 800
+   :align: center
 
 **Writing the Code**
 

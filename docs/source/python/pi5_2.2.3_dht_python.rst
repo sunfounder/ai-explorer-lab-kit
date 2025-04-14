@@ -33,19 +33,17 @@ Here are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - DHT11 Humidity and Temperature Sensor
-      - |link_humiture_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
 
+    *   - DHT11 Humidity and Temperature Sensor
+        - |link_humiture_buy|
+    *   - Wires
+        - |link_wires_buy|  
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -64,9 +62,10 @@ Below is the schematic diagram for connecting the DHT11 sensor:
 
 Build the circuit as shown in the wiring diagram below:
 
-.. image:: ../img/image207.png
+.. image:: img/fzz/2.2.3_bb.png
+   :width: 800
+   :align: center
 
-Ensure all connections are secure and verify that the DHT11 sensor is correctly connected to the GPIO pin on your Raspberry Pi.
 
 
 ----------------------------------------------
@@ -74,146 +73,67 @@ Ensure all connections are secure and verify that the DHT11 sensor is correctly 
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 2.2.3_DHT.py
-
-After running the script, the temperature and humidity detected by the DHT11 sensor will be displayed on your screen.
-
-.. warning::
-    If you encounter the error ``RuntimeError: Cannot determine SOC peripheral base address``, refer to the :ref:`faq_soc` for troubleshooting steps.
-
-
-----------------------------------------------
-
-
-**Code**
 
 Below is the Python code used for this project:
 
 .. code-block:: python
 
-   from gpiozero import OutputDevice, InputDevice
-   import time
+   from fusion_hat import DHT11
+   from time import sleep
 
-   class DHT11:
-      MAX_DELAY_COUNT = 100
-      BIT_1_DELAY_COUNT = 10
-      BITS_LEN = 40
+   dht11 = DHT11(pin=17)
 
-      def __init__(self, pin, pull_up=False):
-         self._pin = pin
-         self._pull_up = pull_up
-
-      def read_data(self):
-         bit_count = 0
-         delay_count = 0
-         bits = ""
-
-         # Send start signal
-         gpio = OutputDevice(self._pin)
-         gpio.off()
-         time.sleep(0.02)
-         gpio.close()
-         gpio = InputDevice(self._pin, pull_up=self._pull_up)
-
-         # Wait for response
-         while gpio.value == 1:
-            pass
-
-         # Read data
-         while bit_count < self.BITS_LEN:
-            while gpio.value == 0:
-               pass
-
-            while gpio.value == 1:
-               delay_count += 1
-               if delay_count > self.MAX_DELAY_COUNT:
-                  break
-
-            bits += "1" if delay_count > self.BIT_1_DELAY_COUNT else "0"
-            delay_count = 0
-            bit_count += 1
-
-         # Parse data
-         humidity_integer = int(bits[0:8], 2)
-         humidity_decimal = int(bits[8:16], 2)
-         temperature_integer = int(bits[16:24], 2)
-         temperature_decimal = int(bits[24:32], 2)
-         check_sum = int(bits[32:40], 2)
-
-         _sum = humidity_integer + humidity_decimal + temperature_integer + temperature_decimal
-
-         if check_sum != _sum:
-            return 0.0, 0.0
-
-         humidity = float(f'{humidity_integer}.{humidity_decimal}')
-         temperature = float(f'{temperature_integer}.{temperature_decimal}')
-         return humidity, temperature
-
-   if __name__ == '__main__':
-      dht11 = DHT11(17)
-      while True:
-         humidity, temperature = dht11.read_data()
-         print(f"{time.time():.3f}  Temperature: {temperature}°C  Humidity: {humidity}%")
-         time.sleep(2)
+   while True:
+      result = dht11.read()
+      if result:
+         humidity, temperature = result
+         print ("humidity: %s %%,  Temperature: %s C`" % (humidity, temperature))
+      else:
+         print("time out")
+      sleep(1)
 
 
-This Python script reads temperature and humidity data from a DHT11 sensor connected to a Raspberry Pi using GPIO pin 17. When executed:
+This Python script reads temperature and humidity data from a DHT11 sensor connected to a Fusion HAT using GPIO pin 17. When executed:
 
-1. The script continuously sends a start signal to the DHT11 sensor, collects raw data, and interprets it.
-2. It calculates and displays the temperature (in Celsius) and humidity (as a percentage) in the format: ``<timestamp> Temperature: <value>°C Humidity: <value>%``
-3. Data is printed to the console every 2 seconds, providing real-time updates.
-4. If the checksum validation fails, the script outputs ``0.0°C`` for temperature and ``0.0%`` for humidity, indicating an error in data reading.
-
-
-
+1. Data is printed to the console every 1 seconds, providing real-time updates.
+2. If the data reading is not successful, the script outputs “time out” , indicating an error in data reading.
 
 
 ----------------------------------------------
 
 **Understanding the Code**
 
-1. **Initialization:**
-
-   The ``DHT11`` class initializes the GPIO pin and sets up pull-up or pull-down configurations as needed.
+1. **Import:**
 
    .. code-block:: python
 
-       def __init__(self, pin, pull_up=False):
-          self._pin = pin
-          self._pull_up = pull_up
+      from fusion_hat import DHT11
+      from time import sleep
 
-2. **Data Reading:**
+   These lines import the necessary modules for the script.
 
-   The ``read_data`` method sends a start signal to the DHT11, reads 40 bits of data, and verifies the checksum to ensure accuracy.
-
-   .. code-block:: python
-
-       def read_data(self):
-          ...
-          humidity = float(f'{humidity_integer}.{humidity_decimal}')
-          temperature = float(f'{temperature_integer}.{temperature_decimal}')
-          return humidity, temperature
-
-3. **Output:**
-
-   The program outputs temperature in Celsius and humidity as percentages. It uses a 2-second delay between readings to ensure sensor stability.
+2. **Sensor Initialization:**
 
    .. code-block:: python
 
-       print(f"{time.time():.3f}  Temperature: {temperature}°C  Humidity: {humidity}%")
-       time.sleep(2)
+      dht11 = DHT11(pin=17)
 
+   This line initializes the DHT11 sensor on GPIO pin 17.
 
+3. **Data Reading:**
+
+   .. code-block:: python
+
+      while True:
+         result = dht11.read()
+         if result:
+            humidity, temperature = result
+            print ("humidity: %s %%,  Temperature: %s C`" % (humidity, temperature))
+         else:
+            print("time out")
+         sleep(1)
+
+   The ``read`` method sends a start signal to the DHT11.
 
 
 ----------------------------------------------
@@ -222,11 +142,8 @@ This Python script reads temperature and humidity data from a DHT11 sensor conne
 
 1. **No Output or Constant 0.0°C and 0.0% Values**:
 
-   - **Cause**: Sensor connection issues or invalid checksum.
-   - **Solution**:
-
-      - Ensure the DHT11 sensor is properly connected to GPIO pin 17, power, and ground.
-      - Verify the pull-up resistor is correctly configured if needed.
+   - **Cause**: Sensor connection issues.
+   - **Solution**: Ensure the DHT11 sensor is properly connected to GPIO pin 17, power, and ground.
 
 2. **Script Crashes with ValueError**:
 
@@ -252,7 +169,7 @@ This Python script reads temperature and humidity data from a DHT11 sensor conne
 
       try:
          while True:
-               humidity, temperature = dht11.read_data()
+               humidity, temperature = dht11.read()
                print(f"{time.time():.3f}  Temperature: {temperature}°C  Humidity: {humidity}%")
                time.sleep(2)
       except KeyboardInterrupt:
@@ -280,19 +197,8 @@ This Python script reads temperature and humidity data from a DHT11 sensor conne
       if humidity > 70:
           print("Warning: High humidity!")
 
-3. **LED or Buzzer Feedback**: Use an LED or buzzer to provide immediate feedback based on sensor readings:
-  
-  .. code-block:: python
-
-      from gpiozero import Buzzer
-      buzzer = Buzzer(27)
-      if temperature > 30:
-          buzzer.on()
-      else:
-          buzzer.off()
-
 ----------------------------------------------
 
 **Conclusion**
 
-This project demonstrates how to interface with the DHT11 temperature and humidity sensor using a Raspberry Pi. By understanding how to read and process sensor data, you can integrate such sensors into various practical applications, from weather stations to automated climate control systems.
+This project demonstrates how to interface with the DHT11 temperature and humidity sensor using a Fusion HAT. By understanding how to read and process sensor data, you can integrate such sensors into various practical applications, from weather stations to automated climate control systems.

@@ -19,8 +19,7 @@
 
 **Introduction**
 
-The Passive Infrared (PIR) sensor is a motion detection device that senses infrared radiation emitted by humans and animals. In this project, we will build a motion-activated LED system using a PIR sensor and an RGB LED. When the PIR sensor detects motion, the LED will glow yellow. If no motion is detected, the LED will turn blue. This project introduces basic motion sensing and LED control using a Raspberry Pi.
-
+The Passive Infrared (PIR) sensor is a motion detection device that senses infrared radiation emitted by humans and animals. In this project, we will use the PIR sensor to detect motion.
 ----------------------------------------------
 
 **What You’ll Need**
@@ -31,20 +30,17 @@ Below are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - RGB LED
-      - |link_rgb_led_buy|
-    * - PIR Sensor
-      - 
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - PIR Sensor
+        - 
+    *   - Wires
+        - |link_wires_buy|        
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 ----------------------------------------------
@@ -54,7 +50,7 @@ Below are the components required for this project:
 
 Below is the schematic diagram for this project:
 
-.. image:: ../python/img/2.2.7_pir_schematic.png
+.. image:: ../python/img/2.2.7_
 
 
 ----------------------------------------------
@@ -64,7 +60,9 @@ Below is the schematic diagram for this project:
 
 Build the circuit as shown in the diagram below:
 
-.. image:: ../python/img/2.2.7_pir_circuit.png
+.. image:: img/fzz/2.2.6_bb.png
+   :width: 800
+   :align: center
 
 Ensure the RGB LED and PIR sensor are connected to the correct GPIO pins as per the schematic.
 
@@ -74,75 +72,44 @@ Ensure the RGB LED and PIR sensor are connected to the correct GPIO pins as per 
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 2.2.7_PIR_zero.py
-
-When the script runs:
-
-* If motion is detected, the RGB LED glows yellow (red and green combined).
-* If no motion is detected, the LED glows blue.
-
-Adjust the PIR sensor’s potentiometers for sensitivity and detection range:
-
-* Turn both potentiometers counterclockwise to the end for optimal performance.
-
-.. image:: ../python/img/2.2.7_PIR_TTE.png
-    :width: 400
-    :align: center
-
-.. warning::
-    If you encounter the error ``RuntimeError: Cannot determine SOC peripheral base address``, refer to the :ref:`faq_soc` for troubleshooting steps.
-
-
-----------------------------------------------
-
-
-**Code**
-
 Below is the Python code for this project:
 
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import RGBLED, MotionSensor
-   from time import sleep
+   from fusion_hat import Pin  
+   from signal import pause  # Import pause function from signal module
 
-   # Initialize RGB LED and PIR motion sensor
-   led = RGBLED(red=18, green=27, blue=22)  # RGB LED connected to GPIO pins 18, 27, and 22
-   pir = MotionSensor(17)  # PIR sensor connected to GPIO pin 17
+   # Initialize a PIR Module object on GPIO pin 17
+   pir = Pin(17, Pin.IN, pull= Pin.PULL_DOWN)
+
+   def detect():
+      if pir.value() == 1:  # Check if the PIR Module is triggered
+         print("Detected Barrier!")
+      else:
+         print("No Barrier")
 
    try:
-       # Continuously monitor for motion and update LED color
-       while True:
-           if pir.motion_detected:  # Check for motion detected by PIR sensor
-               led.color = (1, 1, 0)  # Set LED color to yellow (Red + Green)
-           else:
-               led.color = (0, 0, 1)  # Set LED color to blue (only Blue)
-           sleep(0.1)  # Short delay to reduce CPU load
+      pir.when_activated = detect  # Set up an interrupt to detect changes in the pir sensor state
+      pir.when_deactivated = detect  
+
+      # Run an event loop that waits for button events and keeps the script running
+      print("CTRL + C to exit")
+      pause()
+
    except KeyboardInterrupt:
-       # Gracefully handle script termination
-       pass
+      # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully
+      pass
 
-This Python script monitors a PIR (Passive Infrared) motion sensor and controls an RGB LED based on motion detection. When executed:
 
-1. **When Motion is Detected**:
 
-   - The RGB LED (connected to GPIO pins 18, 27, and 22) turns yellow (a combination of red and green).
-   - The script continuously checks the motion sensor and updates the LED color.
+This Python script monitors a PIR (Passive Infrared) motion sensor based on motion detection. When executed:
 
-2. **When No Motion is Detected**: The RGB LED turns blue.
+1. **When Motion is Detected**: Prints "Detected Barrier!" to the console.
 
-3. The program runs indefinitely, checking the PIR sensor every 0.1 seconds, until interrupted with ``Ctrl+C``.
+2. **When No Motion is Detected**: Prints "No Barrier" to the console.
 
+3. The program runs indefinitely, waiting for motion events. It can be terminated by pressing Ctrl+C.
 
 ----------------------------------------------
 
@@ -150,47 +117,49 @@ This Python script monitors a PIR (Passive Infrared) motion sensor and controls 
 
 1. **Imports:**
 
-   The script uses the ``gpiozero`` library to control the RGB LED and PIR sensor, and the ``time`` module to introduce delays.
-
    .. code-block:: python
 
-       from gpiozero import RGBLED, MotionSensor
-       from time import sleep
+      from fusion_hat import Pin  
+      from signal import pause  # Import pause function from signal module
+
+   The script uses the ``fusion_hat`` library to control the PIR sensor, and the ``signal`` module to handle program termination.
+
 
 2. **Initialization:**
 
-   The RGB LED is initialized with its red, green, and blue components connected to GPIO pins 18, 27, and 22, respectively. The PIR sensor is connected to GPIO pin 17.
-
    .. code-block:: python
 
-       led = RGBLED(red=18, green=27, blue=22)
-       pir = MotionSensor(17)
+      pir = Pin(17, Pin.IN, pull= Pin.PULL_DOWN)
+
+   In this line, a PIR sensor is initialized on pin 17 with an internal pull-down resistor enabled.
+
 
 3. **Main Loop:**
 
+   .. code-block:: python
+
+      def detect():
+         if pir.value() == 1:  # Check if the PIR Module is triggered
+            print("Detected Barrier!")
+         else:
+            print("No Barrier")
+
+      try:
+         pir.when_activated = detect  # Set up an interrupt to detect changes in the pir sensor state
+         pir.when_deactivated = detect  
+
+         # Run an event loop that waits for button events and keeps the script running
+         print("CTRL + C to exit")
+         pause()
+
+      except KeyboardInterrupt:
+         # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully
+         pass
+
+
    * Continuously checks for motion detected by the PIR sensor.
-   * If motion is detected, the LED turns yellow.
-   * If no motion is detected, the LED turns blue.
-   * The ``sleep`` function introduces a short delay to reduce CPU load.
-
-   .. code-block:: python
-
-       while True:
-           if pir.motion_detected:
-               led.color = (1, 1, 0)
-           else:
-               led.color = (0, 0, 1)
-           sleep(0.1)
-
-4. **Graceful Exit:**
-
-   The ``try-except`` block ensures that the program exits cleanly when interrupted with ``Ctrl+C``.
-
-   .. code-block:: python
-
-       except KeyboardInterrupt:
-           pass
-
+   * If motion is detected, the message "Detected Barrier!" is printed.
+   * If no motion is detected, the message "No Barrier" is printed.
 
 
 ----------------------------------------------
@@ -198,23 +167,14 @@ This Python script monitors a PIR (Passive Infrared) motion sensor and controls 
 
 **Troubleshooting**
 
-1. **RGB LED Does Not Light Up**:
 
-   - **Cause**: Incorrect wiring of the RGB LED.
-   - **Solution**: Verify the red, green, and blue pins of the LED are correctly connected to GPIO pins 18, 27, and 22. Ensure resistors are used to prevent damage.
-
-2. **Motion Not Detected**:
+1. **Motion Not Detected**:
 
    - **Cause**: PIR sensor is not wired or configured properly.
    - **Solution**:
 
      - Ensure the PIR sensor is connected to GPIO pin 17, power, and ground.
      - Adjust the sensor’s sensitivity and delay potentiometers if available.
-
-3. **Script Does Not Respond to Motion**:
-
-   - **Cause**: Faulty PIR sensor or incorrect ``pir.motion_detected`` handling.
-   - **Solution**: Test the PIR sensor independently to confirm it detects motion and triggers its output pin.
 
 ----------------------------------------------
 
@@ -224,9 +184,9 @@ This Python script monitors a PIR (Passive Infrared) motion sensor and controls 
 
    .. code-block:: python
 
-      from gpiozero import Buzzer
-      buzzer = Buzzer(23)
-      if pir.motion_detected:
+      from fusion_hat import Buzzer
+      buzzer = Buzzer(Pin(22))
+      if pir.value() == 1:
          buzzer.on()
       else:
          buzzer.off()
@@ -238,24 +198,10 @@ This Python script monitors a PIR (Passive Infrared) motion sensor and controls 
       with open("motion_log.txt", "a") as log_file:
          log_file.write(f"Motion detected at {time.time():.3f}\n")
 
-3. **Event-Based Triggers**: Add logic for specific actions based on motion patterns or duration:
-
-   .. code-block:: python
-
-      import time
-      motion_start = None
-      def detect_motion():
-         global motion_start
-         if pir.motion_detected:
-            motion_start = time.time()
-         else:
-            duration = time.time() - motion_start
-            print(f"Motion lasted {duration:.2f} seconds")
-
 
 ----------------------------------------------
 
 
 **Conclusion**
 
-This project demonstrates how to use a PIR sensor with an RGB LED to build a motion-activated system. By understanding the basics of motion sensing and LED control, you can expand this project into more advanced applications such as security systems, automated lighting, or interactive devices. The PIR sensor’s versatility and simplicity make it an excellent component for countless DIY and professional projects.
+This project demonstrates how to use a PIR sensor. By understanding the basics of motion sensing  control, you can expand this project into more advanced applications such as security systems, automated lighting, or interactive devices. The PIR sensor’s versatility and simplicity make it an excellent component for countless DIY and professional projects.

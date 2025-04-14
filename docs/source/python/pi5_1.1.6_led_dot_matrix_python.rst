@@ -61,7 +61,10 @@ Follow these steps to build the circuit:
 1. Connect the SPI interface pins (MOSI, SCK, and CS) to the Fusion HAT pins.
 2. Ensure proper power supply connections to the matrix.
 
-.. image:: ../img/1.1.6fritzing.png
+.. image:: img/fzz/1.1.6_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

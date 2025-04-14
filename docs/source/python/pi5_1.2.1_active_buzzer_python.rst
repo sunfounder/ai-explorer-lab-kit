@@ -70,7 +70,10 @@ Follow these steps to build the circuit:
 4. Connect the collector of the transistor to one terminal of the buzzer.
 5. Connect the other terminal of the buzzer to the ground (-).
 
-.. image:: ../python/img/
+.. image:: img/fzz/1.2.1_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

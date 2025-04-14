@@ -34,14 +34,12 @@ To complete this project, you will need the following components:
    *   - COMPONENT
       - PURCHASE LINK
 
-   *   - :ref:`cpn_wires`
-      - |link_wires_buy|
    *   - :ref:`cpn_motor`
-      - |link_motor_buy|
+       - |link_motor_buy|
    *   - Fusion HAT
-      - 
+       - 
    *   - Raspberry Pi Zero 2 W
-      -
+       -
 
 
 ----------------------------------------------
@@ -57,7 +55,10 @@ The circuit diagram below shows the connections required to control the motor.
 **Wiring Diagram**
 
 
-.. image:: ../python/img/1.3.1
+.. image:: img/fzz/1.3.1_bb.png
+   :width: 800
+   :align: center
+
 
 
 

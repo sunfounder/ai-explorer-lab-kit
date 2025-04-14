@@ -54,7 +54,7 @@ Below are the components required for this project:
 
    .. code-block:: bash
 
-       cd ~/zero-w-ai-kit/python
+      cd ~/ai-explorer-lab-kit/python
 
 3. **Run the Python Script:**
 
@@ -62,12 +62,12 @@ Below are the components required for this project:
 
    .. code-block:: bash
 
-       sudo python3 3.1.2_VideoModule_zero.py
+      sudo python3 3.1.2_VideoModule_zero.py
 
    The camera will start recording. Press ``Ctrl+C`` to stop. The recorded video will be saved as ``my_video.mp4`` in the ``~`` directory (your home folder).
 
 .. note::
-    You can also open the ``3.1.2_VideoModule_zero.py`` file in a Python IDE, click the "Run" button to execute the script, and stop it using the "Stop" button.
+   You can also open the ``3.1.2_VideoModule_zero.py`` file in a Python IDE, click the "Run" button to execute the script, and stop it using the "Stop" button.
 
 For instructions on transferring the video to your PC, refer to :ref:`filezilla`.
 
@@ -159,11 +159,11 @@ This Python script uses the ``Picamera2`` library to record a video using the Ra
 
    .. code-block:: python
 
-       import time
-       from picamera2 import Picamera2, Preview
-       from picamera2.encoders import H264Encoder
-       from picamera2.outputs import FfmpegOutput
-       import os
+      import time
+      from picamera2 import Picamera2, Preview
+      from picamera2.encoders import H264Encoder
+      from picamera2.outputs import FfmpegOutput
+      import os
 
 2. **User Directory Setup:**
 
@@ -171,7 +171,7 @@ This Python script uses the ``Picamera2`` library to record a video using the Ra
 
    .. code-block:: python
 
-       user_home = os.path.expanduser('~')
+      user_home = os.path.expanduser('~')
 
 3. **Camera Initialization:**
 
@@ -179,8 +179,8 @@ This Python script uses the ``Picamera2`` library to record a video using the Ra
 
    .. code-block:: python
 
-       camera = Picamera2()
-       preview_config = camera.preview_configuration
+      camera = Picamera2()
+      preview_config = camera.preview_configuration
 
 4. **Preview Configuration:**
 
@@ -188,8 +188,8 @@ This Python script uses the ``Picamera2`` library to record a video using the Ra
 
    .. code-block:: python
 
-       preview_config.size = (800, 600)
-       preview_config.format = 'XRGB8888'
+      preview_config.size = (800, 600)
+      preview_config.format = 'XRGB8888'
 
 5. **Video Recording Setup:**
 
@@ -197,11 +197,11 @@ This Python script uses the ``Picamera2`` library to record a video using the Ra
 
    .. code-block:: python
 
-       conf = {'size': (800, 600)}
-       controls = {'FrameRate': 40}
-       config = camera.create_video_configuration(main=conf, controls=controls, buffer_count=12)
-       encoder = H264Encoder(bitrate=10000000)
-       output = FfmpegOutput(f'{user_home}/my_video.mp4')
+      conf = {'size': (800, 600)}
+      controls = {'FrameRate': 40}
+      config = camera.create_video_configuration(main=conf, controls=controls, buffer_count=12)
+      encoder = H264Encoder(bitrate=10000000)
+      output = FfmpegOutput(f'{user_home}/my_video.mp4')
 
 6. **Recording and Cleanup:**
 
@@ -209,13 +209,13 @@ This Python script uses the ``Picamera2`` library to record a video using the Ra
 
    .. code-block:: python
 
-       try:
-           camera.configure(config)
-           camera.start_recording(encoder, output)
-           time.sleep(10)
-           camera.stop_recording()
-       except KeyboardInterrupt:
-           camera.stop_preview()
+      try:
+         camera.configure(config)
+         camera.start_recording(encoder, output)
+         time.sleep(10)
+         camera.stop_recording()
+      except KeyboardInterrupt:
+         camera.stop_preview()
 
 
 

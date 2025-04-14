@@ -34,8 +34,6 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -48,14 +46,19 @@ To complete this project, you will need the following components:
         - \-
     *   - :ref:`cpn_capacitor`
         - |link_capacitor_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+
+
 
 ----------------------------------------------
 
 **Circuit Diagram**
 
 The Micro Switch is connected to GPIO17, and two LEDs are connected to GPIO22 and GPIO27. When the Micro Switch is pressed, the yellow LED lights up; when released, the red LED turns on.
-
-.. image:: ../python/img/2.1.2_micro_switch_schematic_1.png
 
 .. image:: ../python/img/2.1.2_micro_switch_schematic_2.png
 
@@ -69,7 +72,12 @@ Follow these steps to build the circuit:
 2. Connect the anodes of the two LEDs to GPIO22 (yellow) and GPIO27 (red) through current-limiting resistors.
 3. Connect the cathodes of both LEDs to GND.
 
-.. image:: ../python/img/2.1.2_micro_switch_circuit.png
+
+.. image:: img/fzz/2.1.2_bb.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 
@@ -79,34 +87,32 @@ The following Python code toggles between two LEDs based on the state of the Mic
 
 .. code-block:: python
 
-   #!/usr/bin/env python3
-   from gpiozero import LED, Button  # Import LED and Button classes from gpiozero
-   from time import sleep  # Import sleep function for delays
+    #!/usr/bin/env python3
+    from fusion_hat import Pin  
+    from time import sleep  # Import sleep function for delays
 
-   # Initialize micro switch on GPIO pin 17 with the pull-up resistor disabled
-   micro_switch = Button(17, pull_up=False)
-   # Initialize LED1 connected to GPIO pin 22
-   led1 = LED(22)
-   # Initialize LED2 connected to GPIO pin 27
-   led2 = LED(27)
+    # Initialize micro switch on GPIO pin 17
+    micro_switch = Pin(17, Pin.IN, pull = Pin.PULL_DOWN)
+    # Initialize LED1 connected to GPIO pin 22
+    led1 = Pin(22,Pin.OUT)
+    # Initialize LED2 connected to GPIO pin 27
+    led2 = Pin(27,Pin.OUT)
 
-   try:
-       # Continuously check the state of the micro switch and control LEDs accordingly
-       while True:
-           if micro_switch.is_pressed:  # If the micro switch is pressed
-               print('LED1 ON')  # Print a message to the console
-               led1.on()       # Turn on LED1
-               led2.off()      # Turn off LED2
-           else:  # If the micro switch is not pressed
-               print('    LED2 ON')  # Print a message to the console
-               led1.off()      # Turn off LED1
-               led2.on()       # Turn on LED2
+    try:
+        # Continuously check the state of the micro switch and control LEDs accordingly
+        while True:
+            if micro_switch.value() == 1:  # If the micro switch is pressed
+                led1.high()       # Turn on LED1
+                led2.low()      # Turn off LED2
+            else:  # If the micro switch is not pressed
+                led1.low()      # Turn off LED1
+                led2.high()       # Turn on LED2
 
-           sleep(0.5)  # Pause for 0.5 seconds before checking the switch again
+            sleep(0.5)  # Pause for 0.5 seconds before checking the switch again
 
-   except KeyboardInterrupt:
-       # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully
-       pass
+    except KeyboardInterrupt:
+        # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully
+        pass
 
 This Python script controls two LEDs based on the state of a micro switch connected to a Raspberry Pi. When executed:
 
@@ -114,13 +120,11 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
    - LED1 (connected to GPIO pin 22) turns on.
    - LED2 (connected to GPIO pin 27) turns off.
-   - The console displays the message: ``LED1 ON``.
 
 2. **Micro Switch Released**:
 
    - LED1 turns off.
    - LED2 turns on.
-   - The console displays the message: ``LED2 ON``.
 
 3. The program continuously checks the micro switch's state every 0.5 seconds and adjusts the LEDs accordingly.
 
@@ -133,12 +137,12 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
 1. **Library Import**
 
-   The ``gpiozero`` library provides simple GPIO control, and the ``time`` library enables delays.
+   The ``fusion_hat`` library provides simple GPIO control, and the ``time`` library enables delays.
 
    .. code-block:: python
 
-       from gpiozero import LED, Button
-       from time import sleep
+      from fusion_hat import Pin  
+      from time import sleep  
 
 2. **Component Initialization**
 
@@ -146,9 +150,12 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
    .. code-block:: python
 
-       micro_switch = Button(17, pull_up=False)
-       led1 = LED(22)
-       led2 = LED(27)
+      # Initialize micro switch on GPIO pin 17
+      micro_switch = Pin(17, Pin.IN, pull = Pin.PULL_DOWN)
+      # Initialize LED1 connected to GPIO pin 22
+      led1 = Pin(22,Pin.OUT)
+      # Initialize LED2 connected to GPIO pin 27
+      led2 = Pin(27,Pin.OUT)
 
 3. **Switch State Handling**
 
@@ -156,14 +163,14 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
    .. code-block:: python
 
-       while True:
-           if micro_switch.is_pressed:
-               led1.on()
-               led2.off()
-           else:
-               led1.off()
-               led2.on()
-           sleep(0.5)
+      while True:
+         if micro_switch.value() == 1:
+            led1.on()
+            led2.off()
+         else:
+            led1.off()
+            led2.on()
+         sleep(0.5)
 
 4. **Interrupt Handling**
 
@@ -171,8 +178,8 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
    .. code-block:: python
 
-       except KeyboardInterrupt:
-           pass
+      except KeyboardInterrupt:
+         pass
 
 
 ----------------------------------------------
@@ -188,7 +195,7 @@ This Python script controls two LEDs based on the state of a micro switch connec
 2. **Micro Switch Not Detected**  
 
    - **Cause**: The micro switch might not be configured properly or needs a pull-up/pull-down resistor.  
-   - **Solution**: Confirm that ``pull_up=False`` matches your switch configuration. If the switch requires a pull-up, enable it in the ``Button`` initialization.
+   - **Solution**: Confirm that ``pull = Pin.PULL_DOWN`` matches your switch configuration. If the switch requires a pull-up, enable it in the initialization.
 
 3. **LEDs Flicker or Behave Erratically**  
 
@@ -198,7 +205,7 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
    .. code-block:: python
 
-      if micro_switch.is_pressed:
+      if micro_switch.value() == 1:
          sleep(0.05)  # Debounce delay
 
 
@@ -207,18 +214,7 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
 **Extendable Ideas**
 
-1. **Button Hold Detection**  
-
-   Detect whether the micro switch is held down and trigger specific actions:
-
-   .. code-block:: python
-
-      if micro_switch.is_held:
-         print("Button Held!")
-         led1.blink()
-
-
-2. **Adjustable Delay**  
+1. **Adjustable Delay**  
 
    Allow the user to change the delay dynamically to fine-tune LED responsiveness:
 
@@ -230,16 +226,15 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
 
 
-3. **Audio Feedback**  
+2. **Audio Feedback**  
 
    Add a buzzer to provide an audible signal when the switch is pressed or released:
 
-
    .. code-block:: python
 
-      from gpiozero import Buzzer
-      buzzer = Buzzer(18)
-      if micro_switch.is_pressed:
+      from fusion_hat import Buzzer
+      buzzer = Buzzer(Pin(22))
+      if micro_switch.value() == 1:
          buzzer.on()
       else:
          buzzer.off()
@@ -250,4 +245,4 @@ This Python script controls two LEDs based on the state of a micro switch connec
 
 **Conclusion**
 
-This project demonstrates how to use a Micro Switch to control LEDs with a Raspberry Pi. Micro Switches are versatile components widely used in safety systems, user interfaces, and industrial controls. Experimenting with them can open up opportunities for creating more advanced projects.
+This project demonstrates how to use a Micro Switch to control LEDs with the Fusion HAT. Micro Switches are versatile components widely used in safety systems, user interfaces, and industrial controls. Experimenting with them can open up opportunities for creating more advanced projects.

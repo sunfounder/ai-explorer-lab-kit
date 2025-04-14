@@ -35,8 +35,7 @@ The following components are required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -46,9 +45,7 @@ The following components are required for this project:
     *   - LED
         - |link_led_buy|
     *   - Joystick
-        - N/A
-    *   - ADC0834 Module
-        - N/A
+        - 
     *   - Transistor
         - |link_transistor_buy|
     *   - I2C LCD (16x2)
@@ -56,7 +53,11 @@ The following components are required for this project:
     *   - Thermistor
         - |link_thermistor_buy|
     *   - Buzzer
-        - N/A
+        - 
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 ----------------------------------------------
@@ -66,7 +67,7 @@ The following components are required for this project:
 
 The schematic diagram for the overheat monitor is shown below:
 
-.. image:: ../python/img/4.1.13_overheat_monitor_schematic.png
+.. image:: ../python/img/4.1.13_overh
    :align: center
 
 
@@ -77,7 +78,11 @@ The schematic diagram for the overheat monitor is shown below:
 
 Follow the wiring diagram to connect all components:
 
-.. image:: ../python/img/4.1.13_overheat_monitor_circuit.png
+
+.. image:: img/fzz/4.1.10_bb.png
+   :width: 800
+   :align: center
+
 
 
 
@@ -85,29 +90,6 @@ Follow the wiring diagram to connect all components:
 
 **Writing the Code**
 
-1. Navigate to the project directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the Python script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.13_OverheatMonitor_zero.py
-
-   When the program is running:
-
-   * The LCD will display the current temperature and the high-temperature threshold (default: 40°C).
-   * If the current temperature exceeds the threshold, the LED and buzzer will activate as an alert.
-   * Use the joystick to adjust the threshold. Push the joystick along the X or Y axes to increase or decrease the threshold. Press the joystick to reset the threshold to its initial value.
-
-
-----------------------------------------------
-
-
-**Code**
 
 Here is the Python script for the overheat monitoring system:
 
@@ -115,67 +97,96 @@ Here is the Python script for the overheat monitoring system:
 
     #!/usr/bin/env python3
 
-    import LCD1602
-    from gpiozero import LED, Buzzer, Button
-    import ADC0834
+    from fusion_hat import Pin, Buzzer, ADC,LCD1602
     import time
     import math
 
     # Initialize joystick button, buzzer, and LED
-    Joy_BtnPin = Button(22)
-    buzzPin = Buzzer(23)
-    ledPin = LED(24)
+    Joy_BtnPin = Pin(17, Pin.IN, Pin.PULL_UP)
+    xAxis = ADC('A1')
+    yAxis = ADC('A0')
+
+    buzzPin = Buzzer(Pin(22, Pin.OUT))
+    ledPin = Pin(27, Pin.OUT)
+    thermistor = ADC('A3')
 
     # Set initial upper temperature threshold
     upperTem = 40
 
-    # Setup ADC and LCD modules
-    ADC0834.setup()
-    LCD1602.init(0x27, 1)
+    # Setup LCD modules
+    lcd = LCD1602(address=0x27, backlight=1)
+
+    def MAP(x, in_min, in_max, out_min, out_max):
+        """
+        Map a value from one range to another.
+        :param x: The value to be mapped.
+        :param in_min: The lower bound of the value's current range.
+        :param in_max: The upper bound of the value's current range.
+        :param out_min: The lower bound of the value's target range.
+        :param out_max: The upper bound of the value's target range.
+        :return: The mapped value.
+        """
+        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
 
     def get_joystick_value():
-        """Read joystick values and return a change value."""
-        x_val = ADC0834.getResult(1)
-        y_val = ADC0834.getResult(2)
-        if x_val > 200:
+        """
+        Reads the joystick values and returns a change value based on the joystick's position.
+        """
+        x_val = MAP(xAxis.read(),0,4095,-100,100)
+        y_val = MAP(yAxis.read(),0,4095,-100,100)
+        if x_val > 50:
             return 1
-        elif x_val < 50:
+        elif x_val < -50:
             return -1
-        elif y_val > 200:
+        elif y_val > 50:
             return -10
-        elif y_val < 50:
+        elif y_val < -50:
             return 10
         else:
             return 0
 
     def upper_tem_setting():
-        """Adjust the upper temperature threshold using joystick input."""
+        """
+        Adjusts and displays the upper temperature threshold on the LCD.
+        """
         global upperTem
-        LCD1602.write(0, 0, 'Upper Adjust: ')
+        lcd.write(0, 0, 'Upper Adjust: ')
         change = int(get_joystick_value())
         upperTem += change
         strUpperTem = str(upperTem)
-        LCD1602.write(0, 1, strUpperTem)
-        LCD1602.write(len(strUpperTem), 1, ' ' * (16 - len(strUpperTem)))
+        lcd.write(0, 1, strUpperTem)
+        lcd.write(len(strUpperTem), 1, '              ')
         time.sleep(0.1)
 
     def temperature():
-        """Read and calculate the current temperature in Celsius."""
-        analogVal = ADC0834.getResult()
-        Vr = 5 * float(analogVal) / 255
-        Rt = 10000 * Vr / (5 - Vr)
+        """
+        Reads the current temperature from the sensor and returns it in Celsius.
+        """
+        analogVal = thermistor.read()
+        Vr = 3.3 * float(analogVal) / 4095
+        if 3.3 - Vr < 0.1:
+            print("Please check the thermistor")
+            time.sleep(1)
+            return None
+        Rt = 10000 * Vr / (3.3 - Vr)
         temp = 1 / (((math.log(Rt / 10000)) / 3950) + (1 / (273.15 + 25)))
         Cel = temp - 273.15
         return round(Cel, 2)
 
     def monitoring_temp():
-        """Monitor temperature and trigger alerts if it exceeds the threshold."""
+        """
+        Monitors and displays the current temperature and upper temperature threshold. 
+        Activates buzzer and LED if the temperature exceeds the upper limit.
+        """
         global upperTem
         Cel = temperature()
-        LCD1602.write(0, 0, 'Temp: ')
-        LCD1602.write(0, 1, 'Upper: ')
-        LCD1602.write(6, 0, str(Cel))
-        LCD1602.write(7, 1, str(upperTem))
+        if Cel is None:
+            return
+        lcd.write(0, 0, 'Temp: ')
+        lcd.write(0, 1, 'Upper: ')
+        lcd.write(6, 0, str(Cel))
+        lcd.write(7, 1, str(upperTem))
         time.sleep(0.1)
         if Cel >= upperTem:
             buzzPin.on()
@@ -189,24 +200,26 @@ Here is the Python script for the overheat monitoring system:
         lastState = 1
         stage = 0
         while True:
-            currentState = Joy_BtnPin.value
+            currentState = Joy_BtnPin.value()
+            # Toggle between settings and monitoring mode
             if currentState == 1 and lastState == 0:
                 stage = (stage + 1) % 2
                 time.sleep(0.1)
-                LCD1602.clear()
+                lcd.clear()
             lastState = currentState
             if stage == 1:
                 upper_tem_setting()
             else:
                 monitoring_temp()
+
     except KeyboardInterrupt:
-        LCD1602.clear()
-        ADC0834.destroy()
+        # Clean up and exit
+        lcd.clear()
 
 
 This Python script integrates a temperature monitoring system with a joystick-controlled adjustable threshold. It provides the following functionalities:
 
-1. **Temperature Measurement**: Reads the current temperature using the ADC0834 module and displays it on the LCD.
+1. **Temperature Measurement**: Reads the current temperature and displays it on the LCD.
 
 2. **Upper Threshold Adjustment**:
 
@@ -221,12 +234,12 @@ This Python script integrates a temperature monitoring system with a joystick-co
 
    - If the temperature exceeds the threshold:
 
-     - A buzzer (GPIO pin 23) turns on.
-     - An LED (GPIO pin 24) lights up.
+     - A buzzer turns on.
+     - An LED lights up.
 
    - The buzzer and LED turn off when the temperature falls below the threshold.
 
-4. **Joystick Button Functionality**: The joystick button (GPIO pin 22) toggles between two modes:
+4. **Joystick Button Functionality**: The joystick button toggles between two modes:
    
    - Threshold adjustment mode.
    - Temperature monitoring mode.
@@ -269,10 +282,9 @@ This Python script integrates a temperature monitoring system with a joystick-co
 
 1. **Temperature Not Displayed**:
 
-   - **Cause**: ADC0834 module not properly set up.
+   - **Cause**: Module not properly set up.
    - **Solution**:
 
-     - Verify the ADC0834 module is correctly connected and initialized with ``ADC0834.setup()``.
      - Ensure the thermistor is functional and wired properly.
 
 2. **Joystick Not Responding**:
@@ -280,7 +292,7 @@ This Python script integrates a temperature monitoring system with a joystick-co
    - **Cause**: Incorrect joystick wiring or configuration.
    - **Solution**:
 
-     - Verify connections for the joystick's X, Y, and button pins (ADC channels 1, 2, and GPIO 22).
+     - Verify connections for the joystick's X, Y, and button pins (A1, A2 and GPIO 17, respectively).
      - Test the joystick independently to confirm functionality.
 
 3. **Buzzer/LED Not Triggering**:
@@ -288,7 +300,7 @@ This Python script integrates a temperature monitoring system with a joystick-co
    - **Cause**: Incorrect wiring or GPIO pin configuration.
    - **Solution**:
 
-     - Check the connections for the buzzer (GPIO 23) and LED (GPIO 24).
+     - Check the connections for the buzzer (GPIO 27) and LED (GPIO 22).
      - Test the components using simple scripts to ensure they function correctly.
 
 4. **Threshold Adjustment Not Working**:
@@ -296,9 +308,9 @@ This Python script integrates a temperature monitoring system with a joystick-co
    - **Cause**: Joystick movement not detected or ``get_joystick_value()`` logic error.
    - **Solution**: Add debug prints to verify the values returned by ``get_joystick_value()``.
 
-       .. code-block:: python
+      .. code-block:: python
 
-           print(f"Joystick Value: {get_joystick_value()}")
+         print(f"Joystick Value: {get_joystick_value()}")
 
 5. **LCD Not Displaying Properly**:
 
@@ -306,12 +318,6 @@ This Python script integrates a temperature monitoring system with a joystick-co
    - **Solution**:
 
      - Verify the LCD's I2C address using ``i2cdetect -y 1``.
-     - Update ``LCD1602.init()`` with the correct address.
-
-6. **Script Crashes Unexpectedly**:
-
-   - **Cause**: Resource cleanup issues on exit.
-   - **Solution**: Ensure ``ADC0834.destroy()`` and ``LCD1602.clear()`` are called in the ``except KeyboardInterrupt`` block.
 
 
 ----------------------------------------------
@@ -323,10 +329,10 @@ This Python script integrates a temperature monitoring system with a joystick-co
 
 2. **Data Logging**: Log temperature readings and threshold changes to a file for later analysis:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         with open("temperature_log.txt", "a") as log_file:
-             log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - Temp: {Cel}, Threshold: {upperTem}\n")
+      with open("temperature_log.txt", "a") as log_file:
+            log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - Temp: {Cel}, Threshold: {upperTem}\n")
 
 3. **Temperature Unit Conversion**: Add functionality to display the temperature in Fahrenheit or Kelvin.
 

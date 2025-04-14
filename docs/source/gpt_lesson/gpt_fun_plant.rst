@@ -12,7 +12,8 @@ This example demonstrates how to integrate OpenAI's GPT model with IoT hardware 
 2. **Sensor Data Integration:** The virtual plant gathers real-time environmental data from sensors, including:
 
    * **DHT11:** Measures temperature and humidity.
-   * **ADC0834:** Measures soil moisture and light intensity.
+   * **Soil Moisture Sensor:** Measures soil moisture level.
+   * **photoresistor:** light intensity.
 
 3. **Text-to-Speech Feedback:** The plant responds to user questions using OpenAI's TTS model, providing a spoken response.
 
@@ -32,22 +33,27 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - Breadboard
+        - |link_breadboard_buy|
+    *   - Wires
+        - |link_wires_buy|
+    *   - Resistor
+        - |link_resistor_buy|
+    *   - Photoresistor
+        - |link_photoresistor_buy|
+    *   - DHT11 Humidity and Temperature Sensor
+        - |link_humiture_buy|
+    *   - Soil Moisture Sensor
+        - 
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+
 ----------------------------------------------
 
 **Diagram**
@@ -69,20 +75,23 @@ The following components are required for this project:
    import subprocess
    from pathlib import Path
    import speech_recognition as sr
-   from DHT import DHT11
-   import ADC0834
+   from fusion_hat import ADC,DHT11
+
    import time
    import threading
 
    # Initialize OpenAI client
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
+   os.system("fusion_hat enable_speaker")
+
    # Initialize speech recognizer
    recognizer = sr.Recognizer()
 
    # Initialize hardware components
-   ADC0834.setup(cs=17, clk=22, dio=27)
-   dht11 = DHT11(12)
+   dht11 = DHT11(17)
+   light_sensor = ADC('A0')
+   moisture_sensor = ADC('A1')
 
    humidity = None
    temperature = None
@@ -93,13 +102,13 @@ The following components are required for this project:
    def fetch_sensor_data():
       global humidity, temperature, light, moisture
       while True:
-         _humidity, _temperature = dht11.read_data()
+         _humidity, _temperature = dht11.read()
          if _humidity != 0.0:
                humidity = _humidity
          if _temperature != 0.0:
                temperature = _temperature
-         light = ADC0834.getResult(channel=0)
-         moisture = ADC0834.getResult(channel=1)
+         light = light_sensor.read()
+         moisture = moisture_sensor.read()
          time.sleep(1)
 
    # Start a background thread for sensor data
@@ -115,10 +124,12 @@ The following components are required for this project:
                model="tts-1", voice="alloy", input=text
          ) as response:
                response.stream_to_file(speech_file_path)
+         p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+         p.wait()
       except Exception as e:
          print(f"Error in TTS: {e}")
          return None
-      return speech_file_path
+
 
    # Function for speech-to-text conversion
    def speech_to_text(audio_file):
@@ -207,17 +218,11 @@ The following components are required for this project:
                            if block.type == "text":
                               response = block.text.value
                               print(f"Plant Bot >>> {response}")
-                              speech_path = text_to_speech(response)
-                              if speech_path:
-                                 subprocess.Popen(
-                                       ["mplayer", str(speech_path)],
-                                       shell=False,
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT,
-                                 ).wait()
+                              text_to_speech(response)
+                     break
    finally:
       client.beta.assistants.delete(assistant.id)
-      print("Cleaned up resources.")
+      print("\n Delete Assistant ID")
 
 
 ----------------------------------------------
@@ -234,10 +239,14 @@ Initializes the OpenAI client using your API key.
 
 .. code-block:: python
 
-   ADC0834.setup(cs=17, clk=22, dio=27)
-   dht11 = DHT11(12)
+   # Initialize hardware components
+   dht11 = DHT11(17)
+   light_sensor = ADC('A0')
+   moisture_sensor = ADC('A1')
 
-Configures the ADC0834 module for reading light and soil moisture data and initializes the DHT11 sensor for temperature and humidity readings.
+
+Initializes the modules for reading light and soil moisture data.
+Initializes the DHT11 sensor for temperature and humidity readings.
 
 
 2. Sensor Data Collection
@@ -248,13 +257,13 @@ Configures the ADC0834 module for reading light and soil moisture data and initi
    def fetch_sensor_data():
       global humidity, temperature, light, moisture
       while True:
-         _humidity, _temperature = dht11.read_data()
+         _humidity, _temperature = dht11.read()
          if _humidity != 0.0:
                humidity = _humidity
          if _temperature != 0.0:
                temperature = _temperature
-         light = ADC0834.getResult(channel=0)
-         moisture = ADC0834.getResult(channel=1)
+         light = light_sensor.read()
+         moisture = moisture_sensor.read()
          time.sleep(1)
 
 This function continuously updates global variables with sensor data, running on a separate thread to avoid blocking the main program.
@@ -273,25 +282,35 @@ Uses OpenAI's Whisper model to transcribe the user's spoken input into text.
 
 .. code-block:: python
 
+   # Function for text-to-speech conversion
    def text_to_speech(text):
-      with client.audio.speech.with_streaming_response.create(
-         model="tts-1", voice="alloy", input=text
-      ) as response:
-         response.stream_to_file(speech_file_path)
+      speech_file_path = Path(__file__).parent / "speech.mp3"
+      try:
+         with client.audio.speech.with_streaming_response.create(
+               model="tts-1", voice="alloy", input=text
+         ) as response:
+               response.stream_to_file(speech_file_path)
+         p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+         p.wait()
+      except Exception as e:
+         print(f"Error in TTS: {e}")
+         return None
 
 Converts the assistant's textual response into a spoken audio file using OpenAI's TTS model.
+Then plays the audio file using mplayer.
 
 4. Creating the Assistant
 
 .. code-block:: python
 
-   instructions = (
+   instructions=(
       "You are a virtual plant. Based on the received greeting and environmental conditions "
       "(light, soil moisture, temperature, humidity), respond with how you feel. "
       "Provide a concise, plant-like response. Units: "
       "Temperature in Celsius, humidity in %, soil moisture (3200: dry, 2500: wet), "
-      "light (4095: dark, 2300: bright sunlight)."
-   )
+      "light (4095: dark, 2300: bright sunlight). User input will be JSON format like: "
+      '{"light": 512, "moisture": 3000, "temperature": 25, "humidity": 62, "message": "How do you feel?"}'
+   ),
 
 The assistant is designed to mimic the personality of a plant, considering environmental data when responding.
 
@@ -325,15 +344,18 @@ Waits for the assistant to generate a response.
 
 .. code-block:: python
 
-   speech_path = text_to_speech(response)
-   subprocess.Popen(
-      ["mplayer", str(speech_path)],
-      shell=False,
-      stdout=subprocess.PIPE,
-      stderr=subprocess.STDOUT,
-   ).wait()
+   if run.status == "completed":
+      messages = client.beta.threads.messages.list(thread_id=thread.id)
+      for message in messages.data:
+            if message.role == "assistant":
+               for block in message.content:
+                  if block.type == "text":
+                        response = block.text.value
+                        print(f"Plant Bot >>> {response}")
+                        text_to_speech(response)
+               break
 
-Plays the assistant's response through the speaker.
+converts the assistant's response to text and prints it to the console. It also uses the text-to-speech function to play the assistant's response aloud.
 
 
 ----------------------------------------------

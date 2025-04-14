@@ -34,8 +34,7 @@ Here are the components required for the project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -52,7 +51,10 @@ Here are the components required for the project:
         - |link_transistor_buy|
     *   - Capacitor
         - |link_capacitor_buy|
-
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -60,7 +62,7 @@ Here are the components required for the project:
 
 The schematic diagram for the alarm bell is shown below:
 
-.. image:: ../python/img/4.1.15_alarm_bell_schematic.png
+.. image:: ../python/img/4.1.15_ala
    :width: 600
    :align: center
 
@@ -71,102 +73,107 @@ The schematic diagram for the alarm bell is shown below:
 
 Follow the wiring diagram to set up the circuit:
 
-.. image:: ../python/img/4.1.15_alarm_bell_circuit.png
+
+.. image:: img/fzz/4.1.12_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 
 
 **Writing the Code**
 
-1. Navigate to the code directory:
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. Run the script:
-
-   .. code-block:: bash
-
-       sudo python3 4.1.15_AlarmBell_zero.py
-
-Once the program starts, toggling the switch will activate the buzzer and LEDs. The buzzer will play a tune, and the red and green LEDs will flash alternately.
-
-
-----------------------------------------------
-
-**Code**
 
 Below is the Python code for the alarm system:
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
+   #!/usr/bin/env python3
+   from fusion_hat import Pin,Buzzer,PWM
+   import time
+   import threading
 
-    from gpiozero import LED, Button, TonalBuzzer
-    import time
-    import threading
+   # Initialize TonalBuzzer on GPIO pin 22
+   BeepPin = Buzzer(PWM('P0'))  # Update this pin number based on your setup
 
-    # Initialize GPIO pins
-    BeepPin = TonalBuzzer(22)
-    ALedPin = LED(17)
-    BLedPin = LED(27)
-    switchPin = Button(18)
+   # Initialize LEDs on GPIO pins 17 and 27
+   ALedPin = Pin(22,Pin.OUT)
+   BLedPin = Pin(27,Pin.OUT)
 
-    # Global flag to control the alarm state
-    flag = 0
+   # Initialize Button on GPIO pin 17
+   switchPin = Pin(17,Pin.IN, Pin.PULL_DOWN)
 
-    # Define the musical tune for the buzzer
-    tune = [
-        ('C4', 0.1), ('E4', 0.1), ('G4', 0.1), (None, 0.1), 
-        ('E4', 0.1), ('G4', 0.1), ('C5', 0.1), (None, 0.1), 
-        ('C5', 0.1), ('G4', 0.1), ('E4', 0.1), (None, 0.1), 
-        ('G4', 0.1), ('E4', 0.1), ('C4', 0.1), (None, 0.1)
-    ]
+   # Global flag to control the buzzer and LED states
+   flag = 0
 
-    def ledWork():
-        """Control the alternating blinking of LEDs."""
-        while True:
-            if flag:
-                ALedPin.on()
-                time.sleep(0.5)
-                ALedPin.off()
-                BLedPin.on()
-                time.sleep(0.5)
-                BLedPin.off()
-            else:
-                ALedPin.off()
-                BLedPin.off()
+   def ledWork():
+      """
+      Control LED blinking pattern based on the flag state.
+      When flag is set, alternately blink ALedPin and BLedPin.
+      """
+      while True:
+         if flag:
+               # Alternate blinking of LEDs
+               ALedPin.on()
+               time.sleep(0.5)
+               ALedPin.off()
+               BLedPin.on()
+               time.sleep(0.5)
+               BLedPin.off()
+         else:
+               # Turn off both LEDs if flag is not set
+               ALedPin.off()
+               BLedPin.off()
 
-    def buzzerWork():
-        """Play a tune using the buzzer."""
-        while True:
-            for note, duration in tune:
-                if flag == 0:
-                    break
-                BeepPin.play(note)
-                time.sleep(duration)
-            BeepPin.stop()
+   # Define the musical tune as a list of notes and their durations
+   tune = [
+      ('C4', 0.1), ('E4', 0.1), ('G4', 0.1), 
+      (None, 0.1), 
+      ('E4', 0.1), ('G4', 0.1), ('C5', 0.1), 
+      (None, 0.1), 
+      ('C5', 0.1), ('G4', 0.1), ('E4', 0.1), 
+      (None, 0.1), 
+      ('G4', 0.1), ('E4', 0.1), ('C4', 0.1), 
+      (None, 0.1)
+   ]
 
-    def main():
-        """Monitor the switch state to control the alarm."""
-        global flag
-        while True:
-            flag = 1 if switchPin.is_pressed else 0
+   def buzzerWork():
+      """
+      Play a tune using the buzzer based on the flag state.
+      The tune is played only when the flag is set.
+      """
+      while True:
+         for note, duration in tune:
+               if flag == 0:
+                  break
+               print(note)  # Output the current note to the console
+               BeepPin.play(note,duration)  # Play the current note
+         BeepPin.off()  # Stop the buzzer after playing the tune
 
-    try:
-        # Start threads for the buzzer and LED functions
-        tBuzz = threading.Thread(target=buzzerWork)
-        tBuzz.start()
-        tLed = threading.Thread(target=ledWork)
-        tLed.start()
-        main()
+   def main():
+      """
+      Monitor button press to update the flag state.
+      Sets the flag when the button is pressed.
+      """
+      global flag
+      while True:
+         flag = 1 if switchPin.value()==1 else 0
 
-    except KeyboardInterrupt:
-        # Turn off all components on exit
-        BeepPin.stop()
-        ALedPin.off()
-        BLedPin.off()
+
+   try:
+      # Initialize and start threads for buzzer and LED control
+      tBuzz = threading.Thread(target=buzzerWork)
+      tBuzz.start()
+      tLed = threading.Thread(target=ledWork)
+      tLed.start()
+      main()
+
+   except KeyboardInterrupt:
+      # Stop the buzzer and turn off LEDs on program interruption
+      BeepPin.off()
+      ALedPin.off()    
+      BLedPin.off()
 
 
 This Python script creates an alarm system that integrates LEDs, a buzzer, and a switch. The program operates as follows:
@@ -195,9 +202,9 @@ This Python script creates an alarm system that integrates LEDs, a buzzer, and a
 
 1. **Components Setup:**
 
-   * The buzzer is connected to GPIO pin 22.  
-   * Two LEDs are connected to GPIO pins 17 and 27.  
-   * A button is connected to GPIO pin 18, serving as the toggle switch.  
+   * The buzzer is connected to P0.  
+   * Two LEDs are connected to GPIO pins 22 and 27.  
+   * A button is connected to GPIO pin 17, serving as the toggle switch.  
 
 2. **Global Flag:**
 
@@ -230,7 +237,7 @@ This Python script creates an alarm system that integrates LEDs, a buzzer, and a
    - **Cause**: Incorrect wiring or GPIO configuration.
    - **Solution**:
 
-     - Verify that ``ALedPin`` and ``BLedPin`` are connected to GPIO 17 and 27, respectively.
+     - Verify that ``ALedPin`` and ``BLedPin`` are connected to GPIO 22 and 27, respectively.
      - Test the LEDs independently with a simple GPIO script.
 
 2. **Buzzer Does Not Sound**:
@@ -238,7 +245,7 @@ This Python script creates an alarm system that integrates LEDs, a buzzer, and a
    - **Cause**: Faulty buzzer connection or incorrect GPIO pin.
    - **Solution**:
 
-     - Ensure the buzzer is connected to GPIO 22 and ground.
+     - Ensure the buzzer is connected to P0 and ground.
      - Test the buzzer by manually calling ``BeepPin.play()`` with a single note.
 
 3. **Button Does Not Toggle Alarm**:
@@ -246,7 +253,7 @@ This Python script creates an alarm system that integrates LEDs, a buzzer, and a
    - **Cause**: Button not wired correctly or GPIO pin mismatch.
    - **Solution**:
 
-     - Check the button connection to GPIO 18.
+     - Check the button connection to GPIO 17.
      - Ensure the button properly closes the circuit when pressed.
 
 4. **High CPU Usage**:
@@ -254,10 +261,10 @@ This Python script creates an alarm system that integrates LEDs, a buzzer, and a
    - **Cause**: Threads running without delays when the alarm is off.
    - **Solution**: Add small delays to reduce CPU load when ``flag`` is 0:
 
-     .. code-block:: python
+   .. code-block:: python
 
-         if not flag:
-             time.sleep(0.1)
+      if not flag:
+            time.sleep(0.1)
 
 5. **Buzzer Plays Incorrect Notes**:
 

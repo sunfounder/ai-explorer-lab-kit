@@ -34,8 +34,6 @@ To complete this project, you will need the following components:
     *   - COMPONENT
         - PURCHASE LINK
 
-    *   - :ref:`cpn_gpio_extension_board`
-        - |link_gpio_board_buy|
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
@@ -46,19 +44,20 @@ To complete this project, you will need the following components:
         - |link_led_buy|
     *   - :ref:`cpn_button`
         - |link_button_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+
 
 ----------------------------------------------
 
 **Circuit Diagram**
 
-We will use a normally open button as an input for the Raspberry Pi. When the button is pressed, GPIO18 will receive a high-level signal (3.3V). The Raspberry Pi will detect this signal and turn the LED on. The circuit connections are shown in the diagrams below:
+We will use a normally open button as an input for the Raspberry Pi. When the button is pressed, GPIO17 will receive a high-level signal (3.3V). The Raspberry Pi will detect this signal and turn the LED on. The circuit connections are shown in the diagrams below:
 
-.. note::
-    The longer pin of the LED is the anode, and the shorter one is the cathode.
-
-.. image:: ../python/img/2.1.1_Button_schematic_1.png
-
-.. image:: ../python/img/2.1.1_Button_schematic_2.png
+.. image:: ../python/img/2.
 
 ----------------------------------------------
 
@@ -66,11 +65,16 @@ We will use a normally open button as an input for the Raspberry Pi. When the bu
 
 Follow these steps to build the circuit:
 
-1. Connect the anode (long pin) of the LED to a GPIO pin (GPIO17) through a current-limiting resistor.
+1. Connect the anode (long pin) of the LED to a GPIO pin (GPIO22) through a current-limiting resistor.
 2. Connect the cathode (short pin) of the LED to the ground (GND).
-3. Connect one terminal of the button to GPIO18 and the other terminal to the ground (GND).
+3. Connect one terminal of the button to GPIO17 and the other terminal to the ground (GND).
 
-.. image:: ../python/img/2.1.1_Button_circuit.png
+
+.. image:: img/fzz/2.1.1_bb.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 
@@ -81,30 +85,31 @@ The following Python code toggles the LED based on button presses and releases:
 .. code-block:: python
 
    #!/usr/bin/env python3
-   from gpiozero import LED, Button  # Import LED and Button classes from gpiozero
+   from fusion_hat import Pin  
    from signal import pause  # Import pause function from signal module
 
-   # Initialize an LED object on GPIO pin 17
-   led = LED(17)
-   # Initialize a Button object on GPIO pin 18
-   button = Button(18)
+   # Initialize an LED object on GPIO pin 22
+   led = Pin(22,Pin.OUT)
+   # Initialize a Button object on GPIO pin 17
+   button = Pin(17, Pin.IN, pull= Pin.PULL_DOWN)
 
-   # Link the button's "when_pressed" event to the LED's on() method
-   button.when_pressed = led.on
-   # Link the button's "when_released" event to the LED's off() method
-   button.when_released = led.off
+   # # Link the button's "when_activated" event to the LED's high() method
+   button.when_activated = led.high
+
+   # # Link the button's "when_deactivated" event to the LED's low() method
+   button.when_deactivated = led.low
 
    # Run an event loop that waits for button events and keeps the script running
+   print("CTRL + C to exit")
    pause()
 
 
 This Python script demonstrates an interactive setup where a button controls an LED. When executed:
 
-1. Pressing the button (connected to GPIO pin 18) turns the LED (connected to GPIO pin 17) on.
+1. Pressing the button (connected to GPIO pin 17) turns the LED (connected to GPIO pin 22) on.
 2. Releasing the button turns the LED off.
 3. The program runs indefinitely, listening for button press and release events to control the LED.
 
-This is a simple example of event-driven programming using the ``gpiozero`` library.
 
 ----------------------------------------------
 
@@ -112,30 +117,32 @@ This is a simple example of event-driven programming using the ``gpiozero`` libr
 
 1. **Library Import**
 
-   The ``gpiozero`` library provides a simple interface for GPIO control, and the ``signal`` module is used to keep the program running.
+   The ``fusion_hat`` library provides a simple interface for GPIO control, and the ``signal`` module is used to keep the program running.
 
    .. code-block:: python
 
-       from gpiozero import LED, Button
-       from signal import pause
+      from fusion_hat import Pin  
+      from signal import pause 
 
 2. **Component Initialization**
 
-   The ``LED`` object is connected to GPIO pin 17, and the ``Button`` object is connected to GPIO pin 18.
+   The LED is connected to GPIO pin 22, and the Button is connected to GPIO pin 17.
 
    .. code-block:: python
 
-       led = LED(17)
-       button = Button(18)
+      # Initialize an LED object on GPIO pin 22
+      led = Pin(22,Pin.OUT)
+      # Initialize a Button object on GPIO pin 17
+      button = Pin(17, Pin.IN, pull= Pin.PULL_DOWN)
 
 3. **Event Handling**
 
-   The ``when_pressed`` and ``when_released`` events are linked to the LED's ``on()`` and ``off()`` methods, respectively. This ensures that the LED turns on when the button is pressed and off when the button is released.
+   The ``when_activated`` and ``when_deactivated`` events are linked to the LED's ``high()`` and ``low()`` methods, respectively. This ensures that the LED turns on when the button is pressed and off when the button is released.
 
    .. code-block:: python
 
-       button.when_pressed = led.on
-       button.when_released = led.off
+       button.when_activated = led.high
+       button.when_deactivated = led.low
 
 4. **Event Loop**
 
@@ -152,12 +159,12 @@ This is a simple example of event-driven programming using the ``gpiozero`` libr
 1. **LED Does Not Light Up**  
 
    - **Cause**: Incorrect GPIO pin connection or LED wiring.  
-   - **Solution**: Verify that the LED's positive leg is connected to GPIO pin 17 and its negative leg to a resistor leading to ground.
+   - **Solution**: Verify that the LED's positive leg is connected to GPIO pin 22 and its negative leg to a resistor leading to ground.
 
 2. **Button Press Has No Effect**  
 
    - **Cause**: Incorrect button wiring or GPIO pin configuration.  
-   - **Solution**: Ensure the button is connected correctly to GPIO pin 18 and ground. Check if the button needs a pull-up or pull-down resistor, which ``gpiozero`` manages internally by default.
+   - **Solution**: Ensure the button is connected correctly to GPIO pin 17 and ground. .
 
 3. **LED Stays On or Off Regardless of Button State**  
 
@@ -177,9 +184,12 @@ This is a simple example of event-driven programming using the ``gpiozero`` libr
    .. code-block:: python
     
       def toggle():
-         led.toggle()
+         if led.value() == 1:
+            led.off()
+         else:
+            led.on()
 
-      button.when_pressed = toggle
+      button.when_activated = toggle
 
 2. **Multiple LEDs**  
 
@@ -196,7 +206,7 @@ This is a simple example of event-driven programming using the ``gpiozero`` libr
          current_led = (current_led + 1) % len(leds)
          leds[current_led].on()
 
-      button.when_pressed = cycle_leds
+      button.when_activated = cycle_leds
 
 3. **Button Press Duration**  
 
@@ -218,10 +228,10 @@ This is a simple example of event-driven programming using the ``gpiozero`` libr
          if duration < 2:
             led.on()
          else:
-            led.blink()
+            led.off()
 
-      button.when_pressed = start_timer
-      button.when_released = check_duration
+      button.when_activated = start_timer
+      button.when_deactivated = check_duration
 
 4. **Debouncing**  
 
@@ -229,12 +239,30 @@ This is a simple example of event-driven programming using the ``gpiozero`` libr
 
    .. code-block:: python
 
-      button.when_pressed = led.on
-      button.when_released = led.off
-      button.hold_time = 0.2
+      from time import time
+
+      press_time = None
+      debounce_time = 0.2
+
+      def press():
+         global press_time
+         press_time = time()
+
+      def debounce():
+         global press_time
+         current_time = time()
+         duration = current_time - press_time
+         if duration < debounce_time:
+            return
+         else:
+            led.on()
+
+      button.when_activated = press
+      button.when_deactivated = debounce
+
 
 ----------------------------------------------
 
 **Conclusion**
 
-This project demonstrates how to use a button to control an LED with a Raspberry Pi. Buttons are versatile components and can be integrated into various applications, from basic circuits to complex interactive systems.
+This project demonstrates how to use a button to control an LED with a Fusion HAT. Buttons are versatile components and can be integrated into various applications, from basic circuits to complex interactive systems.

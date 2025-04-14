@@ -33,17 +33,17 @@ Below are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - MPU6050 Module
-      - |link_mpu6050_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
 
+    *   - MPU6050 Module
+        - |link_mpu6050_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -62,7 +62,9 @@ The MPU6050 communicates with the microcontroller via the I2C bus. Connect the S
 
 Assemble the circuit as shown in the wiring diagram below:
 
-.. image:: ../python/img/2.2.9_mpu6050_circuit.png
+.. image:: img/fzz/2.2.8_bb.png
+   :width: 800
+   :align: center
 
 Ensure that all connections are secure and match the schematic to avoid communication errors.
 
@@ -72,165 +74,112 @@ Ensure that all connections are secure and match the schematic to avoid communic
 
 **Writing the Code**
 
-1. **Setup I2C:** Follow the steps in the :ref:`i2c_config` to enable I2C on your Raspberry Pi if it is not already configured.
-
-2. **Navigate to the project directory:**
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-3. **Run the Python script:**
-
-   .. code-block:: bash
-
-       sudo python3 2.2.9_mpu6050_zero.py
-
-After running the script, the MPU6050 will calculate and display the following on the screen:
-
-- The deflection angles of the x-axis and y-axis
-- The acceleration and angular velocity along each axis
-
-.. note::
-    - If you encounter the error ``FileNotFoundError: [Errno 2] No such file or directory: '/dev/i2c-1'``, refer to :ref:`i2c_config` to enable I2C.
-    - If you get ``ModuleNotFoundError: No module named 'smbus2'``, run ``sudo pip3 install smbus2``.
-    - If the error ``OSError: [Errno 121] Remote I/O error`` appears, it indicates a miswired or faulty module.
-
-
-----------------------------------------------
-
-
-**Code**
 
 Below is the Python code for this project:
 
 .. code-block:: python
 
-   import smbus
-   import math
-   import time
+   from fusion_hat import MPU6050
+   from time import sleep
 
-   # Power management registers
-   power_mgmt_1 = 0x6b
-   power_mgmt_2 = 0x6c
+   mpu = MPU6050()
 
-   def read_byte(adr):
-       return bus.read_byte_data(address, adr)
+   # mpu.set_accel_range(MPU6050.ACCEL_RANGE_2G)
+   # mpu.set_gyro_range(MPU6050.GYRO_RANGE_250DEG)
 
-   def read_word(adr):
-       high = bus.read_byte_data(address, adr)
-       low = bus.read_byte_data(address, adr+1)
-       val = (high << 8) + low
-       return val
-
-   def read_word_2c(adr):
-       val = read_word(adr)
-       if val >= 0x8000:
-           return -((65535 - val) + 1)
-       else:
-           return val
-
-   def dist(a, b):
-       return math.sqrt((a * a) + (b * b))
-
-   def get_y_rotation(x, y, z):
-       radians = math.atan2(x, dist(y, z))
-       return -math.degrees(radians)
-
-   def get_x_rotation(x, y, z):
-       radians = math.atan2(y, dist(x, z))
-       return math.degrees(radians)
-
-   bus = smbus.SMBus(1)  # Use SMBus(1) for Revision 2 boards
-   address = 0x68         # Address of MPU6050
-
-   # Wake up the MPU6050 as it starts in sleep mode
-   bus.write_byte_data(address, power_mgmt_1, 0)
 
    while True:
-       time.sleep(0.1)
+      temp = mpu.get_temp()
+      acc_x, acc_y, acc_z  = mpu.get_accel_data()
+      gyro_x, gyro_y, gyro_z = mpu.get_gyro_data()
+      print(
+         f"Temp: {temp:0.2f} 'C",
+         f"  |  ACC: {acc_x:8.5f}g {acc_y:8.5f}g {acc_z:8.5f}g",
+         f"  |  GYRO: {gyro_x:8.5f}deg/s {gyro_y:8.5f}deg/s {gyro_z:8.5f}deg/s"
+      )
+      sleep(0.2)
 
-       gyro_xout = read_word_2c(0x43)
-       gyro_yout = read_word_2c(0x45)
-       gyro_zout = read_word_2c(0x47)
-
-       print("gyro_xout: ", gyro_xout, "scaled: ", (gyro_xout / 131))
-       print("gyro_yout: ", gyro_yout, "scaled: ", (gyro_yout / 131))
-       print("gyro_zout: ", gyro_zout, "scaled: ", (gyro_zout / 131))
-
-       accel_xout = read_word_2c(0x3b)
-       accel_yout = read_word_2c(0x3d)
-       accel_zout = read_word_2c(0x3f)
-
-       accel_xout_scaled = accel_xout / 16384.0
-       accel_yout_scaled = accel_yout / 16384.0
-       accel_zout_scaled = accel_zout / 16384.0
-
-       print("accel_xout: ", accel_xout, "scaled: ", accel_xout_scaled)
-       print("accel_yout: ", accel_yout, "scaled: ", accel_yout_scaled)
-       print("accel_zout: ", accel_zout, "scaled: ", accel_zout_scaled)
-
-       print("x rotation: ", get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))
-       print("y rotation: ", get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))
-
-       time.sleep(1)
-
-This Python script interfaces with an MPU6050 sensor connected to a Raspberry Pi via I2C. The script performs the following actions:
-
-1. Initializes the MPU6050 by waking it from sleep mode.
-2. Continuously reads gyroscope and accelerometer data from the sensor:
-
-   - Gyroscope outputs: ``gyro_xout``, ``gyro_yout``, ``gyro_zout`` (raw and scaled).
-   - Accelerometer outputs: ``accel_xout``, ``accel_yout``, ``accel_zout`` (raw and scaled).
-
-3. Calculates the device's tilt angles:
-
-   - ``x rotation``: The angle of tilt along the X-axis.
-   - ``y rotation``: The angle of tilt along the Y-axis.
-
-4. Displays the raw data, scaled data, and calculated angles on the console every second.
-
+This Python script utilizes the MPU6050 sensor, which is commonly used for motion tracking in devices such as drones, mobile phones, and gaming devices. The script reads temperature, accelerometer, and gyroscope data from the sensor and prints these readings continuously in a formatted output. Below, I'll explain the code step-by-step in a way suitable for a documentation style like you might find on readthedocs.
 
 ----------------------------------------------
 
 **Understanding the Code**
 
-1. **Reading Sensor Data:**
 
-   Functions like ``read_word`` and ``read_word_2c`` are used to read raw sensor data from the MPU6050 registers.
 
-   .. code-block:: python
-
-       def read_word(adr):
-           high = bus.read_byte_data(address, adr)
-           low = bus.read_byte_data(address, adr+1)
-           return (high << 8) + low
-
-       def read_word_2c(adr):
-           val = read_word(adr)
-           return -((65535 - val) + 1) if val >= 0x8000 else val
-
-2. **Calculating Rotation Angles:**
-
-   Functions like ``get_x_rotation`` and ``get_y_rotation`` compute the deflection angles of the x-axis and y-axis based on acceleration data.
+1. **Importing Libraries**
 
    .. code-block:: python
 
-       def get_y_rotation(x, y, z):
-           radians = math.atan2(x, dist(y, z))
-           return -math.degrees(radians)
+      from fusion_hat import MPU6050
+      from time import sleep
 
-3. **Displaying Data:**
 
-   The script prints raw and scaled data for the gyroscope and accelerometer, along with calculated rotation angles.
+   These lines import the necessary Python libraries. ``fusion_hat`` contains the ``MPU6050`` class for interfacing with the sensor. The ``sleep`` function from the ``time`` module is used to introduce a delay in the loop.
+
+2. **Initializing the Sensor**
 
    .. code-block:: python
 
-       print("gyro_xout: ", gyro_xout, "scaled: ", (gyro_xout / 131))
-       print("accel_xout: ", accel_xout, "scaled: ", accel_xout_scaled)
-       print("x rotation: ", get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))
+      mpu = MPU6050()
 
 
+   This line creates an instance of the ``MPU6050`` class, initializing the sensor so that it's ready to gather data.
+
+3. **Main Loop**
+
+   .. code-block:: python
+
+      while True:
+         temp = mpu.get_temp()
+         acc_x, acc_y, acc_z = mpu.get_accel_data()
+         gyro_x, gyro_y, gyro_z = mpu.get_gyro_data()
+         print(
+            f"Temp: {temp:0.2f} 'C",
+            f"  |  ACC: {acc_x:8.5f}g {acc_y:8.5f}g {acc_z:8.5f}g",
+            f"  |  GYRO: {gyro_x:8.5f}deg/s {gyro_y:8.5f}deg/s {gyro_z:8.5f}deg/s"
+         )
+         sleep(0.2)
+
+
+   - **While Loop**: The ``while True`` statement creates an infinite loop, meaning the code inside the loop runs repeatedly without stopping.
+
+   - **Reading Sensor Data**:
+
+      - ``temp = mpu.get_temp()``: Retrieves the current temperature from the sensor and stores it in the variable ``temp``.
+      - ``acc_x, acc_y, acc_z = mpu.get_accel_data()``: Retrieves the current acceleration data in three dimensions (x, y, z) from the sensor.
+      - ``gyro_x, gyro_y, gyro_z = mpu.get_gyro_data()``: Retrieves the gyroscope data, which measures angular velocity in the x, y, and z directions.
+
+   - **Printing Data**: The ``print`` statement formats and displays the sensor data. Temperature is displayed in degrees Celsius, acceleration in g-forces, and gyroscope data in degrees per second.
+
+   - **Sleep**: ``sleep(0.2)`` pauses the loop for 0.2 seconds before repeating. This delay helps manage the rate at which data is read and printed, preventing the script from consuming too much CPU time.
+
+4. **Additional Comments**
+
+   The lines to set the accelerometer and gyroscope ranges are commented out:
+
+   .. code-block:: python
+
+      # mpu.set_accel_range(MPU6050.ACCEL_RANGE_2G)
+      # mpu.set_gyro_range(MPU6050.GYRO_RANGE_250DEG)
+
+   Uncommenting these lines would allow you to configure the sensitivity of the accelerometer and gyroscope. For example, ``ACCEL_RANGE_2G`` configures the accelerometer to measure up to ±2g, and ``GYRO_RANGE_250DEG`` sets the gyroscope to measure up to ±250 degrees per second. By default, the MPU6050 module initializes with the default ranges of ±2g for acceleration and ±250 degrees per second for gyroscope.
+
+   You can adjust these ranges based on your specific application requirements. The range settings are as follows:
+
+   - **Accelerometer Ranges**:
+
+      - ``MPU6050.ACCEL_RANGE_2G``: ±2g
+      - ``MPU6050.ACCEL_RANGE_4G``: ±4g
+      - ``MPU6050.ACCEL_RANGE_8G``: ±8g
+      - ``MPU6050.ACCEL_RANGE_16G``: ±16g
+
+   - **Gyroscope Ranges**:
+
+      - ``MPU6050.GYRO_RANGE_250DEG``: ±250 degrees per second
+      - ``MPU6050.GYRO_RANGE_500DEG``: ±500 degrees per second
+      - ``MPU6050.GYRO_RANGE_1000DEG``: ±1000 degrees per second
+      - ``MPU6050.GYRO_RANGE_2000DEG``: ±2000 degrees per second
 
 ----------------------------------------------
 
@@ -269,41 +218,24 @@ This Python script interfaces with an MPU6050 sensor connected to a Raspberry Pi
      sudo apt-get install python3-smbus
 
 
-4. **Script Crashes on Execution**:
-
-   - **Cause**: Power supply issues or incorrect sensor initialization.
-   - **Solution**: Ensure the sensor is powered correctly (3.3V or 5V) and that the initialization command ``bus.write_byte_data(address, power_mgmt_1, 0)`` is executed without errors.
-
-
-
 ----------------------------------------------
 
 **Extendable Ideas**
 
 1. **Data Logging**: Save gyroscope and accelerometer readings to a file for analysis:
      
-    .. code-block:: python
+   .. code-block:: python
 
-        with open("mpu6050_log.txt", "a") as log_file:
-            log_file.write(f"{time.time():.3f}, {gyro_xout}, {gyro_yout}, {gyro_zout}, {accel_xout}, {accel_yout}, {accel_zout}\n")
+      with open("mpu6050_log.txt", "a") as log_file:
+         log_file.write(f"{time.time():.3f}, {gyro_x}, {gyro_y}, {gyro_z}, {acc_x}, {acc_y}, {acc_z}\n")
 
 2. **Integration with Motors**: Use the gyroscope data to stabilize a drone or robotic arm.
 
-3. **Calibration Routine**: Add a calibration step to zero out sensor biases before taking measurements:
-     
-    .. code-block:: python
 
-        def calibrate():
-            gyro_bias_x = sum(read_word_2c(0x43) for _ in range(100)) / 100
-            gyro_bias_y = sum(read_word_2c(0x45) for _ in range(100)) / 100
-            gyro_bias_z = sum(read_word_2c(0x47) for _ in range(100)) / 100
-            return gyro_bias_x, gyro_bias_y, gyro_bias_z
-
-        gyro_bias_x, gyro_bias_y, gyro_bias_z = calibrate()
 
 
 ----------------------------------------------
 
 **Conclusion**
 
-This project demonstrates how to interface with the MPU6050 module using the I2C protocol to capture motion and orientation data. By understanding how to read and process this data, you can integrate the MPU6050 into a wide range of projects, from motion-controlled devices to advanced robotics and navigation systems.
+This script provides a simple yet powerful way to continuously monitor and display data from the MPU6050 sensor, which could be useful in various applications requiring real-time motion tracking or environmental monitoring.

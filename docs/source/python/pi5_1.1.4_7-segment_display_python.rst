@@ -76,6 +76,12 @@ Follow these steps to build the circuit:
 3. Connect the input pins of the shift register to the specified GPIO pins on the Raspberry Pi.
 4. Add resistors to limit current for the display segments.
 
+.. image:: img/fzz/1.1.4_bb.png
+   :width: 800
+   :align: center
+
+
+
 
 ----------------------------------------------
 

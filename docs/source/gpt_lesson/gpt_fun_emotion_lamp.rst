@@ -29,22 +29,21 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_rgb_led`
+        - |link_rgb_led_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -58,7 +57,7 @@ The following components are required for this project:
 **Code**
 
 .. code-block:: python
-      
+         
    import openai
    from keys import OPENAI_API_KEY
    from pathlib import Path
@@ -69,10 +68,12 @@ The following components are required for this project:
    import subprocess
 
    import speech_recognition as sr
-   from gpiozero import RGBLED
+   from fusion_hat import RGB_LED, PWM
 
    # gets API Key from environment variable OPENAI_API_KEY
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
+   os.system("fusion_hat enable_speaker")
 
    TTS_OUTPUT_FILE = 'tts_output.mp3'
 
@@ -106,8 +107,9 @@ The following components are required for this project:
    thread = client.beta.threads.create()
    recognizer = sr.Recognizer()
 
-   # Initialize an RGB LED. Connect the red component to GPIO 17, green to GPIO 18, and blue to GPIO 27.
-   rgb_led = RGBLED(red=23, green=24, blue=25)
+   # Initialize an RGB LED.
+   rgb_led = RGB_LED(PWM('P0'), PWM('P1'), PWM('P2'),common=RGB_LED.CATHODE)
+
 
    recognizer.dynamic_energy_adjustment_damping = 0.15
    recognizer.dynamic_energy_ratio = 1
@@ -150,8 +152,12 @@ The following components are required for this project:
          input=text
       ) as response:
          response.stream_to_file(speech_file_path)
+      p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      p.wait()
+
 
    try:
+      rgb_led.color(0xFF00FF)  # light up the LED to indicate that the program is running
       while True:
          msg = ""
          # msg = input(f'\033[1;30m{"intput: "}\033[0m').encode(sys.stdin.encoding).decode('utf-8')
@@ -184,7 +190,7 @@ The following components are required for this project:
                thread_id=thread.id,
                assistant_id=assistant.id,
          )
-         
+
          if run.status == "completed":
                messages = client.beta.threads.messages.list(thread_id=thread.id)
 
@@ -203,7 +209,7 @@ The following components are required for this project:
                            if block.type == 'text':
                               label = assistant.name
                               value = block.text.value
-                              # print(f"Raw AI Response: {value}")
+                              #print(f'value: {value}')
                               try:
                                  value = eval(value)
                               except Exception as e:
@@ -224,11 +230,10 @@ The following components are required for this project:
                               print(f'{label:>10} >>> {text} {color}')
                               rgb_led.color = color
                               text_to_speech(text)
-                              p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                              p.wait()
                      break # only last reply
 
    finally:
+      rgb_led.color(0x000000)  
       client.beta.assistants.delete(assistant.id)
 
 ----------------------------------------------
@@ -242,16 +247,16 @@ The following components are required for this project:
    import openai
    from keys import OPENAI_API_KEY
    from pathlib import Path
-   import readline  
+   import readline # optimize keyboard input, only need to import
    import sys
    import os
    import subprocess
    import speech_recognition as sr
-   from gpiozero import RGBLED
+   from fusion_hat import RGB_LED, PWM
 
 * **openai**: For interacting with the OpenAI API.
 * **speech_recognition**: To capture and convert user voice inputs to text.
-* **gpiozero**: For controlling the physical RGB LED hardware.
+* **fusion_hat**: For controlling the physical RGB LED hardware.
 * **subprocess**: To execute system commands like audio playback.
 * **sys**, **os**: For handling file paths, standard input/output, and other system-level operations.
 
@@ -303,11 +308,13 @@ Defines the assistant's behavior:
 
    thread = client.beta.threads.create()
    recognizer = sr.Recognizer()
-   rgb_led = RGBLED(red=23, green=24, blue=25)
+   rgb_led = RGB_LED(PWM('P0'), PWM('P1'), PWM('P2'),common=RGB_LED.CATHODE)
+   os.system("fusion_hat enable_speaker")
 
 * **Thread**: Maintains conversational context with the assistant.
 * **Speech Recognizer**: Captures and processes user voice inputs.
 * **RGB LED**: Controls the physical lamp using GPIO pins.
+* **Speaker**: Enables audio output for the assistant's responses.
 
 5. **Configure Speech Recognizer**
 
@@ -455,7 +462,6 @@ Ensures proper cleanup by deleting the assistant instance to free up resources.
 1. **RGB LED Issues**:
 
    * Check GPIO pin connections.
-   * Ensure ``gpiozero`` library is correctly installed.
 
 2. **Speech Recognition Issues**:
 
@@ -471,3 +477,4 @@ Ensures proper cleanup by deleting the assistant instance to free up resources.
 
    * Confirm ``mplayer`` is installed and functioning.
    * Ensure the generated MP3 file is valid.
+   * Ensure the ``fusion_hat enable_speaker`` command is executed.

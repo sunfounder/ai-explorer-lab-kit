@@ -35,8 +35,7 @@ Below is the list of components required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - GPIO Extension Board
-        - |link_gpio_board_buy|
+
     *   - Breadboard
         - |link_breadboard_buy|
     *   - Wires
@@ -49,7 +48,10 @@ Below is the list of components required for this project:
         - |link_74hc595_buy|
     *   - Tilt Switch
         - |link_tilt_switch_buy|
-
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
@@ -58,7 +60,7 @@ Below is the list of components required for this project:
 
 Below is the schematic diagram for the "10 Second Challenge":
 
-.. image:: ../python/img/4.1.18_game_10_second_schematic.png
+.. image:: ../python/img/4.1.18_game_10_second_
    :align: center
 
 
@@ -69,7 +71,11 @@ Below is the schematic diagram for the "10 Second Challenge":
 
 Follow the wiring instructions shown below to set up the circuit:
 
-.. image:: ../python/img/4.1.18_game_10_second_circuit.png
+
+.. image:: img/fzz/4.1.15_bb.png
+   :width: 800
+   :align: center
+
 
 
 
@@ -77,169 +83,131 @@ Follow the wiring instructions shown below to set up the circuit:
 
 **Writing the Code**
 
-1. **Navigate to the Project Directory:**  
-
-   .. code-block:: bash
-
-       cd ~/zero-w-ai-kit/python
-
-2. **Run the Program:**  
-
-   .. code-block:: bash
-
-       sudo python3 4.1.18_GAME_10Second_zero.py
-
-
-----------------------------------------------
-
-
-**How to Play**
-
-1. Shake the wand to start the timer on the 4-digit segment display.  
-2. Shake the wand again to stop the timer.  
-3. If the timer reads **10.00 seconds**, you win the round!  
-4. Shake the wand one more time to reset the game and start a new round.
-
-
-----------------------------------------------
-
-
-**Code**
 
 Here is the Python code for the project:
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
+   #!/usr/bin/env python3
 
-    from gpiozero import OutputDevice, Button
-    import time
-    import threading
+   from fusion_hat import Pin
+   import time
+   import threading
 
-    # Initialize the button connected to GPIO 26
-    sensorPin = Button(26)
+   # Initialize the button connected to GPIO 26
+   sensorPin = Pin(22, Pin.IN, Pin.PULL_DOWN)
 
-    # Define GPIO pins connected to the 74HC595 shift register
-    SDI = OutputDevice(24)   # Serial Data Input
-    RCLK = OutputDevice(23)  # Register Clock
-    SRCLK = OutputDevice(18) # Shift Register Clock
+   # Define GPIO pins for the 74HC595 shift register
+   SDI = Pin(17,Pin.OUT)   # Serial Data Input
+   RCLK = Pin(4,Pin.OUT)  # Register Clock
+   SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
-    # Define GPIO pins for digit selection on the 7-segment display
-    placePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]
+   # Define GPIO pins for digit selection on the 7-segment display
+   placePin = [Pin(pin,Pin.OUT) for pin in (23, 24, 25, 12)]
 
-    # Define segment codes for numbers 0 to 9 on the 7-segment display
-    number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)
+   # Define segment codes for numbers 0 to 9 on the 7-segment display
+   number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)
 
-    # Counter and timer variables
-    counter = 0
-    timer1 = None
-    gameState = 0
+   # Counter and timer variables
+   counter = 0
+   timer1 = None
+   gameState = 0
 
-    def clearDisplay():
-        """ Clear all segments on the 7-segment display. """
-        for _ in range(8):
-            SDI.on()
-            SRCLK.on()
-            SRCLK.off()
-        RCLK.on()
-        RCLK.off()
+   def clearDisplay():
+      """ Clear all segments on the 7-segment display. """
+      for _ in range(8):
+         SDI.on()
+         SRCLK.on()
+         SRCLK.off()
+      RCLK.on()
+      RCLK.off()
 
-    def hc595_shift(data):
-        """ Shift data to the 74HC595 shift register to display a digit. """
-        for i in range(8):
-            SDI.value = 0x80 & (data << i)
-            SRCLK.on()
-            SRCLK.off()
-        RCLK.on()
-        RCLK.off()
+   def hc595_shift(data):
+      """ Shift data to the 74HC595 shift register to display a digit. """
+      for i in range(8):
+         SDI.value(0x80 & (data << i))
+         SRCLK.on()
+         SRCLK.off()
+      RCLK.on()
+      RCLK.off()
 
-    def pickDigit(digit):
-        """ Select which digit to display on the 7-segment display. """
-        for pin in placePin:
-            pin.off()
-        placePin[digit].on()
+   def pickDigit(digit):
+      """ Select which digit to display on the 7-segment display. """
+      for pin in placePin:
+         pin.off()
+      placePin[digit].on()
 
-    def display():
-        """ Display the current counter value on the 7-segment display. """
-        global counter
-        clearDisplay()
-        pickDigit(0)
-        hc595_shift(number[counter % 10])
+   def display():
+      """ Display the current counter value on the 7-segment display. """
+      global counter
+      clearDisplay()
+      pickDigit(0)
+      hc595_shift(number[counter % 10])
 
-        clearDisplay()
-        pickDigit(1)
-        hc595_shift(number[counter % 100 // 10])
+      clearDisplay()
+      pickDigit(1)
+      hc595_shift(number[counter % 100 // 10])
 
-        clearDisplay()
-        pickDigit(2)
-        hc595_shift(number[counter % 1000 // 100] - 0x80)
+      clearDisplay()
+      pickDigit(2)
+      hc595_shift(number[counter % 1000 // 100] - 0x80)
 
-        clearDisplay()
-        pickDigit(3)
-        hc595_shift(number[counter % 10000 // 1000])
+      clearDisplay()
+      pickDigit(3)
+      hc595_shift(number[counter % 10000 // 1000])
 
-    def stateChange():
-        """ Handle state changes for the counter based on button presses. """
-        global gameState, counter, timer1
-        if gameState == 0:
-            counter = 0
-            time.sleep(1)
-            timer()
-        elif gameState == 1 and timer1 is not None:
-            timer1.cancel()
-            time.sleep(1)
-        gameState = (gameState + 1) % 2
+   def stateChange():
+      """ Handle state changes for the counter based on button presses. """
+      global gameState, counter, timer1
+      if gameState == 0:
+         counter = 0
+         time.sleep(1)
+         timer()
+      elif gameState == 1 and timer1 is not None:
+         timer1.cancel()
+         time.sleep(1)
+      gameState = (gameState + 1) % 2
 
-    def loop():
-        """ Main loop to check for button presses and update the display. """
-        global counter
-        currentState = 0
-        lastState = 0
-        while True:
-            display()
-            currentState = sensorPin.value
-            if (currentState == 0) and (lastState == 1):
-                stateChange()
-            lastState = currentState
+   def loop():
+      """ Main loop to check for button presses and update the display. """
+      global counter
+      currentState = 0
+      lastState = 0
+      while True:
+         display()
+         currentState = sensorPin.value()
+         if (currentState == 0) and (lastState == 1):
+               stateChange()
+         lastState = currentState
 
-    def timer():
-        """ Timer function that increments the counter every 0.01 second. """
-        global counter, timer1
-        timer1 = threading.Timer(0.01, timer)
-        timer1.start()
-        counter += 1
+   def timer():
+      """ Timer function that increments the counter every 0.01 second. """
+      global counter, timer1
+      timer1 = threading.Timer(0.01, timer)
+      timer1.start()
+      counter += 1
 
-    try:
-        loop()
-    except KeyboardInterrupt:
-        if timer1:
-            timer1.cancel()
+   try:
+      loop()
+   except KeyboardInterrupt:
+      if timer1:
+         timer1.cancel()
 
 
+#. Shake the wand to start the timer on the 4-digit segment display.
 
-This Python script implements a counter system using a 7-segment display, a 74HC595 shift register, and a tilt switch. The main features include:
+#. Shake the wand again to stop the timer.
 
-1. **Counter Display**:
+#. If the timer reads 10.00 seconds, you win the round!
 
-   - The counter value is displayed on a 4-digit 7-segment display.
-   - The display is updated dynamically as the counter value changes.
-
-2. **Button-Controlled State**: The tilt switch (``sensorPin`` on GPIO 26) is used to toggle between two states:
-
-   - **State 0**: The counter resets to 0 and starts counting.
-   - **State 1**: The counter stops incrementing.
-
-3. **Real-Time Counting**: The counter increments every 0.01 seconds when active.
-
-4. **Graceful Exit**: The script cancels the timer and stops updates on ``Ctrl+C``.
-
+#. Shake the wand one more time to reset the game and start a new round.
 
 ----------------------------------------------
 
 **Understanding the Code**
 
 1. **Button Input:**  
-   The tilt switch is connected to GPIO pin 26, which detects when the wand is shaken.
+   The tilt switch is connected to GPIO pin 22, which detects when the wand is shaken.
 
 2. **74HC595 Shift Register:**  
    The shift register controls which digits are illuminated on the 7-segment display.
