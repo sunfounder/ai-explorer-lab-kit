@@ -20,6 +20,9 @@
 **Introduction**
 
 The Passive Infrared (PIR) sensor is a motion detection device that senses infrared radiation emitted by humans and animals. In this project, we will use the PIR sensor to detect motion.
+
+
+
 ----------------------------------------------
 
 **What You’ll Need**

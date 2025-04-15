@@ -84,7 +84,7 @@ Below is the Python code for this project:
     import time
 
     # Set up the soil moisture sensor
-    moisture = ADC('A0')
+    moisture = ADC('A1')
 
     try:
         while True:
@@ -111,14 +111,14 @@ By inserting the module into the soil and watering it, the value of the soil moi
 This script begins by importing necessary modules: ``fusion_hat`` for the ADC interface and ``time`` for controlling the reading intervals.
 
 1. **Initialization**:
-   - The ``moisture`` object is created as an instance of ``ADC`` on port ``'A0'``. This is the connection point for the soil moisture sensor.
+   The ``moisture`` object is created as an instance of ``ADC`` on port ``'A1'``. This is the connection point for the soil moisture sensor.
 
 .. code-block:: python
 
-    moisture = ADC('A0')
+    moisture = ADC('A1')
 
 2. **Continuous Monitoring Loop**:
-   - The script enters an infinite loop, where it continuously reads the moisture level through ``moisture.read()``. The result is stored in the variable ``result``, which is then printed to the console.
+   The script enters an infinite loop, where it continuously reads the moisture level through ``moisture.read()``. The result is stored in the variable ``result``, which is then printed to the console.
 
 .. code-block:: python
 
@@ -126,10 +126,10 @@ This script begins by importing necessary modules: ``fusion_hat`` for the ADC in
     print('result = %d ' %result)
 
 3. **Timing Control**:
-   - ``time.sleep(0.2)`` is used to pause the loop for 0.2 seconds between readings, allowing for a controlled flow of readings.
+   ``time.sleep(0.2)`` is used to pause the loop for 0.2 seconds between readings, allowing for a controlled flow of readings.
 
 4. **Graceful Exit**:
-   - The ``try`` and ``except`` block gracefully handles a user-generated interrupt, typically ``Ctrl+C``, allowing the program to exit without error messages.
+   The ``try`` and ``except`` block gracefully handles a user-generated interrupt, typically ``Ctrl+C``, allowing the program to exit without error messages.
 
 ----------------------------------------------
 
@@ -138,8 +138,7 @@ This script begins by importing necessary modules: ``fusion_hat`` for the ADC in
 When working with hardware and sensor setups like this one, you might encounter several common issues. Here's how to troubleshoot some of the frequent problems:
 
 1. **No Output or Erratic Readings**:
-
-   - Check all physical connections first. Loose or improper connections between the Raspberry Pi Zero and the moisture sensor can cause no output or fluctuating readings.
+   Check all physical connections first. Loose or improper connections between the Raspberry Pi Zero and the moisture sensor can cause no output or fluctuating readings.
 
 2. **Constant Zero or Maximum Readings**:
 
@@ -148,7 +147,7 @@ When working with hardware and sensor setups like this one, you might encounter 
    - Check the voltage levels supported by your moisture sensor, it should be 3.3V.
 
 4. **Handling Interrupts**:
-   - If the script does not exit cleanly on pressing ``Ctrl+C``, check your exception handling. Ensure that the KeyboardInterrupt exception is correctly being caught in your try-except block.
+   If the script does not exit cleanly on pressing ``Ctrl+C``, check your exception handling. Ensure that the KeyboardInterrupt exception is correctly being caught in your try-except block.
 
 .. code-block:: python
 
@@ -160,8 +159,7 @@ When working with hardware and sensor setups like this one, you might encounter 
 Taking this basic project to the next level involves adding features and integrating it with other technologies. Here are some extendable ideas to enhance your soil moisture sensor project:
 
 1. **Data Logging and Visualization**:
-
-   - Implement data logging by storing the moisture readings in a file or a database at regular intervals. This data can then be used to create graphs and visualizations to analyze the moisture trends over time.
+   Implement data logging by storing the moisture readings in a file or a database at regular intervals. This data can then be used to create graphs and visualizations to analyze the moisture trends over time.
 
    .. code-block:: python
 
@@ -171,8 +169,7 @@ Taking this basic project to the next level involves adding features and integra
          writer.writerow([time.time(), result])
 
 2. **Real-Time Alerts**:
-
-   - Set up a system to send real-time alerts (via email or SMS) when the soil moisture falls below a certain threshold. This could be particularly useful for maintaining optimal soil conditions for specific plants.
+   Set up a system to send real-time alerts (via email or SMS) when the soil moisture falls below a certain threshold. This could be particularly useful for maintaining optimal soil conditions for specific plants.
 
    .. code-block:: python
 
@@ -180,8 +177,7 @@ Taking this basic project to the next level involves adding features and integra
          send_alert("Soil moisture is low, consider watering.")
 
 3. **Integration with a Watering System**:
-
-   - Connect your Raspberry Pi to a solenoid valve or a water pump to automate watering based on the moisture level readings. This can make the system fully autonomous and very efficient for maintaining gardens or crops.
+   Connect your Raspberry Pi to a solenoid valve or a water pump to automate watering based on the moisture level readings. This can make the system fully autonomous and very efficient for maintaining gardens or crops.
 
    .. code-block:: python
 
@@ -189,8 +185,7 @@ Taking this basic project to the next level involves adding features and integra
          activate_pump()
 
 4. **Multi-Sensor Expansion**:
-
-   - Expand the system by integrating other environmental sensors, such as ambient temperature, humidity, and light sensors. This holistic approach would provide more data points for precise gardening or farming conditions management.
+   Expand the system by integrating other environmental sensors, such as ambient temperature, humidity, and light sensors. This holistic approach would provide more data points for precise gardening or farming conditions management.
 
 **Conclusion**
 
