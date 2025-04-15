@@ -98,9 +98,10 @@ Here’s how the circuit should look:
 * The cathode (short pin) of the LED connects to one leg of the resistor.
 * The other leg of the resistor connects to the **GND** (Ground) pin.
 
-.. image:: ../python/img/1.1.1_blinking_led_schematic.png
+.. image:: img/fzz/1.1.1_sch.png
    :width: 800
    :align: center
+
 
 **Why Use a Resistor?**  
 

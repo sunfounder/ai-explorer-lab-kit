@@ -48,7 +48,10 @@ To complete this project, you will need the following components:
 
 The circuit diagram below shows the connections required to control the motor.
 
-.. image:: ../python/img/
+.. image:: img/fzz/1.3.1_sch.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

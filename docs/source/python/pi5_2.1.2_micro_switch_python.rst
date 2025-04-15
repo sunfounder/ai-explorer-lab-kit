@@ -60,7 +60,11 @@ To complete this project, you will need the following components:
 
 The Micro Switch is connected to GPIO17, and two LEDs are connected to GPIO22 and GPIO27. When the Micro Switch is pressed, the yellow LED lights up; when released, the red LED turns on.
 
-.. image:: ../python/img/2.1.2_micro_switch_schematic_2.png
+
+.. image:: img/fzz/2.1.2_sch.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

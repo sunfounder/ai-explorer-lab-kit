@@ -60,8 +60,10 @@ The following components are required:
 
 The schematic diagram is shown below:
 
-.. image:: ../python/img/4.1.16_morse_code_generator_schematic.png
+.. image:: img/fzz/4.1.13_sch.png
+   :width: 800
    :align: center
+
 
 ----------------------------------------------
 

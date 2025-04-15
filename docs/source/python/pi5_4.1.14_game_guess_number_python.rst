@@ -60,8 +60,10 @@ Below is the list of components required for this project:
 
 Below is the schematic diagram for the "Guess the Number" game:
 
-.. image:: ../python/img/4.1.17_game_guess_number
+.. image:: img/fzz/4.1.14_sch.png
+   :width: 800
    :align: center
+
 
 
 

@@ -53,6 +53,9 @@ Here are the components required for this project:
 
 Below is the schematic diagram for the project, showing how to connect the LED Bar Graph to the Raspberry Pi using GPIO pins and resistors for current limitation:
 
+.. image:: img/fzz/1.1.3_sch.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------

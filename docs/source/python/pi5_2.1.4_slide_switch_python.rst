@@ -58,8 +58,10 @@ To complete this project, gather the following components:
 
 The Slide Switch middle pin is connected to GPIO17, while two LEDs are connected to GPIO22 and GPIO27. The switch toggles between the two LEDs, alternately lighting them up.
 
+.. image:: img/fzz/2.1.4_sch.png
+   :width: 800
+   :align: center
 
-.. image:: ../python/img/2.1.4_slide_switch_schematic_2.png
 
 ----------------------------------------------
 

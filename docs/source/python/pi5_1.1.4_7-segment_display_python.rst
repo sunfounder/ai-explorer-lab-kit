@@ -64,6 +64,11 @@ The circuit uses a 74HC595 shift register to control the 7-segment display. The 
 This setup minimizes the GPIO pins needed by using serial communication to control the parallel outputs of the shift register.
 
 
+.. image:: img/fzz/1.1.4_sch.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 

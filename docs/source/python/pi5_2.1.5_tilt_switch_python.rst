@@ -57,7 +57,11 @@ To complete this project, gather the following components:
 
 Refer to the following diagrams for connecting the tilt switch:
 
-.. image:: ../python/img/2.1.5_tilt_
+.. image:: img/fzz/2.1.5_sch.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 

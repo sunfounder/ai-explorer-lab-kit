@@ -60,7 +60,11 @@ Here are the components required for this project:
 
 Below are the schematic diagrams illustrating how to connect the components:
 
-.. image:: ../python/img/2.2.1_pho
+
+.. image:: img/fzz/2.2.1_sch.png
+   :width: 800
+   :align: center
+
 
 
 

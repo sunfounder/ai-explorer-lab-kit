@@ -63,7 +63,8 @@ Below are the components required for this project:
 
 The system uses an ultrasonic sensor to measure the distance to obstacles. The distance is displayed on an I2C LCD screen, and the buzzer emits warning tones of varying frequency depending on the distance.
 
-.. image:: ../python/img/4.1.9_reversing_alarm_schematic.png
+.. image:: img/fzz/4.1.6_sch.png
+   :width: 800
    :align: center
 
 

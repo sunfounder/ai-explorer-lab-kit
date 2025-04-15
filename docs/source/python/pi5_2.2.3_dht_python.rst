@@ -52,7 +52,10 @@ Here are the components required for this project:
 
 Below is the schematic diagram for connecting the DHT11 sensor:
 
-.. image:: ../img/image326.png
+.. image:: img/fzz/2.2.3_sch.png
+   :width: 800
+   :align: center
+
 
 
 ----------------------------------------------

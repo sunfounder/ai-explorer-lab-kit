@@ -54,7 +54,10 @@ To complete this project, you will need the following components:
 
 The circuit uses a passive buzzer, a PNP transistor, and a 1kΩ resistor. The resistor protects the transistor from excessive current. By varying the frequency of the GPIO pin connected to the transistor, the buzzer produces different sounds, enabling it to play music.
 
-.. image:: ../python/img/
+.. image:: img/fzz/1.2.2_sch.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

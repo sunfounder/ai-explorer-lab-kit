@@ -57,7 +57,8 @@ In this project, you will need the following components:
 
 **Circuit Diagram**
 
-.. image:: ../python/img/4.1.6_magneticalarmsystem_schematic.png
+.. image:: img/fzz/4.1.3_sch.png
+   :width: 800
    :align: center
 
 ----------------------------------------------

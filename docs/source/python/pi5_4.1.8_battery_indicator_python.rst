@@ -57,8 +57,10 @@ The following components are required for this project:
 
 The schematic diagram below shows how the components are connected:
 
-.. image:: ../python/img/4.1.11_battery_ind
+.. image:: img/fzz/4.1.8_sch.png
+   :width: 800
    :align: center
+
 
 
 ----------------------------------------------

@@ -61,8 +61,10 @@ The following components are required for this project:
 
 Below is the schematic diagram for the traffic light simulation project:
 
-.. image:: ../python/img/4.1.12_tra
+.. image:: img/fzz/4.1.9_sch.png
+   :width: 800
    :align: center
+
 
 
 ----------------------------------------------

@@ -52,7 +52,9 @@ Below are the components required for this project:
 
 The MPU6050 communicates with the microcontroller via the I2C bus. Connect the SDA1 and SCL1 pins of the MPU6050 to the corresponding I2C pins on the Raspberry Pi:
 
-.. image:: ../python/img/2.2.9_mpu6050_schematic.png
+.. image:: img/fzz/2.2.8_sch.png
+   :width: 800
+   :align: center
 
 
 

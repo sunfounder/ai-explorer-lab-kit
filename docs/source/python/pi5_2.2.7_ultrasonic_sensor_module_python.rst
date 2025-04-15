@@ -53,7 +53,9 @@ Here are the components required for this project:
 
 Below is the schematic diagram for the ultrasonic sensor module:
 
-.. image:: ../python/img/2.2.8_ultra
+.. image:: img/fzz/2.2.7_sch.png
+   :width: 800
+   :align: center
 
 
 

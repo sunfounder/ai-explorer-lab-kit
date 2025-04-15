@@ -56,7 +56,10 @@ To complete this project, you will need the following components:
 
 The circuit uses an active buzzer, a PNP transistor, and a 1kΩ resistor. The resistor protects the transistor by limiting the base current. When GPIO17 outputs a high level (3.3V), the transistor conducts, allowing current to flow through the buzzer, causing it to beep. When GPIO17 outputs a low level, the transistor is cut off, and the buzzer remains silent.
 
-.. image:: ../python/img/1.2.1_active_buzzer_schematic.png
+.. image:: img/fzz/1.2.1_sch.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

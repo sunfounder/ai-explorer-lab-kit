@@ -54,6 +54,9 @@ To complete this project, you will need the following components:
 
 After connecting the R, G, and B pins of the RGB LED to current-limiting resistors, connect these resistors to PWM0, PWM1, and PWM2, respectively. The longest pin of the LED (GND) is connected to the GND pin of the Raspberry Pi. Different PWM values for the three pins produce various colors.
 
+.. image:: img/fzz/1.1.2_sch.png
+   :width: 800
+   :align: center
 
 ----------------------------------------------
 

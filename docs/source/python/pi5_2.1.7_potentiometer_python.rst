@@ -55,7 +55,11 @@ Here are the components required for this project:
 
 Below are the schematic diagrams for the project:
 
-.. image:: ../python/img/2.1.
+.. image:: img/fzz/2.1.7_sch.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 

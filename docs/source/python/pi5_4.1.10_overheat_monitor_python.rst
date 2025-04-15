@@ -67,8 +67,10 @@ The following components are required for this project:
 
 The schematic diagram for the overheat monitor is shown below:
 
-.. image:: ../python/img/4.1.13_overh
+.. image:: img/fzz/4.1.10_sch.png
+   :width: 800
    :align: center
+
 
 
 ----------------------------------------------

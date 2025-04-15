@@ -59,8 +59,8 @@ The following components are required for this project:
 
 Below is the circuit diagram for this project:
 
-.. image:: ../python/img/4.1.4_automatic_capture_schematic.png
-   :width: 400
+.. image:: img/fzz/4.1.2_sch.png
+   :width: 800
    :align: center
 
 

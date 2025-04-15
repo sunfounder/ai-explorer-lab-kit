@@ -50,10 +50,9 @@ Below are the components required for this project:
 
 Below is the schematic diagram for the project:
 
-.. image:: ../python/img/2.2.5_ir_obstacle_list_schematic.png
-   :width: 500
+.. image:: img/fzz/2.2.5_sch.png
+   :width: 800
    :align: center
-
 
 ----------------------------------------------
 

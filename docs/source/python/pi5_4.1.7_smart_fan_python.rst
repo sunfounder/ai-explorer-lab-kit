@@ -61,7 +61,13 @@ Here are the components you’ll need for this project:
 
 The circuit diagram below illustrates how to connect the thermistor, button, motor driver, and motor:
 
-.. image:: ../python/img/4.1.10_smart
+.. image:: img/fzz/4.1.7_sch.png
+   :width: 800
+   :align: center
+
+
+
+
 ----------------------------------------------
 
 **Wiring Diagram**

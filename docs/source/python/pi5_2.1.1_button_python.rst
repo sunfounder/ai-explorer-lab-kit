@@ -57,7 +57,11 @@ To complete this project, you will need the following components:
 
 We will use a normally open button as an input for the Raspberry Pi. When the button is pressed, GPIO17 will receive a high-level signal (3.3V). The Raspberry Pi will detect this signal and turn the LED on. The circuit connections are shown in the diagrams below:
 
-.. image:: ../python/img/2.
+
+.. image:: img/fzz/2.1.1_sch.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

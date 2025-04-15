@@ -62,9 +62,10 @@ Here are the components required for the project:
 
 The schematic diagram for the alarm bell is shown below:
 
-.. image:: ../python/img/4.1.15_ala
-   :width: 600
+.. image:: img/fzz/4.1.12_sch.png
+   :width: 800
    :align: center
+
 
 
 ----------------------------------------------

@@ -57,9 +57,9 @@ Below are the components required for this project:
 
 Below are the schematic diagrams for the project:
 
-.. image:: ../python/img/2.2.4_reed_switch_schematic_2.png
-    :width: 400
-    :align: center
+.. image:: img/fzz/2.2.4_sch.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------

@@ -60,8 +60,10 @@ Below is the list of components required for this project:
 
 Below is the schematic diagram for the "10 Second Challenge":
 
-.. image:: ../python/img/4.1.18_game_10_second_
+.. image:: img/fzz/4.1.15_sch.png
+   :width: 800
    :align: center
+
 
 
 ----------------------------------------------

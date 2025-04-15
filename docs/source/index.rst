@@ -57,14 +57,7 @@ Thanks for choosing our AI Explorer Lab Kit.
 
     About This Kit <self>
     install_setup_os/install_setup_os
-
     download_the_code
-
-.. .. toctree::
-..     :maxdepth: 3
-
-..     for
-..     for_other_models
 
 .. toctree::
     :maxdepth: 3
@@ -74,6 +67,7 @@ Thanks for choosing our AI Explorer Lab Kit.
 
 .. toctree::
     :maxdepth: 2
+
     gpt_lesson/play_with_gpt
 
 

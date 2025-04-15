@@ -51,8 +51,11 @@ Here are the components required for this project:
 
 Below is the circuit diagram showing how to connect the Rotary Encoder module to the Raspberry Pi. Ensure proper connections to avoid damage or errors.
 
-.. image:: ../python/img/2.1.6
+.. image:: img/fzz/2.1.6_sch.png
+   :width: 800
    :align: center
+
+
 
 ----------------------------------------------
 

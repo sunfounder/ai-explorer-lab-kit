@@ -51,7 +51,10 @@ Below are the components required for this project:
 
 When using a joystick, the data for the X and Y axes are analog values that require an ADC (Analog-to-Digital Converter) like the ADC0834 to be converted to digital values. The button (Z-axis or SW) is digital and can be directly read using a GPIO pin.
 
-.. image:: ../python/img/2.1.9_joy
+
+.. image:: img/fzz/2.1.9_sch.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------

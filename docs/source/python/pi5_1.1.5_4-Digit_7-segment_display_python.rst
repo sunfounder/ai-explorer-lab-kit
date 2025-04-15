@@ -56,7 +56,10 @@ To complete this project, you will need the following components:
 
 The circuit diagram shows how to connect the 74HC595 shift register to the 4-digit 7-segment display and the Raspberry Pi GPIO pins. The shift register reduces the number of GPIO pins required, allowing efficient control of the display.
 
-.. image:: ../python/img/
+.. image:: img/fzz/1.1.5_sch.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

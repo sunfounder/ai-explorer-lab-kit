@@ -48,7 +48,11 @@ To complete this project, you will need the following components:
 
 The circuit diagram below shows the connections required for controlling the servo motor.
 
-.. image:: ../img/image337.png
+.. image:: img/fzz/1.3.2_sch.png
+   :width: 800
+   :align: center
+
+
 
 ----------------------------------------------
 

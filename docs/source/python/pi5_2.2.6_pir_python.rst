@@ -50,7 +50,9 @@ Below are the components required for this project:
 
 Below is the schematic diagram for this project:
 
-.. image:: ../python/img/2.2.7_
+.. image:: img/fzz/2.2.6_sch.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------
@@ -65,6 +67,17 @@ Build the circuit as shown in the diagram below:
    :align: center
 
 Ensure the RGB LED and PIR sensor are connected to the correct GPIO pins as per the schematic.
+
+.. note::
+
+   Adjust the two potentiometers on the PIR module for optimal sensitivity and detection distance. Turn both counterclockwise to their maximum setting for best results.
+
+.. image:: ../python/img/4.1.7_PIR_TTE.png
+   :width: 400
+   :align: center
+
+
+
 
 
 ----------------------------------------------

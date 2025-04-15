@@ -17,12 +17,9 @@
 Play with Python
 ======================================
 
-You can program GPIOs with API provided by ``GPIO Zero``.
-
 .. toctree::
     :maxdepth: 3
     
-    check_the_gpiozero_python
     pi5_output_python
     pi5_input_python
 

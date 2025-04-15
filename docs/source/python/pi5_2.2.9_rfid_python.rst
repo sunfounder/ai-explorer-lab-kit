@@ -31,7 +31,9 @@ Below are the components required for this project:
 
 **Circuit Diagram**
 
-.. image:: ../python/img/2.2.
+.. image:: img/fzz/2.2.9_sch.png
+   :width: 800
+   :align: center
 
 
 

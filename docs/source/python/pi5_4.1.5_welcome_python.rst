@@ -68,8 +68,10 @@ Below are the components required for this project:
 
 Below is the circuit diagram for this project:
 
-.. image:: ../python/img/4.1.8_welcome_schematic.png
+.. image:: img/fzz/4.1.5_sch.png
+   :width: 800
    :align: center
+
 
 
 ----------------------------------------------
