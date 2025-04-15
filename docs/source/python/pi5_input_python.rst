@@ -45,3 +45,5 @@ Input
     pi5_2.2.6_pir_python.rst 
     pi5_2.2.7_ultrasonic_sensor_module_python.rst 
     pi5_2.2.8_mpu6050_module_python.rst
+    pi5_2.2.9_rfid_python.rst 
+    pi5_2.2.10_moisture_python.rst
