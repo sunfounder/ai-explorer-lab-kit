@@ -34,9 +34,9 @@ Below are the components required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    *   - IR Obstacle Avoidance Module
+    *   - :ref:`cpn_avoid_module`
         - |link_obstacle_avoidance_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|  
     *   - Fusion HAT
         - 

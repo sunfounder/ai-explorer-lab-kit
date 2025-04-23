@@ -10,47 +10,19 @@ Speech-to-text technology allows chatbots to interact with users in a more natur
 
 【配一张加上了拓展板的照片 指一下麦克风在哪】
 
-----------------------------------------------
-
-**What You’ll Need**
-
-The following components are required for this project:
-
-
-.. list-table::
-    :widths: 30 20
-    :header-rows: 1
-
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
-
 
 ----------------------------------------------
 
 **Running the Example**
 
 
-All example code used in this tutorial is available in the ``pizero-gpt`` directory. 
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
 Follow these steps to run the example:
 
 
 .. code-block:: shell
 
-   cd ~/pizero-gpt/gpt_examples/
+   cd ~/ai-explorer-lab-kit/gpt_examples/
    ~/my_venv/bin/python3 gpt_easy_stt.py
 
 
@@ -85,6 +57,8 @@ Here is the complete example code:
 
    thread = client.beta.threads.create()
    recognizer = sr.Recognizer()
+   os.system("fusion_hat enable_speaker")
+
 
    # speech_recognition init
    # =================================================================
@@ -216,6 +190,13 @@ The ``speech_recognition`` library is a powerful and flexible Python library for
 from microphones or files and performing speech recognition. 
 
 The ``os`` and ``subprocess`` libraries are used for file operations and executing system commands, respectively.
+
+
+.. code-block:: python
+
+   os.system("fusion_hat enable_speaker")
+
+This line enables the speaker and microphone on the Fusion HAT.
 
 
 .. code-block:: python

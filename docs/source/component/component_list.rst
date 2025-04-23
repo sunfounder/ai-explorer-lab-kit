@@ -28,7 +28,6 @@ Below is the introduction to each component, which contains the operating princi
 .. toctree::
     :maxdepth: 1
 
-    component_gpio_board
     component_breadboard
     component_resistor
     component_transistor
@@ -42,10 +41,6 @@ Below is the introduction to each component, which contains the operating princi
     :maxdepth: 1
 
     component_74hc595
-    component_l293d
-    component_adc0834
-
-
 
 **Display**
 
@@ -67,7 +62,6 @@ Below is the introduction to each component, which contains the operating princi
     :maxdepth: 1
 
     component_buzzer
-    component_audio_speaker
 
 **Driver**
 
@@ -76,7 +70,6 @@ Below is the introduction to each component, which contains the operating princi
 
     component_motor
     component_servo
-    component_power_module
     component_relay
     
 
@@ -104,10 +97,10 @@ Below is the introduction to each component, which contains the operating princi
     component_touch_switch
     component_reed_switch
     component_avoid_module
-    component_speed_sensor
     component_pir
     component_ultrasonic_sensor
     component_humiture_sensor
     component_mpu6050
     component_mfrc522
     component_camera_module
+    component_moisture

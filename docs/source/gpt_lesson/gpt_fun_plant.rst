@@ -36,18 +36,18 @@ The following components are required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistor
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - Photoresistor
+    *   - :ref:`cpn_photoresistor`
         - |link_photoresistor_buy|
-    *   - DHT11 Humidity and Temperature Sensor
+    *   - :ref:`cpn_humiture_sensor`
         - |link_humiture_buy|
-    *   - Soil Moisture Sensor
-        - 
+    *   - :ref:`cpn_soil_moisture`
+        - |link_soil_moisture_buy|
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W
@@ -58,7 +58,9 @@ The following components are required for this project:
 
 **Diagram**
 
-【电路图】
+.. image:: img/fzz/gpt_plant_bb.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------

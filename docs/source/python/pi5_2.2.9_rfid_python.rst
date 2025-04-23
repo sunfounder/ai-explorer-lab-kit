@@ -18,14 +18,16 @@ Below are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - RFID Module
-        - 
+    *   - :ref:`cpn_mfrc522`
+        - |link_mfrc522_rfid_buy|
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W
         -
+
+
 ----------------------------------------------
 
 

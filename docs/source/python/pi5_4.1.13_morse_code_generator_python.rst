@@ -35,17 +35,17 @@ The following components are required:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistors
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - LED
+    *   - :ref:`cpn_led`
         - |link_led_buy|
-    *   - Buzzer
+    *   - :ref:`cpn_buzzer`
         - |link_buzzer_buy|
-    *   - Transistor
+    *   - :ref:`cpn_transistor`
         - |link_transistor_buy|
     *   - Fusion HAT
         - 

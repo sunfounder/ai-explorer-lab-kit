@@ -23,29 +23,31 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_photoresistor`
+        - |link_photoresistor_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
 
 **Diagram**
 
-【电路图】
+
+.. image:: img/fzz/gpt_feel_bb.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------
@@ -53,12 +55,12 @@ The following components are required for this project:
 
 **Running the Example**
 
-All example code used in this course is located in the ``pizero-gpt`` directory. Follow the steps below to run this example:
+All example code used in this course is located in the ``ai-explorer-lab-kit`` directory. Follow the steps below to run this example:
 
 
 .. code-block:: shell
 
-   cd ~/pizero-gpt/gpt_examples/
+   cd ~/ai-explorer-lab-kit/gpt_examples/
    ~/my_venv/bin/python3 gpt_easy_feel.py
 
 ----------------------------------------------
@@ -78,38 +80,40 @@ Below is the complete example code:
    import sys
    import os
    import subprocess
-   import ADC0834
+   from fusion_hat import ADC
 
    # gets API Key from environment variable OPENAI_API_KEY
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+   os.system("fusion_hat enable_speaker")
 
    TTS_OUTPUT_FILE = 'tts_output.mp3'
 
-   # Set up the ADC0834 module
-   ADC0834.setup(cs=17,clk=22,dio=27)
+   # Set up the photoresistor 
+   photoresistor = ADC('A0')
 
    instructions_text = '''
    You are a light assistant. Your task is to determine if the current light conditions are suitable for reading based on the photosensor value provided by the user. 
 
    The photosensor value range is:
    - 0: Brightest
-   - 255: Darkest
+   - 4095: Darkest
 
    Input Format:
    "photoresistor: [value], message: [user query]"
 
    Output Guidelines:
-   1. If the light is sufficient for reading (e.g., value <= 100), respond positively.
-   2. If the light is too dim (e.g., value > 100), suggest increasing brightness.
+   1. If the light is sufficient for reading (e.g., value <= 2000), respond positively.
+   2. If the light is too dim (e.g., value > 2000), suggest increasing brightness.
    3. Include the sensor value in your response to explain your reasoning.
 
    Example Input:
-   photoresistor: 75, message: Is the light good for reading?
+   photoresistor: 150, message: Is the light good for reading?
 
    Example Output:
-   Yes, the light is suitable for reading. A value of 75 indicates moderate brightness.
+   Yes, the light is suitable for reading. A value of 150 indicates moderate brightness.
 
    '''
+
 
    assistant = client.beta.assistants.create(
       name="BOT",
@@ -128,86 +132,87 @@ Below is the complete example code:
          input=text
       ) as response:
          response.stream_to_file(speech_file_path)
+      p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      p.wait()
+
 
    try:
       while True:
          msg = ""
          msg = input(f'\033[1;30m{"intput: "}\033[0m').encode(sys.stdin.encoding).decode('utf-8')
          if msg == False or msg == "":
-            print() # new line
-            continue
+               print() # new line
+               continue
 
-         text_send="photoresistor:" +str(ADC0834.getResult()) +" , message: " + msg
+         text_send="photoresistor:" +str(photoresistor.read()) +" , message: " + msg
 
          message = client.beta.threads.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content=text_send,
+               thread_id=thread.id,
+               role="user",
+               content=text_send,
          )
 
          run = client.beta.threads.runs.create_and_poll(
-            thread_id=thread.id,
-            assistant_id=assistant.id,
+               thread_id=thread.id,
+               assistant_id=assistant.id,
          )
 
          if run.status == "completed":
-            messages = client.beta.threads.messages.list(thread_id=thread.id)
+               messages = client.beta.threads.messages.list(thread_id=thread.id)
 
-            for message in messages.data:
-               if message.role == 'user':
-                  for block in message.content:
-                     if block.type == 'text':
-                        label = message.role 
-                        text = block.text.value
-                        print(f'{label:>10} >>> {text}')
-                  break # only last reply
+               for message in messages.data:
+                  if message.role == 'user':
+                     for block in message.content:
+                           if block.type == 'text':
+                              label = message.role 
+                              text = block.text.value
+                              print(f'{label:>10} >>> {text}')
+                     break # only last reply
 
-            for message in messages.data:
-               if message.role == 'assistant':
-                  for block in message.content:
-                     if block.type == 'text':
-                        label = assistant.name
-                        text = block.text.value
-                        print(f'{label:>10} >>> {text}')
-                        text_to_speech(text)
-                        p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                        p.wait()
-                  break # only last reply
+               for message in messages.data:
+                  if message.role == 'assistant':
+                     for block in message.content:
+                           if block.type == 'text':
+                              label = assistant.name
+                              text = block.text.value
+                              print(f'{label:>10} >>> {text}')
+                              text_to_speech(text)
+                     break # only last reply
 
    finally:
       client.beta.assistants.delete(assistant.id)
 
 
-Tips: If the photoresistor values are always 0 or 255, check the circuit connections and ensure the ``ADC0834.setup(cs=17, clk=22, dio=27)`` configuration matches your hardware setup.
+
 
 ----------------------------------------------
 
 
 **Code Explanation**
 
-This example builds upon :ref:`gpt_easy_tts`, with the main difference being the integration of the ``ADC0834`` module. Key modifications include the following:
+This example builds upon :ref:`gpt_easy_tts`, with the main difference being the integration of the ``ADC`` module. Key modifications include the following:
 
 .. code-block:: python
-   :emphasize-lines: 3,8,20,25
+   :emphasize-lines: 3,8,18,23
 
    import openai
    ...
-   import ADC0834
+   from fusion_hat import ADC
 
    ...
 
-   # Configure the ADC0834 module
-   ADC0834.setup(cs=17, clk=22, dio=27)
+   # Set up the photoresistor 
+   photoresistor = ADC('A0')
 
    ...
 
    try:
       while True:
          msg = input(f'\033[1;30m{"Input: "}\033[0m').encode(sys.stdin.encoding).decode('utf-8')
-         if not msg.strip():
+         if msg == False or msg == "":
             continue
 
-         text_send = "photoresistor: " + str(ADC0834.getResult()) + ", message: " + msg
+         text_send="photoresistor:" +str(photoresistor.read()) +" , message: " + msg
 
          message = client.beta.threads.messages.create(
             thread_id=thread.id,
@@ -215,7 +220,7 @@ This example builds upon :ref:`gpt_easy_tts`, with the main difference being the
             content=text_send,
          )
 
-The photoresistor is a sensor whose resistance varies with ambient light intensity. Using the ADC0834 module, its analog signal is converted into a digital value that the AI can process. For more details about using the ADC0834 module, refer to :ref:`2.2.1_py`.
+The photoresistor is a sensor whose resistance varies with ambient light intensity. Using the Fusion HAT, its analog signal is converted into a digital value that the AI can process. For more details about using the ADC module, refer to :ref:`2.2.1_py`.
 
 In this project, the AI receives the photoresistor value along with a user query, enabling it to determine whether the environment is suitable for reading.
 
@@ -294,16 +299,9 @@ Integrating sensors with AI systems, especially in a hardware-limited environmen
 - **Verify Component Integrity**: Test the sensor independently (if possible) with a multimeter to ensure it is functioning correctly.
 - **Adjust Calibration**: Some sensors require calibration to provide accurate readings. Check the sensor documentation and adjust settings in the software accordingly.
 
-2. **ADC (Analog-to-Digital Converter) Module Errors**
 
-**Problem:** The ADC module, such as ADC0834, does not convert or return any data.
 
-**Solutions:**
-
-- **Power Supply Issues**: Verify that the ADC module is receiving the correct voltage as per its specifications.
-- **Library Issues**: Ensure you are using the correct library and its version for interacting with the ADC. Sometimes, updating or rolling back the library can resolve compatibility issues.
-
-3. **Software Bugs**
+2. **Software Bugs**
 
 **Problem:** The program crashes or does not behave as expected.
 
@@ -313,7 +311,7 @@ Integrating sensors with AI systems, especially in a hardware-limited environmen
 - **Code Review**: Go through your code to ensure there are no syntactic or logical errors. Pay special attention to how data is passed between functions.
 - **Environment Issues**: Check the version of Python and libraries you are using. Compatibility issues might cause unexpected behavior.
 
-4. **AI Model Does Not Respond Appropriately**
+3. **AI Model Does Not Respond Appropriately**
 
 **Problem:** The AI model does not generate suitable responses based on the sensor data.
 
@@ -323,7 +321,7 @@ Integrating sensors with AI systems, especially in a hardware-limited environmen
 - **Data Format**: Check if the sensor data is formatted correctly before being sent to the AI. Incorrect data formats or types can lead to inappropriate AI behavior.
 - **Model Limitations**: Consider the limitations of the model you are using. Some models may require fine-tuning or specific training to handle custom scenarios effectively.
 
-5. **Audio Output Issues**
+4. **Audio Output Issues**
 
 **Problem:** No sound from the speaker or poor audio quality when the AI responds.
 

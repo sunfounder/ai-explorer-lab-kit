@@ -34,6 +34,7 @@ Before carrying out the projects in this section, it is best to have completed t
    gpt_fun_plant.rst 
    gpt_fun_security.rst 
    gpt_fun_story.rst 
+   gpt_fun_thermomenter.rst
    gpt_fun_volume.rst 
    gpt_fun_water_level.rst 
    gpt_fun_weather.rst 

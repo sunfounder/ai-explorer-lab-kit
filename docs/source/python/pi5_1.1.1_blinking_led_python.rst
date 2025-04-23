@@ -41,24 +41,26 @@ In this tutorial, we’ll connect an LED to a GPIO pin and write a Python progra
 
 Here’s the list of components and their purposes:
 
+
 .. list-table::
     :widths: 30 20
     :header-rows: 1
 
     *   - COMPONENT
-        - PURPOSE
-    *   - Breadboard
-        - Used to build circuits without soldering
-    *   - Wires
-        - Connects components on the breadboard
-    *   - Resistor (330Ω or 220Ω recommended)
-        - Protects the LED from too much current
-    *   - LED
-        - The main component that will blink
-    *   - Raspberry Pi Zero 2 W
-        - The brain of the project
+        - PURCHASE LINK
+        
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_led`
+        - |link_led_buy|
     *   - Fusion HAT
-        - Connects the Raspberry Pi to the breadboard
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 
 ----------------------------------------------

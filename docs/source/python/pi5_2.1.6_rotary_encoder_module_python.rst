@@ -37,7 +37,7 @@ Here are the components required for this project:
 
     *   - :ref:`cpn_rotary_encoder`
         - |link_rotary_encoder_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|  
     *   - Fusion HAT
         - 

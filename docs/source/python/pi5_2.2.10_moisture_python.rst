@@ -35,10 +35,10 @@ Below are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Soil Moisture Module
-        - 
+    *   - :ref:`cpn_soil_moisture`
+        - |link_soil_moisture_buy|
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W

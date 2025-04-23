@@ -36,17 +36,17 @@ The following components are required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistor
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - LED
+    *   - :ref:`cpn_led`
         - |link_led_buy|
-    *   - Button
+    *   - :ref:`cpn_button`
         - |link_button_buy|
-    *   - Camera Module
+    *   - :ref:`cpn_camera_module`
         - |link_camera_buy|
     *   - Fusion HAT
         - 

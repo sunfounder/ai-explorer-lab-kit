@@ -36,7 +36,7 @@ Below are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - MPU6050 Module
+    *   - :ref:`cpn_mpu6050`
         - |link_mpu6050_buy|
     *   - :ref:`cpn_wires`
         - |link_wires_buy|

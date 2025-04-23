@@ -36,18 +36,19 @@ Here are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wire`
         - |link_wires_buy|
-    *   - Resistor
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - Thermistor
+    *   - :ref:`cpn_thermistor`
         - |link_thermistor_buy|
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W
         -
+
 
 
 
@@ -119,12 +120,12 @@ Below is the Python code used for this project:
    except KeyboardInterrupt:
       pass
 
-This Python script reads an analog signal from a thermistor via the ADC0834 module and calculates the corresponding temperature. When executed:
+This Python script reads an analog signal from a thermistor via the fusion hat and calculates the corresponding temperature. When executed:
 
 1. The script continuously reads the voltage.
 2. It calculates the thermistor resistance (``Rt``), and determines the temperature in Kelvin, Celsius, and Fahrenheit.
 3. The calculated temperatures are printed to the console in both Celsius and Fahrenheit, formatted to two decimal places, as ``Celsius: <value> C  Fahrenheit: <value> F``.
-4. The process repeats every 0.2 seconds until the script is interrupted with ``Ctrl+C``, after which the ADC0834 is cleaned up gracefully.
+4. The process repeats every 0.2 seconds until the script is interrupted with ``Ctrl+C``.
 
 
 ----------------------------------------------

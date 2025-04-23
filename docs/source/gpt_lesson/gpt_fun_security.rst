@@ -26,11 +26,11 @@ Below are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - PIR Sensor
-        - 
-    *   - Reed Switch Module
+    *   - :ref:`cpn_pir`
+        - |link_pir_buy| 
+    *   - :ref:`cpn_reed_switch`
         - |link_reed_switch_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|        
     *   - Fusion HAT
         - 
@@ -42,13 +42,75 @@ Below are the components required for this project:
 
 **Wiring Diagram**
 
-(Include a wiring diagram showing the connections between the reed switch, motion sensor, and Raspberry Pi.)
+
+.. image:: img/fzz/gpt_security_bb.png
+   :width: 800
+   :align: center
+
 
 -----------------------------------------------------------
 
 
 **Code**
 
+.. code-block:: python
+
+    import openai
+    from keys import OPENAI_API_KEY
+    from fusion_hat import Pin
+    from pathlib import Path
+    import subprocess
+    import os
+
+    # Initialize OpenAI client
+    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    # thread = client.beta.threads.create()
+    os.system("fusion_hat enable_speaker")
+
+    # Initialize sensors
+    reed_switch = Pin(17, Pin.IN, pull=Pin.PULL_UP)
+    motion_sensor = Pin(22, Pin.IN, pull=Pin.PULL_DOWN)
+
+    # Function for text-to-speech conversion and play the speech
+    def text_to_speech(text):
+        speech_file_path = Path(__file__).parent / "speech.mp3"
+        try:
+            with client.audio.speech.with_streaming_response.create(
+                model="tts-1", voice="alloy", input=text
+            ) as response:
+                response.stream_to_file(speech_file_path)
+            # Play the generated speech file
+            subprocess.Popen(
+                ["mplayer", str(speech_file_path)],
+                shell=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            ).wait()
+        except Exception as e:
+            print(f"Error in TTS or playing the file: {e}")
+
+    # Sensor event handlers
+    def door_opened():
+        print("Door was opened!")
+        text_to_speech("Attention! The door was opened.")
+
+    def motion_detected():
+        print("Motion detected!")
+        text_to_speech("Warning! Motion detected.")
+
+    # Assign event handlers
+    reed_switch.when_deactivated = door_opened
+    motion_sensor.when_activated = motion_detected
+
+    # Keep the script running
+    try:
+        print("System is active. Monitoring...")
+        import signal
+        signal.pause()  # Use signal.pause() on Unix to keep the script running
+    except KeyboardInterrupt:
+        print("Program terminated by user.")
+    finally:
+        print("Cleaning up resources.")
 
 
 
@@ -119,9 +181,10 @@ The ``text_to_speech`` function converts text to speech using OpenAI's API and p
             print(f"Error in TTS or playing the file: {e}")
 
 This function:
-1. Generates a speech file using OpenAI’s TTS.
-2. Saves the output as ``speech.mp3``.
-3. Uses ``mplayer`` to play the file.
+
+- Generates a speech file using OpenAI’s TTS.
+- Saves the output as ``speech.mp3``.
+- Uses ``mplayer`` to play the file.
 
 If an error occurs, it is caught and displayed.
 

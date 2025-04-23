@@ -36,18 +36,18 @@ The following components are required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistors
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - 4-Digit 7-Segment Display
-        - 
-    *   - 74HC595 Shift Register
+    *   - :ref:`cpn_pir`
+        - |link_pir_buy|
+    *   - :ref:`cpn_4_digit`
+        - \-
+    *   - :ref:`cpn_74hc595`
         - |link_74hc595_buy|
-    *   - PIR Motion Sensor
-        - 
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W

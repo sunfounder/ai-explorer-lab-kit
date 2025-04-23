@@ -76,7 +76,7 @@ Thanks for choosing our AI Explorer Lab Kit.
 
     component/component_list
     appendix/appendix
-    thank-learning
+
 
 
 

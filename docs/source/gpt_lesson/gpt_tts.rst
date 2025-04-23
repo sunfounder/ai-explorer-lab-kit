@@ -10,33 +10,6 @@ The implementation integrates OpenAI's TTS (Text-to-Speech) API and a local audi
 【配一张加上了拓展板的照片 指一下扬声器在哪】
 
 
-----------------------------------------------
-
-**What You’ll Need**
-
-The following components are required for this project:
-
-
-.. list-table::
-    :widths: 30 20
-    :header-rows: 1
-
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
 
 ----------------------------------------------
 
@@ -55,7 +28,7 @@ Once installed, navigate to the project directory and execute the script:
 
 .. code-block:: shell
 
-   cd ~/pizero-gpt/gpt_examples/
+   cd ~/ai-explorer-lab-kit/gpt_examples/
    ~/my_venv/bin/python3 gpt_easy_tts.py
 
 
@@ -76,6 +49,7 @@ The complete example code is as follows:
 
    # gets API Key from environment variable OPENAI_API_KEY
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+   os.system("fusion_hat enable_speaker")
 
    TTS_OUTPUT_FILE = 'tts_output.mp3'
 
@@ -164,6 +138,14 @@ Here are the key parts of the code to focus on:
 The ``subprocess`` library is used to execute system commands, which in this case play the audio file. 
 
 The ``pathlib`` library provides tools for working with file paths in a consistent and cross-platform way.
+
+
+.. code-block:: python
+
+   os.system("fusion_hat enable_speaker")
+
+This line enables the speaker and microphone on the Fusion HAT.
+
 
 
 .. code-block:: python

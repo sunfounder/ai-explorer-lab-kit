@@ -23,23 +23,23 @@ Required Components
 The Raspberry Pi is a low cost, credit-card sized computer that plugs
 into a computer monitor or TV, and uses a standard keyboard and mouse.
 It is a capable little device that enables people of all ages to explore
-computing, and to learn how to program in languages like Scratch and
-Python.
+computing, and to learn how to program in languages like Python.
 
 .. image:: img/compitable_pi.jpg
    :align: center
 
+In this kit, we use Raspberry Pi Zero for learning, but you can also use other Raspberry Pis (such as Pi 5) to carry out these projects.
+
+
 **Power Adapter**
 
-To connect to a power socket, the Raspberry Pi has a micro USB port (the
-same found on many mobile phones). You will need a power supply which
-provides at least 2.5 amps.
+The Fusion HAT is equipped with a battery, but you still need to prepare a Type-C charger (no more than 5V3A) to charge it.
 
 **Micro SD Card**
 
 Your Raspberry Pi needs an Micro SD card to store all its files and the
 Raspberry Pi OS. You will need a micro SD card with a capacity of at
-least 8 GB.
+least 16 GB.
 
 .. Optional Components
 .. -------------------------

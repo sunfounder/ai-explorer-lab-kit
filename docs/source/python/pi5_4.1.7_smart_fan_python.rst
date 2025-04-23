@@ -36,17 +36,17 @@ Here are the components you’ll need for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistors
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - Thermistor
+    *   - :ref:`cpn_thermistor`
         - |link_thermistor_buy|
-    *   - Button
+    *   - :ref:`cpn_button`
         - |link_button_buy|
-    *   - Motor
+    *   - :ref:`cpn_motor`
         - |link_motor_buy|
     *   - Fusion HAT
         - 

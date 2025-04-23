@@ -37,15 +37,15 @@ Below is the list of components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistors
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - Keypad
+    *   - :ref:`cpn_keypad`
         - |link_keypad_buy|
-    *   - I2C LCD
+    *   - :ref:`cpn_i2c_lcd`
         - |link_i2clcd1602_buy|
     *   - Fusion HAT
         - 

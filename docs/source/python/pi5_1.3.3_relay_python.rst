@@ -44,7 +44,7 @@ To complete this project, you will need the following components:
     *   - :ref:`cpn_led`
         - |link_led_buy|
     *   - :ref:`cpn_relay`
-        - 
+        - |link_relay_buy|
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W

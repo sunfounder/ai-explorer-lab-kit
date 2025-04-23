@@ -24,9 +24,10 @@ Here are the components required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - Wires
+
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Ultrasonic Sensor Module
+    *   - :ref:`cpn_ultrasonic_sensor`
         - |link_ultrasonic_buy|
     *   - Fusion HAT
         - 
@@ -38,7 +39,10 @@ Here are the components required for this project:
 
 **Wiring Diagram**
 
-*(Omitted – Assumes prior knowledge of connecting an ultrasonic sensor and audio peripherals.)*
+.. image:: img/fzz/2.2.7_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 
@@ -304,21 +308,26 @@ The program consists of several major components:
 **Debugging Tips**
 
 1. **Microphone Not Capturing Input?**
+
    - Check ambient noise levels and adjust with ``recognizer.adjust_for_ambient_noise(source)``.
 
 2. **Assistant Response Delayed or Missing?**
+
    - Ensure OpenAI API credentials are correct and internet connectivity is stable.
    - Print the ``assistant_input`` before sending it to verify correct formatting.
 
 3. **No Audio Output?**
+
    - Confirm ``mplayer`` is installed (``mplayer test.mp3``).
    - Check if ``speech.mp3`` is generated in the correct directory.
 
 4. **Sensor Not Providing Data?**
+
    - Ensure correct GPIO pin connections (Trigger: GPIO 27, Echo: GPIO 22).
    - Print ``sensor.read()`` values to check real-time readings.
 
 5. **Program Freezes or Crashes?**
+
    - Use ``top`` or ``htop`` to check CPU usage.
    - Debug threading by printing periodic messages within ``fetch_sensor_data()``.
 

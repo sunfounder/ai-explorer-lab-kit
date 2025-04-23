@@ -152,7 +152,7 @@ After completing these patterns, the script pauses briefly and then repeats the 
 
 1. **Importing Libraries**
 
-   The ``gpiozero`` library is used for LED control, and the ``time`` library is used to introduce delays.
+   The ``fusion_hat`` library is used for LED control, and the ``time`` library is used to introduce delays.
 
    .. code-block:: python
 

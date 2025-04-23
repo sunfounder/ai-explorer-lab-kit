@@ -33,7 +33,7 @@ Here are the components required for this project:
         - |link_wires_buy|
     *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - Photoresistor
+    *   - :ref:`cpn_photoresistor`
         - |link_photoresistor_buy|
     *   - :ref:`cpn_bar_graph`
         - \-
@@ -46,7 +46,10 @@ Here are the components required for this project:
 
 **Wiring Diagram**
 
-(Include a wiring diagram illustrating the connections between the microphone, speaker, potentiometer, and LED array.)
+.. image:: img/fzz/gpt_volume_bb.png
+   :width: 800
+   :align: center
+
 
 --------------------------------------
 

@@ -17,20 +17,32 @@ This project is an RFID-based access control system using the Fusion Hat module.
 
 **What You’ll Need**
 
-- Fusion Hat
-- RFID Cards
-- Raspberry Pi Zero 2 W
-- RFID module
-- Relay module for door control
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_relay`
+        - |link_relay_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_mfrc522`
+        - |link_mfrc522_rfid_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
 **Wiring Diagram**
 
-(Include a wiring diagram if necessary.)
 
-
-
+.. image:: img/fzz/gpt_access_bb.png
+   :width: 800
+   :align: center
 
 ----------------------------------------------
 
@@ -212,7 +224,7 @@ The ``gpt_fun_access_read.py`` script checks if an RFID card is registered and g
    - If ``users.json`` is missing or unreadable, ensure proper file permissions using ``chmod 644 users.json``.
    - Add exception handling for unexpected file read/write errors.
 
-----------------------------------------------
+.. ----------------------------------------------
 
-This documentation provides a comprehensive understanding of the RFID-based access control system. Let me know if you need further clarifications!
+.. This documentation provides a comprehensive understanding of the RFID-based access control system. Let me know if you need further clarifications!
 

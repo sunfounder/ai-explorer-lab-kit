@@ -32,7 +32,7 @@ To complete this project, you will need the following components:
    :header-rows: 1
 
    *   - COMPONENT
-      - PURCHASE LINK
+       - PURCHASE LINK
 
    *   - :ref:`cpn_motor`
        - |link_motor_buy|

@@ -9,13 +9,13 @@ This example demonstrates a basic chatbot that can interact with users in real t
 
 **Running the Example**
 
-All example code used in these lessons is available in the ``pizero-gpt`` directory. 
+All example code used in these lessons is available in the ``ai-explorer-lab-kit`` directory. 
 You can follow these steps to run the example:
 
 
 .. code-block:: shell
 
-   cd ~/pizero-gpt/gpt_examples/
+   cd ~/ai-explorer-lab-kit/gpt_examples/
    ~/my_venv/bin/python3 gpt_easy_keyboard.py
 
 

@@ -35,21 +35,21 @@ Here are the components required for the project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistors
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - LED
+    *   - :ref:`cpn_led`
         - |link_led_buy|
-    *   - Buzzer (Tonal)
+    *   - :ref:`cpn_buzzer`
         - |link_passive_buzzer_buy|
-    *   - Slide Switch
+    *   - :ref:`cpn_slide_switch`
         - |link_slide_switch_buy|
-    *   - Transistor
+    *   - :ref:`cpn_transistor`
         - |link_transistor_buy|
-    *   - Capacitor
+    *   - :ref:`cpn_capacitor`
         - |link_capacitor_buy|
     *   - Fusion HAT
         - 
@@ -95,10 +95,10 @@ Below is the Python code for the alarm system:
    import time
    import threading
 
-   # Initialize TonalBuzzer on GPIO pin 22
+   # Initialize TonalBuzzer on PWM 0
    BeepPin = Buzzer(PWM('P0'))  # Update this pin number based on your setup
 
-   # Initialize LEDs on GPIO pins 17 and 27
+   # Initialize LEDs on GPIO pins 22 and 27
    ALedPin = Pin(22,Pin.OUT)
    BLedPin = Pin(27,Pin.OUT)
 

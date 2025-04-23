@@ -50,7 +50,10 @@ The following components are required for this project:
 
 **Diagram**
 
-【电路图】
+.. image:: img/fzz/1.1.2_bb.png
+   :width: 800
+   :align: center
+
 
 ----------------------------------------------
 

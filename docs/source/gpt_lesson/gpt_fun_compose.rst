@@ -30,17 +30,17 @@ The following components are required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistors
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - LED
+    *   - :ref:`cpn_led`
         - |link_led_buy|
-    *   - Buzzer (Tonal)
+    *   - :ref:`cpn_buzzer`
         - |link_passive_buzzer_buy|
-    *   - Transistor
+    *   - :ref:`cpn_transistor`
         - |link_transistor_buy|
     *   - Fusion HAT
         - 
@@ -52,8 +52,10 @@ The following components are required for this project:
 
 **Diagram**
 
-【电路图】
 
+.. image:: img/fzz/gpt_compose_bb.png
+   :width: 800
+   :align: center
 
 ----------------------------------------------
 
@@ -209,7 +211,7 @@ The following components are required for this project:
 **Code Explanation**
 
 
-1. Import Necessary Libraries
+1. **Import Necessary Libraries**
 
 .. code-block:: python
       
@@ -222,12 +224,12 @@ The following components are required for this project:
    import speech_recognition as sr
    from fusion_hat import Buzzer,Pin,PWM
 
-* openai: Interacts with OpenAI's GPT and Whisper models.
-* speech_recognition: Captures and processes audio input.
-* fusion_hat: Controls GPIO components such as the buzzer and LED.
+* ``openai``: Interacts with OpenAI's GPT and Whisper models.
+* ``speech_recognition``: Captures and processes audio input.
+* ``fusion_hat``: Controls GPIO components such as the buzzer and LED.
 
 
-2. Initialize OpenAI Client
+2. **Initialize OpenAI Client**
 
 .. code-block:: python
 
@@ -235,7 +237,7 @@ The following components are required for this project:
 
 The OpenAI client is configured using an API key to access GPT and Whisper models.
 
-3. Define Helper Functions
+3. **Define Helper Functions**
 
 .. code-block:: python
 
@@ -291,7 +293,7 @@ Play Melody on Buzzer:
 * Plays each note on the buzzer for the specified duration.
 
 
-4. Configure Hardware Components
+4. **Configure Hardware Components**
 
 .. code-block:: python
       
@@ -330,7 +332,7 @@ Defines an assistant named BOT with clear instructions to:
 * Provide a textual description of the melody.
 
 
-6. Main Loop for Listening and Responding
+6. **Main Loop for Listening and Responding**
 
 .. code-block:: python
 
@@ -395,7 +397,7 @@ Process GPT Response:
 
 
 
-7. Cleanup Resources
+7. **Cleanup Resources**
 
 .. code-block:: python
 

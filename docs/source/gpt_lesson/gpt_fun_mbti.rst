@@ -28,22 +28,25 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
 
-    *   - Keypad
-        - 
-    *   - Wires
-        - |link_wires_buy|  
+    *   - :ref:`cpn_keypad`
+        - |link_keypad_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W
+        -
 
 ----------------------------------------------
 
 **Diagram**
 
-【电路图】
+.. image:: img/fzz/2.1.8_bb.png
+   :width: 800
+   :align: center
 
 ----------------------------------------------
 

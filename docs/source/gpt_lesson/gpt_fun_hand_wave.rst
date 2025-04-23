@@ -20,7 +20,14 @@ This project is a gesture interaction system that utilizes two infrared obstacle
 
 **What You’ll Need**
 
-    *   - IR Obstacle Avoidance Module
+.. list-table::
+    :widths: 30 20
+    :header-rows: 1
+
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_avoid_module`
         - |link_obstacle_avoidance_buy|
     *   - :ref:`cpn_wires`
         - |link_wires_buy|
@@ -37,7 +44,10 @@ This project is a gesture interaction system that utilizes two infrared obstacle
 
 **Wiring Diagram**
 
-*(Omitted for brevity)*
+.. image:: img/fzz/gpt_hand_wave_bb.png
+   :width: 800
+   :align: center
+
 
 
 -----------------------------------

@@ -47,7 +47,9 @@ To complete this project, you will need the following components:
 
 **Diagram**
 
-【电路图】
+.. image:: img/fzz/1.1.7_bb.png
+   :width: 800
+   :align: center
 
 ----------------------------------------------
 
@@ -83,7 +85,7 @@ To complete this project, you will need the following components:
 
    .. code-block:: shell
 
-      nano ~/pizero-gpt/gpt_examples/keys.py
+      nano ~/ai-explorer-lab-kit/gpt_examples/keys.py
 
 #. Add the copied API Key:
 

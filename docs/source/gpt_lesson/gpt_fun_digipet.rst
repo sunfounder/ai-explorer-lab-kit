@@ -54,7 +54,9 @@ The following components are required for this project:
 
 **Diagram**
 
-【电路图】
+.. image:: img/fzz/1.1.6_bb.png
+   :width: 800
+   :align: center
 
 
 ----------------------------------------------
@@ -223,7 +225,7 @@ The following components are required for this project:
    recognizer = sr.Recognizer()
 
 * Initializes the OpenAI client with an API key.
-* Sets up the 8x8 LED matrix using the ``luma.led_matrix`` library.
+* Sets up the 8x8 LED matrix using the ``LedMatrix`` Class.
 * Configures the speech recognizer for audio input.
 
 
@@ -384,7 +386,7 @@ Ensures proper cleanup of resources, including deleting the assistant instance.
 
 2. LED Matrix Not Displaying Patterns:
 
-   * Verify MAX7219 wiring and connections.
+   * Verify LED Matrix Module wiring and connections.
    * Ensure the pattern is a valid list of 8 integers.
 
 3. Audio Playback Issues:

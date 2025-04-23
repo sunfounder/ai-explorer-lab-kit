@@ -35,9 +35,10 @@ Here are the components required for this project:
 
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
-    *   - Wires
+
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Ultrasonic Sensor Module
+    *   - :ref:`cpn_ultrasonic_sensor`
         - |link_ultrasonic_buy|
     *   - Fusion HAT
         - 

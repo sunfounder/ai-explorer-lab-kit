@@ -199,7 +199,7 @@ This Python script controls two LEDs based on the state of a micro switch connec
 2. **Micro Switch Not Detected**  
 
    - **Cause**: The micro switch might not be configured properly or needs a pull-up/pull-down resistor.  
-   - **Solution**: Confirm that ``pull = Pin.PULL_DOWN`` matches your switch configuration. If the switch requires a pull-up, enable it in the initialization.
+   - **Solution**: Confirm that ``pull = Pin.PULL_UP`` matches your switch configuration. If the switch requires a pull-up, enable it in the initialization.
 
 3. **LEDs Flicker or Behave Erratically**  
 

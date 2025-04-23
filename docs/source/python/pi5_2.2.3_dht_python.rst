@@ -36,9 +36,9 @@ Here are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - DHT11 Humidity and Temperature Sensor
+    *   - :ref:`cpn_humiture_sensor`
         - |link_humiture_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|  
     *   - Fusion HAT
         - 

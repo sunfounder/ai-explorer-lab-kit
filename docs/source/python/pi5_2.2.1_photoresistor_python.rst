@@ -38,15 +38,15 @@ Here are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wire`
         - |link_wires_buy|
-    *   - Resistor
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - LED
+    *   - :ref:`cpn_led`
         - |link_led_buy|
-    *   - Photoresistor
+    *   - :ref:`cpn_photoresistor`
         - |link_photoresistor_buy|
     *   - Fusion HAT
         - 

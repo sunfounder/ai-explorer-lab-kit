@@ -96,13 +96,13 @@ gettext_compact = False # Support for generating the contents of the folders ins
 # Purchase links of components
 rst_epilog = """
 
-.. |link_Raphael_kit| raw:: html
+.. |link_ai_explorer_kit| raw:: html
 
-    <a href="https://www.sunfounder.com/products/zero-w-ai-kit?_pos=1&_sid=e78196ab0&_ss=r" target="_blank">Raphael Kit</a>
+    <a href="https://www.sunfounder.com/products/ai-explorer-lab-kit?_pos=1&_sid=e78196ab0&_ss=r" target="_blank">AI Explorer Lab Kit</a>
 
-.. |link_Raphael| raw:: html
+.. |link_ai_explorer| raw:: html
 
-    <a href="https://www.sunfounder.com/products/zero-w-ai-kit?_pos=1&_sid=e78196ab0&_ss=r" target="_blank">Purchase link for Raphael Kit</a>
+    <a href="https://www.sunfounder.com/products/ai-explorer-lab-kit?_pos=1&_sid=e78196ab0&_ss=r" target="_blank">Purchase link for AI Explorer Lab Kit</a>
 
 .. |link_picow_buy| raw:: html
 
@@ -256,6 +256,11 @@ rst_epilog = """
 
     <a href="https://www.sunfounder.com/products/5mp-1080p-camera" target="_blank">BUY</a>   
 
+.. |link_soil_moisture_buy| raw:: html
+
+    <a href="https://www.sunfounder.com/products/capacitive-soil-moisture-sensor-module?_pos=1&_sid=73e23dc8a&_ss=r" target="_blank">BUY</a>       
+
+
 """
 
 # language links
@@ -268,28 +273,28 @@ rst_epilog += """
 
 .. |link_german_tutorials| raw:: html
 
-    <a href="https://docs.sunfounder.com/projects/zero-w-ai-kit/de/latest/" target="_blank">Deutsch Online-Kurs</a>
+    <a href="https://docs.sunfounder.com/projects/ai-explorer-lab-kit/de/latest/" target="_blank">Deutsch Online-Kurs</a>
 
 .. |link_jp_tutorials| raw:: html
 
-    <a href="https://docs.sunfounder.com/projects/zero-w-ai-kit/ja/latest/" target="_blank">日本語オンライン教材</a>
+    <a href="https://docs.sunfounder.com/projects/ai-explorer-lab-kit/ja/latest/" target="_blank">日本語オンライン教材</a>
 
 .. |link_en_tutorials| raw:: html
 
-    <a href="https://docs.sunfounder.com/projects/zero-w-ai-kit/en/latest/" target="_blank">English Online-tutorials</a>
+    <a href="https://docs.sunfounder.com/projects/ai-explorer-lab-kit/en/latest/" target="_blank">English Online-tutorials</a>
 
 
 .. |link_es_tutorials| raw:: html
 
-    <a href="https://docs.sunfounder.com/projects/zero-w-ai-kit/es/latest/" target="_blank">Tutoriales en línea de español</a>
+    <a href="https://docs.sunfounder.com/projects/ai-explorer-lab-kit/es/latest/" target="_blank">Tutoriales en línea de español</a>
 
 .. |link_fr_tutorials| raw:: html
 
-    <a href="https://docs.sunfounder.com/projects/zero-w-ai-kit/fr/latest/" target="_blank">Tutoriels de français en ligne</a>
+    <a href="https://docs.sunfounder.com/projects/ai-explorer-lab-kit/fr/latest/" target="_blank">Tutoriels de français en ligne</a>
 
 .. |link_it_tutorials| raw:: html
 
-    <a href="https://docs.sunfounder.com/projects/zero-w-ai-kit/it/latest/" target="_blank">Tutorial online in italiano</a>
+    <a href="https://docs.sunfounder.com/projects/ai-explorer-lab-kit/it/latest/" target="_blank">Tutorial online in italiano</a>
     
 
 .. |Adafruit_CircuitPython_DHT| raw:: html

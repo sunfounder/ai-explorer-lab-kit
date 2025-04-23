@@ -35,7 +35,7 @@ Below are the components required for this project:
 
     * - COMPONENT INTRODUCTION
       - PURCHASE LINK
-    * - Camera Module
+    * - :ref:`cpn_camera_module`
       - |link_camera_buy|
 
 

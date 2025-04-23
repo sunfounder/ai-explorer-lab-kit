@@ -5,7 +5,9 @@ This Python script integrates OpenAI's GPT with hardware components like a butto
 
 The program waits for the user to press a button.
 
-[这里搞张图 指一下是按拓展板上的按钮]
+
+
+
 
 When pressed:
 
@@ -39,22 +41,33 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT INTRODUCTION
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|   
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_button`
+        - |link_button_buy|
+    *   - :ref:`cpn_camera_module`
+        - |link_camera_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
+----------------------------------------------
+
+
+**Circuit Diagram**
+
+
+.. image:: img/fzz/gpt_story_bb.png
+   :width: 800
+   :align: center
 
 
 
@@ -63,7 +76,7 @@ The following components are required for this project:
 **Code**
 
 .. code-block:: python
-
+      
    import openai
    from keys import OPENAI_API_KEY
    import readline  # Optimize keyboard input
@@ -71,14 +84,16 @@ The following components are required for this project:
    import os
    from pathlib import Path
    import subprocess
-   from gpiozero import Button
+   from fusion_hat import Pin
    from picamera2 import Picamera2
+
+   os.system("fusion_hat enable_speaker")
 
    # Initialize OpenAI client
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
    # Initialize hardware components
-   button = Button(6)
+   button = Pin(17, Pin.IN, Pin.PULL_DOWN)
    camera = Picamera2()
 
    # Function to capture a photo
@@ -93,6 +108,7 @@ The following components are required for this project:
          camera.start()
          camera.capture_file("my_photo.jpg")
          camera.stop()
+         story_talking()
       except Exception as e:
          print(f"Error capturing photo: {e}")
 
@@ -164,17 +180,18 @@ The following components are required for this project:
    # Create a conversation thread
    thread = client.beta.threads.create()
 
+   button.when_activated = capture_photo
+
    try:
-      while True:
-         print(f'\033[1;30m{"Waiting for button press to capture photo..."}\033[0m')
-         button.wait_for_press()
-         capture_photo()
-         story_talking()
+      print(f'\033[1;30m{"Waiting for button press to capture photo..."}\033[0m')
+      print(f'\033[1;30m{"Tap any key to exit..."}\033[0m')
+      import signal
+      signal.pause()  # Use signal.pause() on Unix to keep the script running
    finally:
       # Clean up resources
-      button.close()
       client.beta.assistants.delete(assistant.id)
       print("Resources cleaned up. Exiting.")
+
 
 
 ----------------------------------------------
@@ -189,15 +206,17 @@ The following components are required for this project:
    import openai
    from keys import OPENAI_API_KEY
    import readline  # Optimize keyboard input
-   import sys,os,subprocess
+   import sys
+   import os
    from pathlib import Path
-   from gpiozero import Button
+   import subprocess
+   from fusion_hat import Pin
    from picamera2 import Picamera2
 
-* openai: To interact with OpenAI's GPT and Whisper models.
-* gpiozero.Button: To handle button presses for capturing photos.
-* picamera2.Picamera2: To control the Raspberry Pi camera for taking photos.
-* subprocess: To play audio files for text-to-speech output.
+* ``openai``: To interact with OpenAI's GPT and Whisper models.
+* ``fusion_hat``: To handle button presses for capturing photos.
+* ``picamera2``: To control the Raspberry Pi camera for taking photos.
+* ``subprocess``: To play audio files for text-to-speech output.
 
 
 2. Initialize OpenAI Client and Hardware
@@ -210,10 +229,10 @@ This sets up the OpenAI client with the provided API key for accessing GPT and W
 
 .. code-block:: python
 
-   button = Button(6)
-   camera = Picamera2()  
+   button = Pin(17, Pin.IN, Pin.PULL_DOWN)
+   camera = Picamera2()
 
-The button connected to GPIO pin 6 triggers the photo capture process. The ``Picamera2`` instance controls the Raspberry Pi camera.
+The button connected to GPIO pin 17 triggers the photo capture process. The ``Picamera2`` instance controls the Raspberry Pi camera.
 
 
 3. Capture Photo
@@ -236,7 +255,7 @@ The button connected to GPIO pin 6 triggers the photo capture process. The ``Pic
 
 * Configures the camera's preview settings.
 * Starts the camera to capture an image.
-* Saves the image as my_photo.jpg.
+* Saves the image as `my_photo.jpg`.
 
 4. Text-to-Speech Conversion
 

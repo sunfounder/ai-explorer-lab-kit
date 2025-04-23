@@ -35,10 +35,10 @@ Here are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Keypad
-        - 
-    *   - Wires
-        - |link_wires_buy|  
+    *   - :ref:`cpn_keypad`
+        - |link_keypad_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W

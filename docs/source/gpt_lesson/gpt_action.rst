@@ -24,42 +24,46 @@ The following components are required for this project:
     :widths: 30 20
     :header-rows: 1
 
-    * - COMPONENT INTRODUCTION
-      - PURCHASE LINK
-    * - GPIO Extension Board
-      - |link_gpio_board_buy|
-    * - Breadboard
-      - |link_breadboard_buy|
-    * - Wires
-      - |link_wires_buy|
-    * - Resistor
-      - |link_resistor_buy|
-    * - LED
-      - |link_led_buy|
-    * - Button
-      - |link_button_buy|
-    * - Camera Module
-      - |link_camera_buy|
+    *   - COMPONENT
+        - PURCHASE LINK
+
+    *   - :ref:`cpn_breadboard`
+        - |link_breadboard_buy|
+    *   - :ref:`cpn_wires`
+        - |link_wires_buy|
+    *   - :ref:`cpn_resistor`
+        - |link_resistor_buy|
+    *   - :ref:`cpn_rgb_led`
+        - |link_rgb_led_buy|
+    *   - Fusion HAT
+        - 
+    *   - Raspberry Pi Zero 2 W
+        -
+
 
 ----------------------------------------------
 
 
 **Diagram**
 
-【电路图】
+
+.. image:: img/fzz/1.1.2_bb.png
+   :width: 800
+   :align: center
+
 
 
 ----------------------------------------------
 
 **Running the Example**
 
-We provide all example code used in this course, located in the ``pizero-gpt`` directory. 
+We provide all example code used in this course, located in the ``ai-explorer-lab-kit`` directory. 
 Use the following steps to run this example:
 
 
 .. code-block:: shell
 
-   cd ~/pizero-gpt/gpt_examples/
+   cd ~/ai-explorer-lab-kit/gpt_examples/
    ~/my_venv/bin/python3 gpt_easy_action.py
 
 ----------------------------------------------
@@ -72,7 +76,7 @@ Here is the complete example code:
 .. code-block:: python
 
    import openai
-   from keys import OPENAI_API_KEY, OPENAI_ASSISTANT_ID
+   from keys import OPENAI_API_KEY
    from pathlib import Path
 
    import readline # optimize keyboard input, only need to import
@@ -80,10 +84,11 @@ Here is the complete example code:
    import os
    import subprocess
 
-   from gpiozero import RGBLED
+   from fusion_hat import RGB_LED,PWM
 
    # gets API Key from environment variable OPENAI_API_KEY
    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+   os.system("fusion_hat enable_speaker")
 
    TTS_OUTPUT_FILE = 'tts_output.mp3'
 
@@ -98,8 +103,8 @@ Here is the complete example code:
 
    **Output Requirements**:
    1. Return a JSON output with no extraneous text or wrappers:
-   - `color`: A list of three floating-point values representing the RGB color components (each between 0 and 1).
-   - `message`: A textual response to the user.
+      - `color`: A list of three floating-point values representing the RGB color components (each between 0 and 1).
+      - `message`: A textual response to the user.
 
    **Example JSON Output**:
    {
@@ -118,8 +123,10 @@ Here is the complete example code:
 
    thread = client.beta.threads.create()
 
-   # Initialize an RGB LED. Connect the red component to GPIO 17, green to GPIO 18, and blue to GPIO 27.
-   rgb_led = RGBLED(red=23, green=24, blue=25)
+   # Initialize an RGB LED.
+   rgb_led = RGB_LED(PWM('P0'), PWM('P1'), PWM('P2'),common=RGB_LED.CATHODE)
+
+
 
    def text_to_speech(text):
       speech_file_path = Path(__file__).parent / "speech.mp3"
@@ -129,71 +136,73 @@ Here is the complete example code:
          input=text
       ) as response:
          response.stream_to_file(speech_file_path)
+      p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      p.wait()
+
 
    try:
       while True:
          msg = ""
          msg = input(f'\033[1;30m{"intput: "}\033[0m').encode(sys.stdin.encoding).decode('utf-8')
          if msg == False or msg == "":
-            print() # new line
-            continue
+               print() # new line
+               continue
 
          message = client.beta.threads.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content=msg,
+               thread_id=thread.id,
+               role="user",
+               content=msg,
          )
 
          run = client.beta.threads.runs.create_and_poll(
-            thread_id=thread.id,
-            assistant_id=assistant.id,
+               thread_id=thread.id,
+               assistant_id=assistant.id,
          )
 
          if run.status == "completed":
-            messages = client.beta.threads.messages.list(thread_id=thread.id)
+               messages = client.beta.threads.messages.list(thread_id=thread.id)
 
-            for message in messages.data:
-               if message.role == 'user':
-                  for block in message.content:
-                     if block.type == 'text':
-                        label = message.role 
-                        value = block.text.value
-                        print(f'{label:>10} >>> {value}')
-                  break # only last reply
+               for message in messages.data:
+                  if message.role == 'user':
+                     for block in message.content:
+                           if block.type == 'text':
+                              label = message.role 
+                              value = block.text.value
+                              print(f'{label:>10} >>> {value}')
+                     break # only last reply
 
-            for message in messages.data:
-               if message.role == 'assistant':
-                  for block in message.content:
-                     if block.type == 'text':
-                        label = assistant.name
-                        value = block.text.value
-                        # print(f"Raw AI Response: {value}")
-                        try:
-                           value = eval(value)
-                        except Exception as e:
-                           value = str(value)
-                        if isinstance(value, dict):
-                           if 'color' in value:
-                              color = list(value['color'])
-                           else:
-                              color = [0,0,0]
-                           if 'message' in value:
-                              text = value['message']
-                           else :
-                              text = ''
-                        else:
-                           color = [0,0,0]
-                           text = value
+               for message in messages.data:
+                  if message.role == 'assistant':
+                     for block in message.content:
+                           if block.type == 'text':
+                              label = assistant.name
+                              value = block.text.value
+                              # print(f"Raw AI Response: {value}")
+                              try:
+                                 value = eval(value)
+                              except Exception as e:
+                                 value = str(value)
+                              if isinstance(value, dict):
+                                 if 'color' in value:
+                                       color = list(value['color'])
+                                 else:
+                                       color = [0,0,0]
+                                 if 'message' in value:
+                                       text = value['message']
+                                 else :
+                                       text = ''
+                              else:
+                                 color = [0,0,0]
+                                 text = value
 
-                        print(f'{label:>10} >>> {text} {color}')
-                        rgb_led.color = color
-                        text_to_speech(text)
-                        p=subprocess.Popen("mplayer speech.mp3", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                        p.wait()
-                  break # only last reply
+                              print(f'{label:>10} >>> {text} {color}')
+                              rgb_led.color = color
+                              text_to_speech(text)
+                     break # only last reply
 
    finally:
       client.beta.assistants.delete(assistant.id)
+
 
 ----------------------------------------------
 

@@ -33,7 +33,7 @@ This project is a voice-controlled fan speed regulator powered by OpenAI's API. 
     *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
     *   - :ref:`cpn_buzzer`
-        - \-
+        - |link_passive_buzzer_buy|
     *   - :ref:`cpn_transistor`
         - |link_transistor_buy|
     *   - :ref:`cpn_motor`
@@ -51,7 +51,10 @@ This project is a voice-controlled fan speed regulator powered by OpenAI's API. 
 
 **Wiring Diagram**
 
-*(Omitted for brevity)*
+
+.. image:: img/fzz/gpt_fan_bb.png
+   :width: 800
+   :align: center
 
 ----------------------------------------------
 

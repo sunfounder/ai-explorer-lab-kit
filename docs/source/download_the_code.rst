@@ -53,7 +53,7 @@ Clone the repository from GitHub.
 
 Download the source code from github: https://github.com/sunfounder/ai-explorer-lab-kit
 
-.. image:: img/image33.png
+.. image:: img/download_code.png
 
 
 

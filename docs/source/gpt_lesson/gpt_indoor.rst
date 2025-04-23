@@ -13,11 +13,11 @@ This example demonstrates how to use OpenAI's Python library to create and inter
 
 **Running the Example**
 
-All example code used in these lessons is available in the ``pizero-gpt`` directory. Follow these steps to run the example:
+All example code used in these lessons is available in the ``ai-explorer-lab-kit`` directory. Follow these steps to run the example:
 
 .. code-block:: shell
 
-   cd ~/pizero-gpt/gpt_examples/
+   cd ~/ai-explorer-lab-kit/gpt_examples/
    ~/my_venv/bin/python3 gpt_easy.py
 
 ----------------------------------------------
@@ -276,12 +276,12 @@ When working with OpenAI's API and developing chatbots on a Raspberry Pi, you mi
 
 .. **运行示例**
 
-.. 我们提供了这些课程用到的所有示例代码。位于 ``pizero-gpt`` 目录下。
+.. 我们提供了这些课程用到的所有示例代码。位于 ``ai-explorer-lab-kit`` 目录下。
 .. 你可以按以下步骤执行指令，来启动这个示例。
 
 .. .. code-block:: shell
 
-..    cd ~/pizero-gpt/gpt_examples/
+..    cd ~/ai-explorer-lab-kit/gpt_examples/
 ..    ~/my_venv/bin/python3 gpt_easy.py
 
 .. **Code**

@@ -37,21 +37,19 @@ Below are the components required for this project:
     *   - COMPONENT INTRODUCTION
         - PURCHASE LINK
 
-    *   - Breadboard
+    *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - Wires
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - Resistors
+    *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
-    *   - LED
-        - |link_led_buy|
-    *   - PIR Motion Sensor
-        - 
-    *   - Servo Motor
+    *   - :ref:`cpn_pir`
+        - |link_pir_buy|
+    *   - :ref:`cpn_servo`
         - |link_servo_buy|
-    *   - Buzzer
+    *   - :ref:`cpn_buzzer`
         - |link_passive_buzzer_buy|
-    *   - Transistor
+    *   - :ref:`cpn_transistor`
         - |link_transistor_buy|
     *   - Fusion HAT
         - 
