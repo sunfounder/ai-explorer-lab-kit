@@ -60,7 +60,7 @@ Thanks for choosing our AI Explorer Lab Kit.
     download_the_code
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 4
 
     python/play_with_python
 
