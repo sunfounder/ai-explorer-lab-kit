@@ -14,7 +14,7 @@ os.system("fusion_hat enable_speaker")
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 # Initialize hardware components
-button = Pin(6, Pin.IN, Pin.PULL_DOWN)
+button = Pin(17, Pin.IN, Pin.PULL_DOWN)
 camera = Picamera2()
 
 # Function to capture a photo

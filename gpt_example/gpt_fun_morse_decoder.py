@@ -4,7 +4,6 @@ from fusion_hat import Pin
 from signal import pause
 import time
 
-
 # init openai
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
@@ -15,7 +14,6 @@ assistant = client.beta.assistants.create(
 )
 
 thread = client.beta.threads.create()
-
 
 # setup GPIO
 morse_input = Pin(22, Pin.IN, pull= Pin.PULL_DOWN)  

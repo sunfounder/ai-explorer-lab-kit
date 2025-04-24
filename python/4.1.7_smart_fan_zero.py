@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from fusion_hat import Motor, PWM, Pin, ADC
+from fusion_hat import Motor, Pin, ADC
 from time import sleep
 import math
 

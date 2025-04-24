@@ -8,6 +8,7 @@ from pathlib import Path
 
 # gets API Key from environment variable OPENAI_API_KEY
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
+os.system("fusion_hat enable_speaker")
 
 TTS_OUTPUT_FILE = 'tts_output.mp3'
 
@@ -85,7 +86,6 @@ SDI = Pin(17,Pin.OUT)   # Serial Data Input
 RCLK = Pin(4,Pin.OUT)  # Register Clock
 SRCLK = Pin(27,Pin.OUT) # Shift Register Clock
 
-os.system("fusion_hat enable_speaker")
 
 # Define GPIO pins for digit selection on the 7-segment display
 placePin = [Pin(pin,Pin.OUT) for pin in (23, 24, 25, 12)]

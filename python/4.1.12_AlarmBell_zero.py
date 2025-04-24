@@ -3,10 +3,10 @@ from fusion_hat import Pin,Buzzer,PWM
 import time
 import threading
 
-# Initialize TonalBuzzer on GPIO pin 22
+# Initialize TonalBuzzer on PWM0
 BeepPin = Buzzer(PWM('P0'))  # Update this pin number based on your setup
 
-# Initialize LEDs on GPIO pins 17 and 27
+# Initialize LEDs on GPIO pins 22 and 27
 ALedPin = Pin(22,Pin.OUT)
 BLedPin = Pin(27,Pin.OUT)
 
