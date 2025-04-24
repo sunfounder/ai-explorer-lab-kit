@@ -3,7 +3,7 @@ from fusion_hat import ADC
 import time
 
 # Set up the soil moisture sensor
-moisture = ADC('A0')
+moisture = ADC('A1')
 
 try:
     while True:
