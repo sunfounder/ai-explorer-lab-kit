@@ -28,6 +28,7 @@ Below is the introduction to each component, which contains the operating princi
 .. toctree::
     :maxdepth: 1
 
+    component_fusion_hat
     component_breadboard
     component_resistor
     component_transistor

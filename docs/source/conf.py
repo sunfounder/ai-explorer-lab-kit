@@ -260,6 +260,12 @@ rst_epilog = """
 
     <a href="https://www.sunfounder.com/products/capacitive-soil-moisture-sensor-module?_pos=1&_sid=73e23dc8a&_ss=r" target="_blank">BUY</a>       
 
+.. |link_fusion_hat| raw:: html
+
+    <a href="https://fusion-hat.readthedocs.io/en/latest/fusion_hat/fusion_hat.html" target="_blank">SunFounder Fusion HAT+</a>
+
+
+
 
 """
 
