@@ -38,7 +38,7 @@ Here are the components required for this project:
 
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - :ref:`cpn_wire`
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
     *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
@@ -60,8 +60,6 @@ Below are the schematic diagrams illustrating how to connect the thermistor to t
 
 
 .. image:: img/fzz/2.2.2_sch.png
-   :width: 800
-   :align: center
 
 
 
@@ -90,6 +88,11 @@ Ensure that:
 **Writing the Code**
 
 Below is the Python code used for this project:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

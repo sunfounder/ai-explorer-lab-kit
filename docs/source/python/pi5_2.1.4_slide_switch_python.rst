@@ -87,6 +87,12 @@ Follow these steps to build the circuit:
 
 Here’s the Python code to control the LEDs based on the state of the Slide Switch:
 
+
+.. raw:: html
+
+   <run></run>
+
+
 .. code-block:: python
 
    #!/usr/bin/env python3

@@ -79,6 +79,11 @@ Build the circuit as shown in the wiring diagram below:
 
 Below is the Python code used for this project:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    from fusion_hat import DHT11

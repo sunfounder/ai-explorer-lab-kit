@@ -55,8 +55,7 @@ Here are the components required for this project:
 Below is the schematic diagram for the ultrasonic sensor module:
 
 .. image:: img/fzz/2.2.7_sch.png
-   :width: 800
-   :align: center
+
 
 
 
@@ -80,6 +79,11 @@ Ensure the connections are secure, with the Echo pin connected to GPIO 22 and th
 
 
 Below is the Python code for this project:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

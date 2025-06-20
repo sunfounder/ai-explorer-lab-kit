@@ -77,6 +77,10 @@ Assemble the circuit as shown below:
 Below is the Python code for this project:
 
 
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
     #!/usr/bin/env python3

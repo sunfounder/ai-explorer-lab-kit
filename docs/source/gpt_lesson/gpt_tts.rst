@@ -38,6 +38,10 @@ Once installed, navigate to the project directory and execute the script:
 
 The complete example code is as follows:
 
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    import openai

@@ -88,6 +88,12 @@ Follow the wiring diagram to set up the circuit:
 
 Below is the Python code for the alarm system:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

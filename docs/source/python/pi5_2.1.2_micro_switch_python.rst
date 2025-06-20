@@ -89,6 +89,11 @@ Follow these steps to build the circuit:
 
 The following Python code toggles between two LEDs based on the state of the Micro Switch:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
     #!/usr/bin/env python3

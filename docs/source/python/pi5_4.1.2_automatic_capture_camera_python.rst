@@ -95,6 +95,11 @@ For best performance, adjust the two potentiometers on the PIR module: one contr
 
 Here is the Python code used for this project:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

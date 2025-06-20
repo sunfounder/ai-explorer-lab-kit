@@ -86,6 +86,11 @@ Follow these steps to build the circuit:
 
 The following Python code toggles the LED based on button presses and releases:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

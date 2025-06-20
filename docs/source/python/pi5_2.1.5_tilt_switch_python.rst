@@ -86,6 +86,11 @@ Follow these steps to set up the circuit:
 
 Below is the Python script to control the tilt switch and LEDs:
 
+.. raw:: html
+
+   <run></run>
+
+
 .. code-block:: python
 
    #!/usr/bin/env python3

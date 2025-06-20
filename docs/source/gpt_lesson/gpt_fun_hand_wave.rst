@@ -54,6 +54,10 @@ This project is a gesture interaction system that utilizes two infrared obstacle
 
 **Code**
 
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    import openai

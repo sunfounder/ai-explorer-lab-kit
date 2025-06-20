@@ -84,6 +84,12 @@ Follow this wiring diagram to set up the circuit:
 
 Here is the Python code used for this project:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    from picamera2 import Picamera2, Preview

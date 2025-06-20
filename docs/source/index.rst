@@ -16,39 +16,33 @@ SunFounder AI Explorer Lab Kit
 =======================================================
 
 
+**Your Gateway to Creative AI Projects with Raspberry Pi**
 
-Thanks for choosing our AI Explorer Lab Kit.
+Are you new to programming, curious about AI, or looking for a hands-on way to bring smart ideas to life?
 
-.. .. note::
-..     This document is available in the following languages.
+The **AI Explorer Lab Kit** is the perfect starting point for students, makers, and educators who want to learn Python and explore the power of artificial intelligence—**no prior experience needed**.
 
-..         * |link_german_tutorials|
-..         * |link_jp_tutorials|
-..         * |link_en_tutorials|
-..         * |link_es_tutorials|
-..         * |link_fr_tutorials|
-..         * |link_it_tutorials|
+This kit doesn’t just give you parts. It gives you a **complete learning journey**.
 
-..     Please click on the respective links to access the document in your preferred language.
+With step-by-step tutorials, you’ll learn how to:
 
-.. Are you new to Raspberry Pi? Are you looking for a clear path to learn Raspberry Pi? 
-.. Would you like to do more than just copy and paste code, but actually write your own? 
-.. If you answered yes to any of the above questions, then the Raspberry Pi Education Starter Kit - Raphael Kit is right for you.
+.. With step-by-step tutorials and over **160 hands-on projects**, you’ll learn how to:
 
-.. The kit is unlike other kits that only have a variety of projects. It is a true educational kit designed for beginners, whether you are programming beginners, electronics hobbyists, 
-.. experienced electrical engineers, students or educators, this kit will meet all your needs.
+* Use **OpenAI’s API** to generate text, answer questions, or create chatbots
+* Connect AI to real-world components like LEDs, sensors, buzzers, and motors
+* Build smart projects like a voice-controlled assistant, AI-powered robot, or even a chatbot that controls lights
+* Understand Python basics while actually building real things—not just reading theory
 
-.. In addition to including all the hardware and software needed for beginners, the kit also offers an online tutorial with 161 interesting projects in 5 programming languages and 45 free video courses (30 hours) on getting started to mastery.
+Each lesson is designed to be beginner-friendly, engaging, and practical. You’ll start with small examples and quickly move on to exciting AI-powered applications that combine **software and hardware in creative ways**.
 
+Whether you’re a middle school student learning to code for the first time, a teacher bringing AI into the classroom, or a hobbyist ready to explore machine learning, the AI Explorer Lab Kit helps you turn ideas into reality.
 
-.. This `video course <https://www.youtube.com/playlist?list=PLGs0VKk2DiYxdMjCJmcP6jt4Yw6OHK85O>`_ shows beginners how to set up the Raspberry Pi, use the GPIO pins and sensors, and learn the basics of circuits and programming. Each course has simple and interesting projects for beginners to practice and learn, all you need to do is to follow step by step and eventually you will be able to master the Raspberry Pi and make your own projects.
+If you have any questions, just reach out to us at **service@sunfounder.com** —we’re here to help.
+
+Let’s start building the future—one line of Python at a time.
 
 
-.. After learning the video tutorials, you can practice the use of each component from our online tutorials and play with some more advanced and interesting projects.
 
-.. Alternatively, you can use the components to build projects in other languages, such as C, Scratch, Java (processing) and JavaScript (Nodejs).
-
-.. If you have any questions, please send an email to service@sunfounder.com and we will respond as soon as possible.
 
 **Contents**
 

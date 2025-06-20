@@ -26,6 +26,10 @@ All example code used in these lessons is available in the ``ai-explorer-lab-kit
 
 Here is the complete example code:
 
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    import openai

@@ -81,6 +81,11 @@ If you wish to download the photo to your PC, refer to the :ref:`filezilla` guid
 
 Below is the Python code used for this project:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3    

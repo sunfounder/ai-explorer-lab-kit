@@ -102,6 +102,12 @@ To complete this project, you will need the following components:
 
 **Code**
 
+
+
+.. raw:: html
+
+   <run></run>
+   
 .. code-block:: python
 
    import openai

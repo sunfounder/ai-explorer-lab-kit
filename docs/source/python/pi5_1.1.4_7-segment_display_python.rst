@@ -56,9 +56,9 @@ To complete this project, you will need the following components:
 
 The circuit uses a 74HC595 shift register to control the 7-segment display. The connections are as follows:
 
-- Connect ST_CP (Storage Register Clock, RCLK) of 74HC595 to Pin 4 of the Raspberry Pi.
-- Connect SH_CP (Shift Register Clock, SRCLK) to Pin 27.
-- Connect DS (Data Input, SDI) to Pin 17.
+- Connect RCLK (Storage Register Clock) of 74HC595 to Pin 4 of the Raspberry Pi.
+- Connect SRCLK (Shift Register Clock) to Pin 27.
+- Connect SER (Serial Data Input, SDI) to Pin 17.
 - The output pins of the 74HC595 are connected to the corresponding segments of the 7-segment display.
 
 This setup minimizes the GPIO pins needed by using serial communication to control the parallel outputs of the shift register.
@@ -93,6 +93,11 @@ Follow these steps to build the circuit:
 **Writing the Code**
 
 The following Python code sequentially displays hexadecimal digits (0-9, A-F) on the 7-segment display:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

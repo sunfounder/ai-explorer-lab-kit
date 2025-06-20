@@ -98,6 +98,12 @@ Follow the wiring diagram to connect the components correctly:
 
 Below is the Python script used in this project:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

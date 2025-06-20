@@ -54,8 +54,6 @@ Below are the components required for this project:
 Below is the schematic diagram for this project:
 
 .. image:: img/fzz/2.2.6_sch.png
-   :width: 800
-   :align: center
 
 
 ----------------------------------------------
@@ -89,6 +87,11 @@ Ensure the RGB LED and PIR sensor are connected to the correct GPIO pins as per 
 **Writing the Code**
 
 Below is the Python code for this project:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

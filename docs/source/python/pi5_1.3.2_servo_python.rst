@@ -71,6 +71,11 @@ The circuit diagram below shows the connections required for controlling the ser
 
 The following Python code demonstrates how to control the servo motor by moving it between various angles:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    from fusion_hat import Servo

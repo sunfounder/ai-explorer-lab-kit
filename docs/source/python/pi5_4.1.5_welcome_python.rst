@@ -101,6 +101,12 @@ Follow the wiring diagram to assemble the circuit:
 
 Below is the Python script for the project:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    from fusion_hat import Pin, Servo, Buzzer,PWM
@@ -176,13 +182,13 @@ Below is the Python script for the project:
 
 This Python script integrates a PIR motion sensor, servo motor, LED, and buzzer to create an automated welcoming system. When executed:
 
-1. **Motion Detection**: A PIR motion sensor connected to GPIO pin 21 detects motion.
+1. **Motion Detection**: A PIR motion sensor connected to GPIO pin 22 detects motion.
 
 2. **Door Automation**: When motion is detected:
 
-     - The servo motor (on GPIO pin 25) opens a door by moving from 0° to 180°.
-     - The LED (on GPIO pin 6) turns on.
-     - A welcoming chime is played through the buzzer (on GPIO pin 27).
+     - The servo motor (on PWM 4) opens a door by moving from 0° to 180°.
+     - The LED (on GPIO pin 17) turns on.
+     - A welcoming chime is played through the buzzer (on PWM 0).
      - The servo motor closes the door by moving back from 180° to 0°.
      - The LED turns off.
 

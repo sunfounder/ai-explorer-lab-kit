@@ -82,6 +82,12 @@ Follow these steps to build the circuit:
 
 The following Python code controls two LEDs based on the state of the Touch Switch Module:
 
+
+.. raw:: html
+
+   <run></run>
+
+
 .. code-block:: python
 
    #!/usr/bin/env python3

@@ -69,7 +69,7 @@ Follow these steps to assemble the circuit:
 
 1. Place the 4-digit 7-segment display and the 74HC595 shift register on the breadboard.
 2. Connect the output pins of the 74HC595 to the segments of the display.
-3. Use Digital pins on the Fusion HAT for the data input (SDI), shift register clock (SRCLK), and latch register clock (RCLK).
+3. Use Digital pins on the Fusion HAT for the data input (SER also called SDI), shift register clock (SRCLK), and latch register clock (RCLK).
 4. Add resistors to limit current for the display segments.
 
 .. image:: img/fzz/1.1.5_bb.png
@@ -82,6 +82,11 @@ Follow these steps to assemble the circuit:
 **Writing the Code**
 
 The Python code below initializes the display, updates the counter, and manages the display refresh loop:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

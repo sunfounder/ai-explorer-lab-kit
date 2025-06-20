@@ -79,6 +79,11 @@ Ensure that all connections are secure and match the schematic to avoid communic
 
 Below is the Python code for this project:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    from fusion_hat import MPU6050

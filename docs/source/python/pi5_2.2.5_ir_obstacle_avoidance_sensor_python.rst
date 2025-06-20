@@ -76,6 +76,11 @@ Ensure the connections are secure and match the schematic. The IR sensor module 
 
 The following Python code can be used to read the obstacle distance and detect if an obstacle is present:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

@@ -48,6 +48,11 @@ This project is an interactive blindfolded watermelon-smashing game powered by O
 
 **Code**
 
+
+.. raw:: html
+
+   <run></run>
+   
 .. code-block:: python
 
     import openai

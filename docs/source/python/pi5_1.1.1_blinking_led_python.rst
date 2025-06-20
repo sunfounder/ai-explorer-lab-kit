@@ -155,7 +155,7 @@ Let’s write the Python code to control the LED. You’ll create a script that 
 
        nano 1.1.1_BlinkingLed_zero.py
 
-   Make your changes, then press ``Ctrl+X`` to exit. Save your modifications by typing `Y` when prompted. Run the script again to see your changes.
+   Make your changes, then press ``Ctrl+X`` to exit. Save your modifications by typing ``Y`` when prompted. Run the script again to see your changes.
 
 
 ----------------------------------------------
@@ -164,6 +164,11 @@ Let’s write the Python code to control the LED. You’ll create a script that 
 **Code**
 
 Here’s the complete Python script for this project:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 
@@ -240,7 +245,7 @@ This Python script controls an LED connected to GPIO pin 17 of a Raspberry Pi. W
 
 3. **Incorrect GPIO Setup**  
 
-   - **Cause**: Fusion_hat library is not installed.  
+   - **Cause**: ``fusion_hat`` library is not installed.  
    - **Solution**: See :ref:`download_the_lib`.
 
 4. **LED Flickers or Behaves Erratically**  

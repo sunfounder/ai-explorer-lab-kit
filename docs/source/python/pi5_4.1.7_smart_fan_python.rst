@@ -86,6 +86,12 @@ Refer to the following image for the breadboard layout and wiring connections:
 
 Here’s the Python script for this project:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
     #!/usr/bin/env python3

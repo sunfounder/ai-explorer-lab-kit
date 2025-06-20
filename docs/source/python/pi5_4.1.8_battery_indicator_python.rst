@@ -85,6 +85,12 @@ Refer to the following diagram for setting up the circuit on a breadboard:
 
 Here is the Python code for the battery indicator project:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
     #!/usr/bin/env python3

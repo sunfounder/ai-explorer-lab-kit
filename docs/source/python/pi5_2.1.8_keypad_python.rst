@@ -78,6 +78,11 @@ Ensure that all connections are secure and that the GPIO pins are correctly assi
 
 Below is the Python code used for this project:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    from fusion_hat import Keypad

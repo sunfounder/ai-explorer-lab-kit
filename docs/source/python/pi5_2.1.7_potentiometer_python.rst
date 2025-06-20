@@ -36,7 +36,7 @@ Here are the components required for this project:
 
     *   - :ref:`cpn_breadboard`
         - |link_breadboard_buy|
-    *   - :ref:`cpn_wire`
+    *   - :ref:`cpn_wires`
         - |link_wires_buy|
     *   - :ref:`cpn_resistor`
         - |link_resistor_buy|
@@ -78,6 +78,12 @@ Build the circuit as shown in the image below:
 **Writing the Code**
 
 Below is the code for the experiment:
+
+
+.. raw:: html
+
+   <run></run>
+
 
 .. code-block:: python
 

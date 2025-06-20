@@ -19,7 +19,7 @@
 
 **Introduction**
 
-In this project, we will learn how to drive an active buzzer to produce a beeping sound using a PNP transistor. Active buzzers are simple components used in many electronic projects to produce sound signals.
+In this project, we will learn how to drive an active buzzer to produce a beeping sound using a NPN transistor. Active buzzers are simple components used in many electronic projects to produce sound signals.
 
 ----------------------------------------------
 
@@ -54,11 +54,9 @@ To complete this project, you will need the following components:
 
 **Circuit Diagram**
 
-The circuit uses an active buzzer, a PNP transistor, and a 1kΩ resistor. The resistor protects the transistor by limiting the base current. When GPIO17 outputs a high level (3.3V), the transistor conducts, allowing current to flow through the buzzer, causing it to beep. When GPIO17 outputs a low level, the transistor is cut off, and the buzzer remains silent.
+The circuit uses an active buzzer, a NPN transistor, and a 1kΩ resistor. The resistor protects the transistor by limiting the base current. When GPIO17 outputs a high level (3.3V), the transistor conducts, allowing current to flow through the buzzer, causing it to beep. When GPIO17 outputs a low level, the transistor is cut off, and the buzzer remains silent.
 
 .. image:: img/fzz/1.2.1_sch.png
-   :width: 800
-   :align: center
 
 
 ----------------------------------------------
@@ -67,7 +65,7 @@ The circuit uses an active buzzer, a PNP transistor, and a 1kΩ resistor. The re
 
 Follow these steps to build the circuit:
 
-1. Place the PNP transistor, buzzer, and resistor on the breadboard.
+1. Place the NPN transistor, buzzer, and resistor on the breadboard.
 2. Connect the base of the transistor to GPIO17 through the resistor.
 3. Connect the emitter of the transistor to the power supply (+).
 4. Connect the collector of the transistor to one terminal of the buzzer.
@@ -83,6 +81,11 @@ Follow these steps to build the circuit:
 **Writing the Code**
 
 The following Python code drives the active buzzer to beep on and off in a loop:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 
@@ -227,4 +230,4 @@ This Python script controls a buzzer connected to GPIO pin 17 on a Raspberry Pi.
 
 **Conclusion**
 
-This project demonstrates how to drive an active buzzer using a PNP transistor and the Raspberry Pi GPIO pins. The simplicity of the code and hardware setup makes it a great starting point for sound-based electronic projects.
+This project demonstrates how to drive an active buzzer using a NPN transistor and the Raspberry Pi GPIO pins. The simplicity of the code and hardware setup makes it a great starting point for sound-based electronic projects.

@@ -47,7 +47,7 @@ Below is the list of components required for this project:
     *   - :ref:`cpn_74hc595`
         - |link_74hc595_buy|
     *   - :ref:`cpn_tilt_switch`
-        - |link_tilt_switch_buy|
+        - \-
     *   - Fusion HAT
         - 
     *   - Raspberry Pi Zero 2 W
@@ -87,6 +87,11 @@ Follow the wiring instructions shown below to set up the circuit:
 
 
 Here is the Python code for the project:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

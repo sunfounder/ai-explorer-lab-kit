@@ -79,6 +79,11 @@ Follow the steps below to build the circuit:
 
 The following Python code cycles through various colors on the RGB LED by setting different PWM values for the red, green, and blue components:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

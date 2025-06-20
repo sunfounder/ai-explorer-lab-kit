@@ -60,6 +60,11 @@ This project is a voice-controlled fan speed regulator powered by OpenAI's API. 
 
 **Code**
 
+
+.. raw:: html
+
+   <run></run>
+   
 .. code-block:: python
 
    import openai

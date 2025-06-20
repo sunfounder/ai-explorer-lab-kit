@@ -66,6 +66,9 @@ Here are the components required for this project:
 
 **Code**  
 
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

@@ -32,6 +32,10 @@ Follow these steps to run the example:
 
 Here is the complete example code:
 
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    import openai

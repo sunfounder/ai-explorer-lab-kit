@@ -86,6 +86,10 @@ Follow the wiring instructions shown below to set up the circuit:
 **Writing the Code**
 
 
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

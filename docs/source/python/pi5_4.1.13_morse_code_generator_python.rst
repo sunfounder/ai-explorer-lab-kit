@@ -44,7 +44,7 @@ The following components are required:
     *   - :ref:`cpn_led`
         - |link_led_buy|
     *   - :ref:`cpn_buzzer`
-        - |link_buzzer_buy|
+        - \-
     *   - :ref:`cpn_transistor`
         - |link_transistor_buy|
     *   - Fusion HAT
@@ -82,6 +82,7 @@ Build the circuit following the diagram below. Ensure correct polarity for the b
 **Writing the Code**
 
 Below is the Python code for this project:
+
 
 .. code-block:: python
 

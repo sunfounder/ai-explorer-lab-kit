@@ -26,7 +26,6 @@ If you are familiar with Raspberry Pi and can open the command line successfully
 .. toctree::
     :maxdepth: 1
 
-    what_do_we_need
     installing_the_os
     set_up_your_raspberry_pi
 

@@ -52,7 +52,7 @@ This project is a smart fitness assistant that helps users track their dumbbell 
 
 **Wiring Diagram**
 
-.. image:: img/fzz/gpt_dumbbell_bb
+.. image:: img/fzz/gpt_dumbbell_bb.png
    :width: 800
    :align: center
 
@@ -60,6 +60,10 @@ This project is a smart fitness assistant that helps users track their dumbbell 
 ----------------------------------------------
 
 **Code**
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

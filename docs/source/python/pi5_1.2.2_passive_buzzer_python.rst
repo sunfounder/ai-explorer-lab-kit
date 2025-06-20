@@ -52,11 +52,9 @@ To complete this project, you will need the following components:
 
 **Circuit Diagram**
 
-The circuit uses a passive buzzer, a PNP transistor, and a 1kΩ resistor. The resistor protects the transistor from excessive current. By varying the frequency of the GPIO pin connected to the transistor, the buzzer produces different sounds, enabling it to play music.
+The circuit uses a passive buzzer, a NPN transistor, and a 1kΩ resistor. The resistor protects the transistor from excessive current. By varying the frequency of the GPIO pin connected to the transistor, the buzzer produces different sounds, enabling it to play music.
 
 .. image:: img/fzz/1.2.2_sch.png
-   :width: 800
-   :align: center
 
 
 ----------------------------------------------
@@ -65,7 +63,7 @@ The circuit uses a passive buzzer, a PNP transistor, and a 1kΩ resistor. The re
 
 Follow these steps to build the circuit:
 
-1. Connect the base of the PNP transistor to PWM0 through the resistor.
+1. Connect the base of the NPN transistor to PWM0 through the resistor.
 2. Connect the emitter of the transistor to the power supply (+).
 3. Connect the collector of the transistor to one terminal of the passive buzzer.
 4. Connect the other terminal of the buzzer to the ground (-).
@@ -80,6 +78,11 @@ Follow these steps to build the circuit:
 **Writing the Code**
 
 The following Python code generates musical notes using a passive buzzer:
+
+
+.. raw:: html
+
+   <run></run>
 
 .. code-block:: python
 

@@ -88,6 +88,12 @@ Refer to the wiring diagram for assembling the components:
 
 Here is the Python script for the traffic light simulation:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

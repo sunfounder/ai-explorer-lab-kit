@@ -88,6 +88,12 @@ Follow this wiring diagram to set up your system:
 
 Here is the Python code for the project:
 
+
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
     #!/usr/bin/env python3

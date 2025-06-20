@@ -69,6 +69,11 @@ Follow these steps to build the circuit:
 
 The following Python code initializes the LCD1602 and displays a simple greeting message:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    from fusion_hat import LCD1602

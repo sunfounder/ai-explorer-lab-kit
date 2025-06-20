@@ -71,6 +71,11 @@ The circuit diagram below shows the connections required to control the motor.
 
 The following Python code controls the motor’s rotation direction and timing:
 
+
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    #!/usr/bin/env python3

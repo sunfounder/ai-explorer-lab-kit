@@ -67,6 +67,10 @@ The following components are required for this project:
 
 **Code**
 
+.. raw:: html
+
+   <run></run>
+
 .. code-block:: python
 
    import openai
