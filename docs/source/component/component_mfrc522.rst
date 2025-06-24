@@ -58,8 +58,3 @@ which needs less wiring. You can choose between SPI, I2C and serial UART
 mode (similar to RS232), which helps reduce the connection, save PCB
 board space (smaller size), and reduce cost.
 
-**Example**
-
-* :ref:`2.2.10_c` (C Project)
-* :ref:`2.2.10_py` (Python Project)
-* :ref:`4.1.19_py` (Python Project)

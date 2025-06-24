@@ -30,8 +30,3 @@ If the light beam between the emitter and receiver is interrupted by an obstacle
 
 .. image:: img/speed_sensor2.png
 
-**Example**
-
-* :ref:`2.2.6_c` (C Project)
-* :ref:`2.2.6_py` (Python Project)
-* :ref:`1.7_scratch` (Scratch Project)

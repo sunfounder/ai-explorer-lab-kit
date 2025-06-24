@@ -53,11 +53,3 @@ Convert this formula TK=1/(ln(RT/RN)/B+1/TN) to get Kelvin temperature that minu
 
 This relation is an empirical formula. It is accurate only when the temperature and resistance are within the effective range.
 
-**Example**
-
-* :ref:`2.2.2_c` (C Project)
-* :ref:`3.1.4_c` (C Project)
-* :ref:`3.1.7_c` (C Project)
-* :ref:`2.2.2_py` (Python Project)
-* :ref:`4.1.10_py` (Python Project)
-* :ref:`4.1.13_py` (Python Project)

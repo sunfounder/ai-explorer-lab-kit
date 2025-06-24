@@ -42,9 +42,3 @@ A convenient 4-wire serial interface connects to all common µPs. Individual dig
 
 * `MAX7219 Datasheet <https://datasheets.maximintegrated.com/en/ds/MAX7219-MAX7221.pdf>`_
 
-**Example**
-
-* :ref:`1.1.6_c` (C Project)
-* :ref:`3.1.12_c` (C Project)
-* :ref:`1.1.6_py` (Python Project)
-* :ref:`4.1.19_py` (Python Project)

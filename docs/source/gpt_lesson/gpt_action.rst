@@ -1,7 +1,7 @@
 .. _gpt_easy_action:
 
 
-Take Action
+1.7 Take Action
 ==========================
 
 In recent years, the convergence of artificial intelligence (AI) and the Internet of Things (IoT) has sparked a revolution in smart home technology. By integrating AI capabilities with physical devices, it's possible to create highly interactive and responsive environments. This tutorial explores how OpenAI can be utilized to control a physical device—specifically an RGB LED—through natural language commands. Such integration paves the way for intelligent systems that enhance everyday living by responding to vocal instructions for tasks like adjusting lighting based on mood or time of day.

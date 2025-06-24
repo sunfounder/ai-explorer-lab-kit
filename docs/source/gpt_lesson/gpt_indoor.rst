@@ -2,8 +2,8 @@
 .. _gpt_easy:
 
 
-A Simple Conversation
-======================
+1.1 A Simple Conversation
+=======================================
 
 This example demonstrates how to use OpenAI's Python library to create and interact with a chatbot through a simple conversation.
 

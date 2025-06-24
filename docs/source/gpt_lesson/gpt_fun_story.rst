@@ -1,4 +1,4 @@
-Story Teller
+2.1 Story Teller
 ==========================
 
 This Python script integrates OpenAI's GPT with hardware components like a button and a camera to create an interactive storytelling experience based on a book cover photo. 

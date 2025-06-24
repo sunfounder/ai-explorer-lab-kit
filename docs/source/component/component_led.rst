@@ -37,10 +37,3 @@ The formula of the resistance value is as follows:
 
 Here is the detailed introduction for the LED: `LED - Wikipedia <https://en.wikipedia.org/wiki/Light-emitting_diode>`_.
 
-**Example**
-
-* :ref:`1.1.1_c` (C Project)
-* :ref:`3.1.6_c` (C Project)
-* :ref:`1.1.1_py` (Python Project)
-* :ref:`4.1.12_py` (Python Project)
-* :ref:`1.1_scratch` (Scratch Project)

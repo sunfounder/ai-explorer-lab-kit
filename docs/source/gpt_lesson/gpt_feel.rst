@@ -1,6 +1,6 @@
 .. _gpt_easy_feel:
 
-How Does It Feel?
+1.6 How Does It Feel?
 ============================
 
 In the rapidly evolving world of technology, the integration of artificial intelligence (AI) with real-world sensors opens up a myriad of possibilities for creating smarter, more responsive environments. This chapter explores how AI can transcend traditional boundaries, interacting directly with physical surroundings to enhance decision-making and user experiences.

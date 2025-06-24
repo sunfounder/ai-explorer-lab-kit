@@ -1,5 +1,5 @@
-blindfolded Watermelon-smashing Game
-====================================
+2.11 Blindfolded Watermelon-smashing Game
+==================================================
 
 This project is an interactive blindfolded watermelon-smashing game powered by OpenAI's GPT-4 and a joystick-based control system. The game involves randomly placing a virtual watermelon within a 20x20 meter area. The player, who starts at the origin (0,0), navigates the area using a joystick and attempts to smash the watermelon by pressing a joystick. After each attempt, the AI provides directional guidance to help the player locate the target. The assistant's responses are converted into speech for an immersive experience.
 

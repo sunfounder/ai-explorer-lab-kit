@@ -17,8 +17,8 @@ Learn about the Components in Your Kit
 
 After opening the package, please check whether the quantity of components is compliance with product description and whether all components are in good condition.
 
-* :download:`Components List <https://github.com/sunfounder/sf-pdf/raw/master/components_list/a0000672-raphael-kit.pdf>`
-
+.. image:: img/list.png
+    :width: 800
 
 Below is the introduction to each component, which contains the operating principle of the component and the corresponding projects.
 
@@ -71,7 +71,6 @@ Below is the introduction to each component, which contains the operating princi
 
     component_motor
     component_servo
-    component_relay
     
 
 **Controller**
@@ -84,7 +83,6 @@ Below is the introduction to each component, which contains the operating princi
     component_slide_switch
     component_potentiometer
     component_joystick
-    component_rotary_encoder
     component_keypad
 
 **Sensor**
@@ -102,6 +100,5 @@ Below is the introduction to each component, which contains the operating princi
     component_ultrasonic_sensor
     component_humiture_sensor
     component_mpu6050
-    component_mfrc522
     component_camera_module
     component_moisture

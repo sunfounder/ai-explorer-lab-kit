@@ -1,5 +1,5 @@
-OpenAI Initial Configuration
-===============================
+1.0 OpenAI Initial Configuration
+==================================================
 
 This chapter provides a step-by-step guide on configuring OpenAI's development environment on a Raspberry Pi. 
 You will learn how to register an OpenAI account, obtain the API key, and install the necessary Python dependencies. 

@@ -30,10 +30,3 @@ The principle is very simple. When the switch is tilted in a certain angle, the 
 
 * `SW520D Tilt Switch Datasheet <https://www.tme.com/Document/f1e6cedd8cb7feeb250b353b6213ec6c/SW-520D.pdf>`_
 
-**Example**
-
-* :ref:`2.1.5_c` (C Project)
-* :ref:`3.1.12_c` (C Project)
-* :ref:`2.1.5_py` (Python Project)
-* :ref:`4.1.18_py` (Python Project)
-* :ref:`1.3_scratch` (Scratch Project)

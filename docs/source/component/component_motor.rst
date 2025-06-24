@@ -24,8 +24,8 @@ This is a 3V DC motor. When you give a high level and a low level to each of the
 
 * **Size**: 25*20*15MM
 * **Operation Voltage**: 1-6V
-* **Free-run Current** (3V): 70m
-* **A Free-run Speed** (3V): 13000RPM
+* **Free-run Current** (3V): 100mA
+* **A Free-run Speed** (3V): 10000RPM
 * **Stall Current** (3V): 800mA
 * **Shaft Diameter**: 2mm
 
@@ -41,10 +41,3 @@ Current flows from the positive terminal of the battery through the circuit, thr
 But because of the two gaps in the commutator, this flow reverses halfway through each complete rotation.
 This continuous reversal essentially converts the DC power from the battery to AC, allowing the armature to experience torque in the right direction at the right time to maintain rotation.
 
-**Example**
-
-* :ref:`1.3.1_c` (C Project)
-* :ref:`3.1.4_c` (C Project)
-* :ref:`1.3.1_py` (Python Project)
-* :ref:`4.1.10_py` (Python Project)
-* :ref:`1.17_scratch` (Scratch Project)

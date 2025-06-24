@@ -1,4 +1,4 @@
-Weather Assistant
+2.15 Weather Assistant
 ==================================
 
 This project demonstrates the creation of an interactive weather assistant that uses voice commands to provide real-time clothing recommendations based on local weather conditions. 

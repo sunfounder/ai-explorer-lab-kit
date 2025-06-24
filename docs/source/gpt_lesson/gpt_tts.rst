@@ -1,15 +1,12 @@
 .. _gpt_easy_tts:
 
-Voice-Enabled Chatbot
-==========================
+1.4 Voice-Enabled Chatbot
+==============================================
 
 This example builds upon :ref:`gpt_easy_keyboard` by enabling the chatbot to play its responses as speech. 
 The implementation integrates OpenAI's TTS (Text-to-Speech) API and a local audio player for playback.
 
-
-【配一张加上了拓展板的照片 指一下扬声器在哪】
-
-
+.. image:: img/fusionhat_spk.png
 
 ----------------------------------------------
 

@@ -1,4 +1,4 @@
-MBTI Personality Test
+2.7 MBTI Personality Test
 ======================================
 
 In this example, you will learn how to build a simple MBTI (Myers-Briggs Type Indicator) personality test using OpenAI’s GPT model and a 4x4 keypad on a Raspberry Pi (or similar hardware). 

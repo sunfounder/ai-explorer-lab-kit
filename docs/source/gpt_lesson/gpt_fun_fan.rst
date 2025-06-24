@@ -1,4 +1,4 @@
-Voice-Controlled Fan
+2.12 Voice-Controlled Fan
 ================================================
 
 This project is a voice-controlled fan speed regulator powered by OpenAI's API. Users can give voice commands to adjust the speed of a motor, which acts as the fan. The system utilizes a microphone for voice input, a motor driver to control fan speed, and a buzzer for auditory feedback. It ensures a seamless interaction by recognizing speech, processing commands through AI, and dynamically adjusting the fan's speed.

@@ -41,9 +41,3 @@ It has two internal metal reeds, sealed in a glass tube, which is filled with in
         
 .. image:: img/HowItWorksReed.jpg
 
-**Example**
-
-* :ref:`2.2.4_c` (C Project)
-* :ref:`2.2.4_py` (Python Project)
-* :ref:`4.1.6_py` (Python Project)
-* :ref:`1.6_scratch` (Scratch Project)

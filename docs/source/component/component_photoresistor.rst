@@ -32,9 +32,3 @@ Here is the electronic symbol of photoresistor.
     :align: center
 
 * `Photoresistor - Wikipedia <https://en.wikipedia.org/wiki/Photoresistor#:~:text=A%20photoresistor%20(also%20known%20as,on%20the%20component's%20sensitive%20surface>`_
-
-**Example**
-
-* :ref:`2.2.1_c` (C Project)
-* :ref:`2.2.1_py` (Python Project)
-

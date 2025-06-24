@@ -33,14 +33,3 @@ The detection distance can be adjusted by potentiometer, the effective distance 
     :width: 600
     :align: center
 
-**Example**
-
-* :ref:`2.2.5_c` (C Project)
-* :ref:`2.2.5_py` (Python Project)
-* :ref:`1.11_scratch` (Scratch Project)
-
-
-
-
-
-

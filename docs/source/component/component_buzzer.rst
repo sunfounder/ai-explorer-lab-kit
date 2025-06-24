@@ -37,12 +37,3 @@ You can check the pins of the buzzer, the longer one is the anode and the shorte
 
 `Buzzer - Wikipedia <https://en.wikipedia.org/wiki/Buzzer>`_
 
-**Example**
-
-* :ref:`1.2.1_c` (C Project)
-* :ref:`1.2.2_c` (C Project)
-* :ref:`1.2.1_py` (Python Project)
-* :ref:`1.2.2_py` (Python Project)
-* :ref:`1.13_scratch` (Scratch Project)
-* :ref:`1.14_scratch` (Scratch Project)
-

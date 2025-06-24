@@ -39,18 +39,4 @@ Pins of 74HC595 and their functions:
 * **VCC**: Positive supply voltage.
 * **GND**: Ground.
 
-**Example**
-
-* :ref:`1.1.4_c` (C Project)
-* :ref:`1.1.5_c` (C Project)
-* :ref:`3.1.1_c` (C Project)
-* :ref:`3.1.6_c` (C Project)
-* :ref:`3.1.12_c` (C Project)
-* :ref:`1.1.4_py` (Python Project)
-* :ref:`1.1.5_py` (Python Project)
-* :ref:`4.1.7_py` (Pyhton Project)
-* :ref:`4.1.12_py` (Python Project)
-* :ref:`4.1.18_py` (Pyhton Project)
-
-
 

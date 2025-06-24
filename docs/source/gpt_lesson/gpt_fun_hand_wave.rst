@@ -1,5 +1,5 @@
-Hand-wave Interaction System
-================================
+2.6 Hand-wave Interaction System
+======================================
 
 This project is a gesture interaction system that utilizes two infrared obstacle avoidance sensors to detect hand waves. The system sends detected sensor events to an OpenAI-powered assistant, which analyzes the time difference between sensor activations to determine the nature of the user's hand movement. Based on the analysis, the assistant generates relevant responses, such as recognizing a wave gesture and responding accordingly.
 

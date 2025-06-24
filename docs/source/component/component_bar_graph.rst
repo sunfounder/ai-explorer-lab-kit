@@ -32,10 +32,3 @@ The following is the internal schematic diagram of LED Bar Graph. Generally spea
 
 .. image:: img/led_bar_sche.png
 
-**Example**
-
-* :ref:`1.1.3_c` (C Project)
-* :ref:`3.1.5_c` (C Project)
-* :ref:`1.1.3_py` (Python Project)
-* :ref:`4.1.11_py` (Python Project)
-* :ref:`1.12_scratch` (Scratch Project)

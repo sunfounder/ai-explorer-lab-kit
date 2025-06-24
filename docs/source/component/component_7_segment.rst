@@ -36,7 +36,3 @@ To help you get to know how 7-segment displays(Common Cathode) display Numbers, 
 
 .. image:: img/segment_code.png
 
-**Example**
-
-* :ref:`1.1.4_c` (C Project)
-* :ref:`1.1.4_py` (Python Project)

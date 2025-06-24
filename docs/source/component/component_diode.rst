@@ -51,8 +51,3 @@ This diode is a semiconductor device that has a very high resistance up to the c
 
 
 * `Zener diode - Wikipedia <https://en.wikipedia.org/wiki/Zener_diode>`_
-
-**Example**
-
-* :ref:`1.3.3_c` (C Project)
-* :ref:`1.3.3_py` (Python Project)

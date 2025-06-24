@@ -33,12 +33,3 @@ The circuit symbol of the slide switch is shown as below. The pin2 in the figure
 .. image:: img/slide_symbol.png
     :width: 200
     :align: center
-
-**Example**
-
-* :ref:`2.1.4_c` (C Project)
-* :ref:`3.1.9_c` (C Project)
-* :ref:`2.1.4_py` (Python Project)
-* :ref:`4.1.15_py` (Python Project)
-* :ref:`1.15_scratch` (Scratch Project)
-

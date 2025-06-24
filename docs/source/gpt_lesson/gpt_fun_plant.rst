@@ -1,4 +1,4 @@
-Virtual Plant 
+2.2 Virtual Plant 
 ===================================
 
 This example demonstrates how to integrate OpenAI's GPT model with IoT hardware components to create a virtual plant assistant. The assistant uses environmental data from sensors to simulate a plant's "feelings" and responds to user inquiries in a natural, plant-like manner.

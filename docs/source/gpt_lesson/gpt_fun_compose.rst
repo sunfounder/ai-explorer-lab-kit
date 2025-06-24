@@ -1,4 +1,4 @@
-Composition Assistant
+2.5 Composition Assistant
 ======================================
 
 This example showcases how to integrate OpenAI's GPT model with GPIO-controlled hardware to create an interactive music composition assistant. 

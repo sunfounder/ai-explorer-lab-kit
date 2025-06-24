@@ -1,4 +1,4 @@
-Voice Level
+2.3 Voice Level
 =====================================
 
 This project is a voice-controlled AI assistant that listens to user speech, transcribes it using OpenAI's Whisper model, generates a response using GPT-4, and plays the response back through text-to-speech (TTS). The system also integrates a potentiometer to control volume levels with visual LED feedback.

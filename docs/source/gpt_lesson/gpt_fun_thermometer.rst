@@ -1,4 +1,4 @@
-AI Thermometer Assistant
+2.13 AI Thermometer Assistant
 ===================================================
 
 This project is a voice-interactive health assistant designed to monitor body temperature using a thermistor and provide personalized health advice through OpenAI's GPT-4 API. The system listens to the user's voice input, reads the current body temperature from a sensor, and uses AI to generate health-related responses. It also supports text-to-speech functionality to audibly deliver the assistant’s feedback.

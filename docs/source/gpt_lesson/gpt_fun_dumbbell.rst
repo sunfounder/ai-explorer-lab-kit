@@ -1,4 +1,4 @@
-Smart Fitness Assistant
+2.10 Smart Fitness Assistant
 ======================================
 
 This project is a smart fitness assistant that helps users track their dumbbell workouts in real-time. Using an MPU6050 accelerometer sensor, the system detects lifting motions, calculates speed, and interacts with OpenAI's API to provide personalized feedback and motivation. The feedback is delivered through text-to-speech (TTS), ensuring a seamless workout experience.

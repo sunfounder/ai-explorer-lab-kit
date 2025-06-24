@@ -1,4 +1,4 @@
-Morse Code Decoder
+2.8 Morse Code Decoder
 ============================
 
 This project is a Morse code decoder that interprets button presses as Morse code signals. Short presses are recognized as dots, and long presses as dashes. The system collects these inputs and sends them to an OpenAI-powered assistant for decoding. Once decoded, the translated message is displayed on the console.

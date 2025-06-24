@@ -39,12 +39,3 @@ There are 103 or 104 label on the ceramic capacitors, which represent the capaci
 
     1F=10^3mF=10^6uF=10^9nF=10^12pF
 
-**Example**
-
-* :ref:`2.1.2_c` (C Project)
-* :ref:`2.1.4_c` (C Project)
-* :ref:`3.1.9_c` (C Project)
-* :ref:`2.1.2_py` (Python Project)
-* :ref:`4.1.15_py` (Python Project)
-* :ref:`1.8_scratch` (scratch Project)
-

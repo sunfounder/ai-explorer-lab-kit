@@ -51,17 +51,3 @@ Backlight can be enabled by jumper cap, unplugg the jumper cap to disable the ba
 * **Potentiometer**: It is used to adjust the contrast (the clarity of the displayed text), which is increased in the clockwise direction and decreased in the counterclockwise direction.
 
 
-
-
-**Example**
-
-* :ref:`1.1.7_c` (C Project)
-* :ref:`3.1.3_c` (C Project)
-* :ref:`3.1.7_c` (C Project)
-* :ref:`3.1.8_c` (C Project)
-* :ref:`3.1.11_c` (C Project)
-* :ref:`1.1.7_py` (Python Project)
-* :ref:`4.1.9_py` (Python Project)
-* :ref:`4.1.13_py` (Python Project)
-* :ref:`4.1.14_py` (Python Project)
-* :ref:`4.1.17_py` (Python Project)

@@ -31,8 +31,3 @@ In practice, a capacitive sensor can be made on a double-sided PCB by regarding 
 
 The touch detector circuit has an oscillator whose frequency is dependent on capacitance of the touchpad. When a finger is moved close to the touchpad, additional capacitance causes frequency of this internal oscillator to change. The detector circuit tracks oscillator frequency at timed intervals, and when the shift crosses the threshold change, the circuit triggers a key-press event.
 
-**Example**
-
-* :ref:`2.1.3_c` (C Project)
-* :ref:`2.1.3_py` (Python Project)
-* :ref:`1.9_scratch` (Scratch Project)

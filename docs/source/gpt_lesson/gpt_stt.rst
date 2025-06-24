@@ -1,14 +1,14 @@
 .. _gpt_easy_stt:
 
-Speech-to-Text Chatbot
-======================
+1.5 Speech-to-Text Chatbot
+===========================================
 
 This example builds upon :ref:`gpt_easy_tts`, enhancing the chatbot to not only speak but also understand user speech. By integrating OpenAI's Whisper API for speech-to-text (STT), the chatbot can now accept voice input and provide conversational replies.
 
 
 Speech-to-text technology allows chatbots to interact with users in a more natural and accessible way. This is particularly useful for hands-free interactions, accessibility applications, and real-time communication systems.
 
-【配一张加上了拓展板的照片 指一下麦克风在哪】
+.. image:: img/fusionhat_mic.png
 
 
 ----------------------------------------------

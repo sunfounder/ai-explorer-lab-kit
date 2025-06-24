@@ -1,4 +1,4 @@
-Debate Simulation
+2.4 Debate Simulation
 ======================================
 
 This Python script simulates a debate between two GPT-based assistants: one playing the role of an affirmative speaker and the other as the opposition. The program uses hardware elements such as a servo motor and LEDs to visually represent the debate and integrates text-to-speech for auditory feedback.

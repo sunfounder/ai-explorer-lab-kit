@@ -50,9 +50,3 @@ When the plunger is depressed or switched.
 * The normally open circuit is closed.
 
 .. image:: img/micro_switch1.png
-
-**Example**
-
-* :ref:`2.1.2_c` (C Project)
-* :ref:`2.1.2_py` (Python Project)
-* :ref:`1.8_scratch` (Scratch Project)

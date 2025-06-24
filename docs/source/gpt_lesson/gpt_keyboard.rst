@@ -1,6 +1,6 @@
 .. _gpt_easy_keyboard:
 
-Real-Time Interaction
+1.3 Real-Time Interaction
 ==========================
 
 This example demonstrates a basic chatbot that can interact with users in real time, process input, and return generated responses. It showcases how to use the OpenAI API and handle sending and receiving text messages.
