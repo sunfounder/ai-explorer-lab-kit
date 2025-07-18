@@ -14,7 +14,7 @@
 
 .. _4.1.15_py:
 
-4.1.15 GAME - 10 Second Challenge
+4.1.3 GAME - 10 Second Challenge
 =================================
 
 **Introduction**
@@ -91,7 +91,7 @@ Follow these steps to run the example:
 .. code-block:: shell
    
    cd ai-explorer-lab-kit/python/
-   sudo python3 4.1.15_GAME_10Second_zero.py
+   sudo python3 4.1.3_GAME_10Second_zero.py
 
 ----------------------------------------------
 

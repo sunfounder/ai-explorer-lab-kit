@@ -24,3 +24,5 @@ Audiovisual
 
     pi5_3.1.1_photograph_module_python
     pi5_3.1.2_video_module_python
+    pi5_3.1.3_speaker.rst 
+    pi5_3.1.4_mic.rst

@@ -20,7 +20,7 @@ Extension
 
     pi5_4.1.1_camera_python.rst 
     pi5_4.1.2_automatic_capture_camera_python.rst 
-    pi5_4.1.3_magneticalarmsystem_pyhton.rst 
+    pi5_4.1.3_game_10_second_python.rst
     pi5_4.1.4_counting_device_python.rst 
     pi5_4.1.5_welcome_python.rst 
     pi5_4.1.6_reversing_alarm_python.rst 
@@ -32,6 +32,6 @@ Extension
     pi5_4.1.12_alarm_bell_python.rst 
     pi5_4.1.13_morse_code_generator_python.rst 
     pi5_4.1.14_game_guess_number_python.rst 
-    pi5_4.1.15_game_10_second_python.rst
+
 
 

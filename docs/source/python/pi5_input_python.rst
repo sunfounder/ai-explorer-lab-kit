@@ -26,10 +26,10 @@ Input
     pi5_2.1.3_touch_switch_module_python
     pi5_2.1.4_slide_switch_python
     pi5_2.1.5_tilt_switch_python
-    pi5_2.1.6_rotary_encoder_module_python
+    pi5_2.1.6_joystick_python
     pi5_2.1.7_potentiometer_python
     pi5_2.1.8_keypad_python
-    pi5_2.1.9_joystick_python
+
 
 2.2 Sensors
 ----------------
@@ -40,10 +40,9 @@ Input
     pi5_2.2.1_photoresistor_python.rst 
     pi5_2.2.2_thermistor_python.rst 
     pi5_2.2.3_dht_python.rst 
-    pi5_2.2.4_reed_switch_python.rst 
+    pi5_2.2.4_moisture_python.rst
     pi5_2.2.5_ir_obstacle_avoidance_sensor_python.rst 
     pi5_2.2.6_pir_python.rst 
     pi5_2.2.7_ultrasonic_sensor_module_python.rst 
     pi5_2.2.8_mpu6050_module_python.rst
-    pi5_2.2.9_rfid_python.rst 
-    pi5_2.2.10_moisture_python.rst
+
