@@ -6,7 +6,7 @@ from signal import pause  # Import pause function from signal module
 IR_Obstacle = Pin(17, Pin.IN, pull= Pin.PULL_UP)
 
 def detect():
-    if IR_Obstacle.value() == 0:  # Check if the IR Obstacle Module is activated
+    if IR_Obstacle.value() == 1:  # Check if the IR Obstacle Module is activated
         print("Detected Barrier!")
     else:
         print("No Barrier")

@@ -26,12 +26,12 @@ The user will provide a command describing their mood or desired lighting condit
 
 **Output Requirements**:
 1. Return a JSON output with no extraneous text or wrappers:
-   - `color`: A list of three floating-point values representing the RGB color components (each between 0 and 1).
+   - `color`: A list of three floating-point values representing the RGB color components (each between 0 and 255).
    - `message`: A textual response to the user.
 
 **Example JSON Output**:
 {
-  "color": [0.5, 0.4, 0.2],
+  "color": [125, 100, 50],
   "message": "Setting a warm and relaxing light for you."
 }
 '''
