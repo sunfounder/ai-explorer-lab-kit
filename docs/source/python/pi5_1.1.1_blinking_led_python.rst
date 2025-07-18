@@ -213,6 +213,9 @@ This Python script controls an LED connected to GPIO pin 17 of a Raspberry Pi. W
 
    The ``fusion_hat`` library simplifies controlling GPIO devices. The ``Pin`` class allows you to control an LED with basic methods like ``on()`` and ``off()``. The ``sleep`` function introduces delays between commands.
 
+   .. note:: For the usage of fusion-hat, please refer to the |link_api_fusion_hat|.
+
+
 2. **Initialization:**  
 
    The line ``led = Pin(17,mode=Pin.OUT)`` tells the Raspberry Pi that an LED is connected to GPIO pin 17.

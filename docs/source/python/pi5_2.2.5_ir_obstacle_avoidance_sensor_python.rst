@@ -67,6 +67,19 @@ Connect the components as shown in the wiring diagram below:
 
 Ensure the connections are secure and match the schematic. The IR sensor module should be connected to GPIO pin 17.
 
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 2.2.5_IrObstacle_zero.py  
 
 ----------------------------------------------
 
@@ -91,7 +104,7 @@ The following Python code can be used to read the obstacle distance and detect i
    IR_Obstacle = Pin(17, Pin.IN, pull= Pin.PULL_UP)
 
    def detect():
-      if IR_Obstacle.value() == 0:  # Check if the IR Obstacle Module is activated
+      if IR_Obstacle.value() == 1:  # Check if the IR Obstacle Module is activated
          print("Detected Barrier!")
       else:
          print("No Barrier")
@@ -139,7 +152,7 @@ The following Python code can be used to read the obstacle distance and detect i
    .. code-block:: python
 
       def detect():
-         if IR_Obstacle.value() == 0:  # Check if the IR Obstacle Module is activated
+         if IR_Obstacle.value() == 1:  # Check if the IR Obstacle Module is activated
             print("Detected Barrier!")
          else:
             print("No Barrier")
@@ -189,7 +202,7 @@ The following Python code can be used to read the obstacle distance and detect i
 
       from fusion_hat import Pin
       led = Pin(27, Pin.OUT)
-      if obstacle_sensor.value() == 0:
+      if obstacle_sensor.value() == 1:
          led.on()
       else:
          led.off()
@@ -200,7 +213,7 @@ The following Python code can be used to read the obstacle distance and detect i
 
       from fusion_hat import Buzzer
       buzzer = Buzzer(Pin(22))
-      if obstacle_sensor.value() == 0:
+      if obstacle_sensor.value() == 1:
          buzzer.on()
          time.sleep(1)
          buzzer.off()

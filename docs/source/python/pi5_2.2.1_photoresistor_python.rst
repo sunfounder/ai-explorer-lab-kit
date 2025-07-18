@@ -87,6 +87,22 @@ Ensure that:
 - All connections are secure, and power and ground connections are properly set.
 
 
+
+
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 2.2.1_photoresistor_zero.py 
+
 ----------------------------------------------
 
 

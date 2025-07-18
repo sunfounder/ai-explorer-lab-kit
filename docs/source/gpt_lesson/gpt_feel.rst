@@ -60,8 +60,8 @@ All example code used in this course is located in the ``ai-explorer-lab-kit`` d
 
 .. code-block:: shell
 
-   cd ~/ai-explorer-lab-kit/gpt_examples/
-   ~/my_venv/bin/python3 gpt_easy_feel.py
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_easy_feel.py
 
 ----------------------------------------------
 

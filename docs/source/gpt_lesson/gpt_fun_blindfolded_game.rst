@@ -43,6 +43,19 @@ This project is an interactive blindfolded watermelon-smashing game powered by O
    :width: 800
    :align: center
 
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_fun_blindfolded_game.py 
 
 ----------------------------------------
 

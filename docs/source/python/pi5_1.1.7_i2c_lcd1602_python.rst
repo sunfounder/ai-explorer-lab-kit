@@ -43,7 +43,7 @@ To complete this project, you will need the following components:
     *   - Raspberry Pi Zero 2 W
         -
 
-
+----------------------------------------------
 
 **Circuit Diagram**
 
@@ -52,6 +52,8 @@ The circuit diagram below shows how to connect the LCD1602 to the Raspberry Pi u
 .. image:: img/fzz/1.1.7_sch.png
    :width: 800
    :align: center
+
+----------------------------------------------
 
 **Wiring Diagram**
 
@@ -64,6 +66,23 @@ Follow these steps to build the circuit:
 .. image:: img/fzz/1.1.7_bb.png
    :width: 800
    :align: center
+
+
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 1.1.7_Lcd1602_zero.py 
+
+----------------------------------------------
 
 **Writing the Code**
 
@@ -100,7 +119,7 @@ This Python script interfaces with an LCD1602 display module to present a brief 
 The display clears if the user interrupts the script by pressing ``Ctrl+C``.
 
 
-
+----------------------------------------------
 
 **Understanding the Code**
 
@@ -136,6 +155,7 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
    * The ``message`` function displays a multi-line message on the LCD. The text is automatically split into two lines.
    * The ``clear`` function clears the display.
 
+----------------------------------------------
 
 **Troubleshooting**
 
@@ -154,7 +174,7 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
    - **Cause**: Incorrect column and row positions in the ``write()`` function.  
    - **Solution**: Adjust the ``write(row, column, text)`` parameters to align the text properly.
 
-
+----------------------------------------------
 
 **Extendable Ideas**
 
@@ -209,7 +229,7 @@ The display clears if the user interrupts the script by pressing ``Ctrl+C``.
 
    Create simple animations, such as blinking text or alternating messages, for more engaging output.
 
-
+----------------------------------------------
 
 **Conclusion**
 

@@ -22,8 +22,8 @@ Follow these steps to run the example:
 
 .. code-block:: shell
 
-   cd ~/ai-explorer-lab-kit/gpt_examples/
-   ~/my_venv/bin/python3 gpt_easy_stt.py
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_easy_stt.py
 
 
 ----------------------------------------------

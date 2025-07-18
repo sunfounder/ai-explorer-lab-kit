@@ -111,7 +111,7 @@ image generation, semantic search, and speech recognition.
 
    .. code-block:: shell
 
-      nano ~/ai-explorer-lab-kit/gpt_examples/keys.py
+      nano ~/ai-explorer-lab-kit/gpt_example/keys.py
 
 #. Add the copied API Key:
 
@@ -131,7 +131,7 @@ image generation, semantic search, and speech recognition.
 
 .. .. code-block:: shell
 
-..    cd ~/ai-explorer-lab-kit/gpt_examples
+..    cd ~/ai-explorer-lab-kit/gpt_example
 ..    chmod 755 
 
 .. .. warning::

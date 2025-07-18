@@ -87,6 +87,20 @@ For best performance, adjust the two potentiometers on the PIR module: one contr
    :align: center
 
 
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 4.1.2_AutomaticCaptureCamera_zero.py 
+
 
 ----------------------------------------------
 

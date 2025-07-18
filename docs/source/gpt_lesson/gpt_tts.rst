@@ -25,8 +25,8 @@ Once installed, navigate to the project directory and execute the script:
 
 .. code-block:: shell
 
-   cd ~/ai-explorer-lab-kit/gpt_examples/
-   ~/my_venv/bin/python3 gpt_easy_tts.py
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_easy_tts.py
 
 
 ----------------------------------------------

@@ -17,8 +17,8 @@ All example code used in these lessons is available in the ``ai-explorer-lab-kit
 
 .. code-block:: shell
 
-   cd ~/ai-explorer-lab-kit/gpt_examples/
-   ~/my_venv/bin/python3 gpt_easy.py
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_easy.py
 
 ----------------------------------------------
 
@@ -285,8 +285,8 @@ When working with OpenAI's API and developing chatbots on a Raspberry Pi, you mi
 
 .. .. code-block:: shell
 
-..    cd ~/ai-explorer-lab-kit/gpt_examples/
-..    ~/my_venv/bin/python3 gpt_easy.py
+..    cd ~/ai-explorer-lab-kit/gpt_example/
+..    sudo sudo ~/my_venv/bin/python3 gpt_easy.py
 
 .. **Code**
 

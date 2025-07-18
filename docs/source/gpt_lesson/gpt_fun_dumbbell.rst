@@ -59,6 +59,20 @@ This project is a smart fitness assistant that helps users track their dumbbell 
 
 ----------------------------------------------
 
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_fun_dumbbell.py 
+   
+----------------------------------------------
+
 **Code**
 
 .. raw:: html

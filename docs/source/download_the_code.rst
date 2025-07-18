@@ -62,6 +62,8 @@ Download the source code from github: https://github.com/sunfounder/ai-explorer-
 Download & Install the Library
 ----------------------------------
 
+For this kit, all GPIO functionalities are managed through the Fusion HAT. Therefore, you need to use the accompanying ``fusion-hat`` library to access and control them.
+
 Run the command in terminal to install ``fusion-hat`` module.
 
    .. raw:: html
@@ -75,6 +77,7 @@ Run the command in terminal to install ``fusion-hat`` module.
       cd fusion-hat
       sudo python3 setup.py install
 
+.. note:: For the detail of fusion-hat, please refer to the |link_fusion_hat|.
 
 .. _install_i2s:
 
@@ -89,7 +92,7 @@ The steps are as follows:
 
 .. code-block::
 
-    cd ~/robot-hat
+    cd ~/fusion-hat
     sudo bash i2samp.sh
 
 Type ``y`` and press ``enter`` to continue running the script.

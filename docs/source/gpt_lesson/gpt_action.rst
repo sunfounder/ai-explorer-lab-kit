@@ -63,8 +63,8 @@ Use the following steps to run this example:
 
 .. code-block:: shell
 
-   cd ~/ai-explorer-lab-kit/gpt_examples/
-   ~/my_venv/bin/python3 gpt_easy_action.py
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_easy_action.py
 
 ----------------------------------------------
 
@@ -103,12 +103,12 @@ Here is the complete example code:
 
    **Output Requirements**:
    1. Return a JSON output with no extraneous text or wrappers:
-      - `color`: A list of three floating-point values representing the RGB color components (each between 0 and 1).
+      - `color`: A list of three floating-point values representing the RGB color components (each between 0 and 255).
       - `message`: A textual response to the user.
 
    **Example JSON Output**:
    {
-   "color": [0.5, 0.4, 0.2],
+   "color": [125, 100, 50],
    "message": "Setting a warm and relaxing light for you."
    }
    '''
@@ -204,6 +204,7 @@ Here is the complete example code:
       client.beta.assistants.delete(assistant.id)
 
 
+
 ----------------------------------------------
 
 **Code Explanation**
@@ -233,7 +234,7 @@ Below, we’ll focus on JSON parsing and its key aspects.
 
    **Example JSON Output**:
    {
-   "color": [0.5, 0.4, 0.2],
+   "color": [125, 100, 50],
    "message": "Setting a warm and relaxing light for you."
    }
    '''
@@ -290,8 +291,8 @@ light and generate speech output.
 
 ``eval(value)`` attempts to parse the AI's JSON string into a Python dictionary.
 
-* **Example Input:** ``'{"color": [0.5, 0.3, 0.2], "message": "Setting a warm light."}'``
-* **Example Output:** ``{'color': [0.5, 0.3, 0.2], 'message': 'Setting a warm light.'}``
+* **Example Input:** ``'{"color": [125, 100, 50], "message": "Setting a warm light."}'``
+* **Example Output:** ``{'color': [125, 100, 50], 'message': 'Setting a warm light.'}``
 
 
 If parsing fails (e.g., the string is not valid JSON), the raw string is retained, 

@@ -50,8 +50,7 @@ Let’s start building the future—one line of Python at a time.
     :maxdepth: 2
 
     About This Kit <self>
-    install_setup_os/install_setup_os
-    download_the_code
+    prepare
 
 .. toctree::
     :maxdepth: 4

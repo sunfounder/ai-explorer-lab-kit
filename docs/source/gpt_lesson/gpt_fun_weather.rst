@@ -85,7 +85,7 @@ To complete this project, you will need the following components:
 
    .. code-block:: shell
 
-      nano ~/ai-explorer-lab-kit/gpt_examples/keys.py
+      nano ~/ai-explorer-lab-kit/gpt_example/keys.py
 
 #. Add the copied API Key:
 
@@ -97,6 +97,25 @@ To complete this project, you will need the following components:
 
 
 #. Press ``Ctrl + X``, ``Y``, and then ``Enter`` to save the file and exit.
+
+
+
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ~/ai-explorer-lab-kit/gpt_example/
+   sudo ~/my_venv/bin/python3 gpt_fun_weather.py
+
+
+
 
 ----------------------------------------------
 

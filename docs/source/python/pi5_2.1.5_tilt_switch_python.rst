@@ -82,6 +82,20 @@ Follow these steps to set up the circuit:
 
 ----------------------------------------------
 
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 2.1.5_Tilt_zero.py 
+   
+----------------------------------------------
+
 **Writing the Code**
 
 Below is the Python script to control the tilt switch and LEDs:

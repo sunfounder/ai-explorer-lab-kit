@@ -264,7 +264,9 @@ rst_epilog = """
 
     <a href="https://fusion-hat.readthedocs.io/en/latest/fusion_hat/fusion_hat.html" target="_blank">SunFounder Fusion HAT+</a>
 
+.. |link_api_fusion_hat| raw:: html
 
+    <a href="https://docs.sunfounder.com/projects/fusion-hat/en/latest/api/api.html" target="_blank">fusion-hat documentation </a>
 
 
 """

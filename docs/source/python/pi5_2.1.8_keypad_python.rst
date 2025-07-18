@@ -71,6 +71,19 @@ Connect the components as shown in the wiring diagram below:
 
 Ensure that all connections are secure and that the GPIO pins are correctly assigned to the rows and columns of the keypad.
 
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 2.1.8_Keypad_zero.py 
 
 ----------------------------------------------
 

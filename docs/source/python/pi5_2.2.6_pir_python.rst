@@ -77,7 +77,19 @@ Ensure the RGB LED and PIR sensor are connected to the correct GPIO pins as per 
    :width: 400
    :align: center
 
+----------------------------------------------
 
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 2.2.6_PIR_zero.py 
 
 
 

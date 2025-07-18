@@ -82,6 +82,20 @@ Ensure that:
 * All wiring is consistent with the diagram to ensure proper functionality.
 
 
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 2.2.2_thermistor_zero.py 
+
 
 ----------------------------------------------
 

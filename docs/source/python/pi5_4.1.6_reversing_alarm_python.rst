@@ -81,6 +81,21 @@ Follow this wiring diagram to set up your system:
    :align: center
 
 
+
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 4.1.6_ReversingAlarm_zero.py 
+
 ----------------------------------------------
 
 

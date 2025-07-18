@@ -21,6 +21,8 @@
 
 This project involves creating a simple yet effective battery indicator that visually displays the battery level using an LED bar graph. It's a practical application of analog-to-digital conversion (ADC) and GPIO control, making it an excellent learning opportunity for understanding how to measure and visualize voltage levels.
 
+.. warning::  In this example, please do not measure power supplies above 3.3V. More specifically, we recommend that you only measure one AA battery in this example. Otherwise, you may burn out the Fusion HAT.
+
 
 ----------------------------------------------
 
@@ -76,6 +78,19 @@ Refer to the following diagram for setting up the circuit on a breadboard:
    :align: center
 
 
+----------------------------------------------
+
+**Running the Example**
+
+
+All example code used in this tutorial is available in the ``ai-explorer-lab-kit`` directory. 
+Follow these steps to run the example:
+
+
+.. code-block:: shell
+   
+   cd ai-explorer-lab-kit/python/
+   sudo python3 4.1.8_battery_indicator_zero.py 
 
 
 ----------------------------------------------
