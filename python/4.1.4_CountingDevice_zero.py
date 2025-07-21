@@ -47,19 +47,19 @@ def display():
     # Updates the display with the current counter value
     global counter
     clearDisplay()
-    pickDigit(0)
+    pickDigit(3)
     hc595_shift(number[counter % 10])
 
     clearDisplay()
-    pickDigit(1)
+    pickDigit(2)
     hc595_shift(number[counter % 100//10])
 
     clearDisplay()
-    pickDigit(2)
+    pickDigit(1)
     hc595_shift(number[counter % 1000//100])
 
     clearDisplay()
-    pickDigit(3)
+    pickDigit(0)
     hc595_shift(number[counter % 10000//1000])
 
 def loop():

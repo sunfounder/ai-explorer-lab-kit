@@ -51,19 +51,19 @@ def display():
     """ Display the current counter value on the 7-segment display. """
     global counter
     clearDisplay()
-    pickDigit(0)
+    pickDigit(3)
     hc595_shift(number[counter % 10])
 
     clearDisplay()
-    pickDigit(1)
+    pickDigit(2)
     hc595_shift(number[counter % 100 // 10])
 
     clearDisplay()
-    pickDigit(2)
+    pickDigit(1)
     hc595_shift(number[counter % 1000 // 100] - 0x80)
 
     clearDisplay()
-    pickDigit(3)
+    pickDigit(0)
     hc595_shift(number[counter % 10000 // 1000])
 
 def stateChange():

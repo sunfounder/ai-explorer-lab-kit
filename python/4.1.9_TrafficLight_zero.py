@@ -90,7 +90,7 @@ def display():
         if i == 0 and digit == 0:
             continue
         clearDisplay()
-        pickDigit(3 - i)
+        pickDigit(i)
         hc595_shift(number[digit])
 
 def loop():

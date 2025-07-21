@@ -125,7 +125,7 @@ def display(count):
         pickDigit(i)    # Select digit for display
 
         # Choose the digit of count to display
-        digit = (count // (10 ** i)) % 10
+        digit = (count // (10 ** (3-i))) % 10
 
         hc595_shift(number[digit])  # Shift digit value to 74HC595
         sleep(0.001)  # Short delay for display stability
