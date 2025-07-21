@@ -107,7 +107,7 @@ Below is the Python code used for this project:
        preview_config.size = (800, 600)
        preview_config.format = 'XRGB8888'  
        # Start the camera preview in QTGL mode
-       camera.start_preview(Preview.QTGL)
+       # camera.start_preview(Preview.QTGL)
        # Start the camera
        camera.start()
        # Capture and save a photo to the user's home directory
@@ -176,7 +176,7 @@ This Python script uses the ``Picamera2`` library to interface with a Raspberry 
 
    .. code-block:: python
 
-       camera.start_preview(Preview.QTGL)
+       # camera.start_preview(Preview.QTGL)
        camera.start()
        camera.capture_file(f'{user_home}/my_photo.jpg')
 

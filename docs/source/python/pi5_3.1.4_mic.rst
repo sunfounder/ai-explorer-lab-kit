@@ -1,4 +1,4 @@
-Raspberry Pi Microphone
+3.1.4 Funsion HAT Microphone
 ==============================
 
 **Introduction**
