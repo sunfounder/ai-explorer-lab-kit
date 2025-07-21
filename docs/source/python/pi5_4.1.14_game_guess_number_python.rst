@@ -41,8 +41,6 @@ Below is the list of components required for this project:
         - |link_breadboard_buy|
     *   - :ref:`cpn_wires`
         - |link_wires_buy|
-    *   - :ref:`cpn_resistor`
-        - |link_resistor_buy|
     *   - :ref:`cpn_keypad`
         - |link_keypad_buy|
     *   - :ref:`cpn_i2c_lcd`
