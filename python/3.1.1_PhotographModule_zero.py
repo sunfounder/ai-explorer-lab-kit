@@ -18,7 +18,7 @@ try:
     preview_config.size = (800, 600)
     preview_config.format = 'XRGB8888'  
     # Start the camera preview in QTGL mode
-    camera.start_preview(Preview.QTGL)
+    # camera.start_preview(Preview.QTGL)
     # Start the camera
     camera.start()
     # Capture and save a photo to the user's home directory
